@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>P7IVESC's blog</title><link>https://P7IVESC.github.io</link><description>知其黑，守其白。一个网安小白的红队实战、靶场复盘与学习笔记。技术交流请备注来源：emhlcGluZzA1MDc=</description><copyright>P7IVESC's blog</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://avatars.githubusercontent.com/u/237383456?v=4&amp;size=200</url><title>avatar</title><link>https://P7IVESC.github.io</link></image><lastBuildDate>Fri, 06 Nov 2026 06:46:50 +0000</lastBuildDate><managingEditor>P7IVESC's blog</managingEditor><ttl>60</ttl><webMaster>P7IVESC's blog</webMaster><item><title>开局一个登录口如何进行渗透测试</title><link>https://P7IVESC.github.io/post/kai-ju-yi-ge-deng-lu-kou-ru-he-jin-xing-shen-tou-ce-shi.html</link><description># 弱口令
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>P7IVESC's blog</title><link>https://P7IVESC.github.io</link><description>知其黑，守其白。一个网安小白的红队实战、靶场复盘与学习笔记。技术交流请备注来源：emhlcGluZzA1MDc=</description><copyright>P7IVESC's blog</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://avatars.githubusercontent.com/u/237383456?v=4&amp;size=200</url><title>avatar</title><link>https://P7IVESC.github.io</link></image><lastBuildDate>Fri, 06 Nov 2026 06:49:06 +0000</lastBuildDate><managingEditor>P7IVESC's blog</managingEditor><ttl>60</ttl><webMaster>P7IVESC's blog</webMaster><item><title>开局一个登录口如何进行渗透测试</title><link>https://P7IVESC.github.io/post/kai-ju-yi-ge-deng-lu-kou-ru-he-jin-xing-shen-tou-ce-shi.html</link><description># 弱口令
 
 常见用户名：
 
@@ -536,7 +536,7 @@ copy有两个命令：COPY FROM和COPY TO。</description><guid isPermaLink="tru
 
 ## 背景介绍
 
-Apache Solr 是一个开源的搜索服务器，使用 Java 语言开发，主要基于 HTTP 和 Apache Lucene 实现。</description><guid isPermaLink="true">https://P7IVESC.github.io/post/solr%20-dai-ma-zhi-xing-%20%28CVE-2019-12409%29.html</guid><pubDate>Fri, 06 Nov 2026 02:50:55 +0000</pubDate></item><item><title>MySQL-UDF提权</title><link>https://P7IVESC.github.io/post/MySQL-UDF-ti-quan.html</link><description># 参考[MySQL渗透 (CVE-2012-2122)](https://p7ivesc.github.io/post/MySQL-shen-tou-CVE-2012-2122.html)文档，进行mysql渗透
+Apache Solr 是一个开源的搜索服务器，使用 Java 语言开发，主要基于 HTTP 和 Apache Lucene 实现。</description><guid isPermaLink="true">https://P7IVESC.github.io/post/solr%20-dai-ma-zhi-xing-%20%28CVE-2019-12409%29.html</guid><pubDate>Fri, 06 Nov 2026 02:50:55 +0000</pubDate></item><item><title>MySQL-UDF提权</title><link>https://P7IVESC.github.io/post/MySQL-UDF-ti-quan.html</link><description># 参考[MySQL渗透 (CVE-2012-2122)](https://p7ivesc.github.io/post/MySQL-shen-tou-%20%28CVE-2012-2122%29.html)文档，进行mysql渗透
 
 UDF：User Defined Function，用户自定义函数 
 
