@@ -158,7 +158,8 @@ body:has(.hero) .hero { padding-top: 10px; }
   font-size: 15px;
   color: var(--fg-soft);
   margin: 0 0 14px;
-  max-width: 46em;
+  max-width: none;
+  white-space: nowrap;     /* 副标题（含联系方式）压成一行；放不下时见下方 940px 断点 */
 }
 
 .hero-stats {
@@ -660,6 +661,11 @@ body:has(.hero) .hero { padding-top: 10px; }
 #footer a:hover { color: var(--accent); border-color: var(--accent); }
 
 /* ---------- 响应式 ---------- */
+/* 副标题压一行需要约 740px 宽；窗口更窄时放不下，改回折行，避免横向滚动 */
+@media (max-width: 940px) {
+  .hero-desc { white-space: normal; }
+}
+
 @media (max-width: 900px) {
   #content:has(#postBody) { grid-template-columns: minmax(0, 1fr); }
   #side { display: none; }
