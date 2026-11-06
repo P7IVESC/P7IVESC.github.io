@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html data-color-mode="light" data-dark-theme="dark" data-light-theme="light" lang="zh-CN">
+<head>
+    <meta content="text/html; charset=utf-8" http-equiv="content-type" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link href='https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/Primer/21.0.7/primer.css' rel='stylesheet' />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/noto-serif-sc@5.0.0/700.css"><link rel="stylesheet" href="/assets/theme.css?v=bc05a334"><script defer src="/assets/app.js?v=bc05a334"></script>
+    <link rel="icon" href="https://avatars.githubusercontent.com/u/237383456?v=4&size=200"><script>
+        let theme = localStorage.getItem("meek_theme") || "light";
+        document.documentElement.setAttribute("data-color-mode", theme);
+    </script>
+<meta name="description" content="# 弱口令
+
+常见用户名：
+
+```Plain Text
+admin
+root
+admin123
+test
+test01
+```
+
+常见密码：
+
+```Plain Text
+admin
+admin123
+123456
+1
+123123
+```
+
+# 返回包篡改
+
+## 第一种\-无密码情况下
+
+第一种是只改一个简单的状态码,比如400改成200,fail改成true,或者改成success
+
+不知道咋改可以f12看源码里面有没有
+
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/9f0ecf5769fd.png)
+
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/442acf792913.png)
+
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/7e7f13bc4539.png)
+
+## 第二种\-有密码情况下
+
+该系统有俩洞一个是弱口令,一个是绕过登录验证,直接进后台。">
+<meta property="og:title" content="开局一个登录口如何进行渗透测试">
+<meta property="og:description" content="# 弱口令
+
+常见用户名：
+
+```Plain Text
+admin
+root
+admin123
+test
+test01
+```
+
+常见密码：
+
+```Plain Text
+admin
+admin123
+123456
+1
+123123
+```
+
+# 返回包篡改
+
+## 第一种\-无密码情况下
+
+第一种是只改一个简单的状态码,比如400改成200,fail改成true,或者改成success
+
+不知道咋改可以f12看源码里面有没有
+
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/9f0ecf5769fd.png)
+
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/442acf792913.png)
+
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/7e7f13bc4539.png)
+
+## 第二种\-有密码情况下
+
+该系统有俩洞一个是弱口令,一个是绕过登录验证,直接进后台。">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://P7IVESC.github.io/post/kai-ju-yi-ge-deng-lu-kou-ru-he-jin-xing-shen-tou-ce-shi.html">
+<meta property="og:image" content="https://avatars.githubusercontent.com/u/237383456?v=4&size=200">
+<title>开局一个登录口如何进行渗透测试</title>
+
+
+
+</head>
+<style>
+body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;padding: 45px;font-size: 16px;font-family: sans-serif;line-height: 1.25;}
+#header{display:flex;padding-bottom:8px;border-bottom: 1px solid var(--borderColor-muted, var(--color-border-muted));margin-bottom: 16px;}
+#footer {margin-top:64px; text-align: center;font-size: small;}
+
+</style>
+
+<style>
+.postTitle{margin: auto 0;font-size:40px;font-weight:bold;}
+.title-right{display:flex;margin:auto 0 0 auto;}
+.title-right .circle{padding: 14px 16px;margin-right:8px;}
+#postBody{border-bottom: 1px solid var(--color-border-default);padding-bottom:36px;}
+#postBody hr{height:2px;}
+#cmButton{height:48px;margin-top:48px;}
+#comments{margin-top:64px;}
+.g-emoji{font-size:24px;}
+@media (max-width: 600px) {
+    body {padding: 8px;}
+    .postTitle{font-size:24px;}
+}
+
+</style>
+
+
+
+
+<body>
+    <div id="header">
+<h1 class="postTitle">开局一个登录口如何进行渗透测试</h1>
+<div class="title-right">
+    <a href="https://P7IVESC.github.io" id="buttonHome" class="btn btn-invisible circle" title="首页">
+        <svg class="octicon" width="16" height="16">
+            <path id="pathHome" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+    
+    <a href="https://github.com/P7IVESC/P7IVESC.github.io/issues/19" target="_blank" class="btn btn-invisible circle" title="Issue">
+        <svg class="octicon" width="16" height="16">
+            <path id="pathIssue" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+    
+
+    <a class="btn btn-invisible circle" onclick="modeSwitch();" title="切换主题">
+        <svg class="octicon" width="16" height="16" >
+            <path id="themeSwitch" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+
+</div>
+</div>
+    <div id="content">
+<div class="markdown-body" id="postBody"><h1>弱口令</h1>
+<p>常见用户名：</p>
+<pre lang="Plain" data-meta="Text" class="notranslate"><code class="notranslate">admin
+root
+admin123
+test
+test01
+</code></pre>
+<p>常见密码：</p>
+<pre lang="Plain" data-meta="Text" class="notranslate"><code class="notranslate">admin
+admin123
+123456
+1
+123123
+</code></pre>
+<h1>返回包篡改</h1>
+<h2>第一种-无密码情况下</h2>
+<p>第一种是只改一个简单的状态码,比如400改成200,fail改成true,或者改成success</p>
+<p>不知道咋改可以f12看源码里面有没有</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/a35986e05558b38e25e5c85855b3df8811abd6630543a2bda9276ca40f6f5624/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3966306563663537363966642e706e67"><img src="https://camo.githubusercontent.com/a35986e05558b38e25e5c85855b3df8811abd6630543a2bda9276ca40f6f5624/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3966306563663537363966642e706e67" alt="Image" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/9f0ecf5769fd.png" style="max-width: 100%;"></a></p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/db0d156ffc4712ebc81e2e16e849f188c0d5171a139a5fe8caaab5d80e52c5d6/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3434326163663739323931332e706e67"><img src="https://camo.githubusercontent.com/db0d156ffc4712ebc81e2e16e849f188c0d5171a139a5fe8caaab5d80e52c5d6/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3434326163663739323931332e706e67" alt="Image" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/442acf792913.png" style="max-width: 100%;"></a></p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/a1e1eefaa00475fdde76ea0af0e2836c1512a61bdb9a24b009cd8492c6aa93dd/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3765376631336263343533392e706e67"><img src="https://camo.githubusercontent.com/a1e1eefaa00475fdde76ea0af0e2836c1512a61bdb9a24b009cd8492c6aa93dd/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3765376631336263343533392e706e67" alt="Image" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/7e7f13bc4539.png" style="max-width: 100%;"></a></p>
+<h2>第二种-有密码情况下</h2>
+<p>该系统有俩洞一个是弱口令,一个是绕过登录验证,直接进后台。</p>
+<p>首先输入正确的账号密码 admin/123456</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/db73d71418ea5993267c45bdf4a25801c5159d7c90f618af4b6ee8fa3c5dbe93/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6138373061666437313031322e706e67"><img src="https://camo.githubusercontent.com/db73d71418ea5993267c45bdf4a25801c5159d7c90f618af4b6ee8fa3c5dbe93/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6138373061666437313031322e706e67" alt="Image" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/a870afd71012.png" style="max-width: 100%;"></a></p>
+<p>抓取登录包的返回包</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/6501d222f2b1278fc8e932d4cb7fee0dbfc60f3f5efdb1615002b8cf600b02f2/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6431616634323666663639322e77656270"><img src="https://camo.githubusercontent.com/6501d222f2b1278fc8e932d4cb7fee0dbfc60f3f5efdb1615002b8cf600b02f2/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6431616634323666663639322e77656270" alt="Image" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/d1af426ff692.webp" style="max-width: 100%;"></a></p>
+<p>获取这个返回包的正确登录的状态码</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/43396ab28a0cad8f6e3e6cfc149acbf2901d0cc103e920c7dc7ed9a5dd2e60a5/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3234623566666233313737342e77656270"><img src="https://camo.githubusercontent.com/43396ab28a0cad8f6e3e6cfc149acbf2901d0cc103e920c7dc7ed9a5dd2e60a5/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3234623566666233313737342e77656270" alt="Image" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/24b5ffb31774.webp" style="max-width: 100%;"></a></p>
+<p>将返回的这个状态码保存下来</p>
+<p>{"status":1,"msg":"OK","result":"/Admin/MainPage"}</p>
+<p>接下来随便登录个已经存在的账户,密码随便输入,然后将这个状态码替换成上面这个就可以直接登录。</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/3c0dee24eee4e54e9320f6c9d0825126dbf5365cdcfe74498b808327b174bcbc/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6165373131333862616138312e706e67"><img src="https://camo.githubusercontent.com/3c0dee24eee4e54e9320f6c9d0825126dbf5365cdcfe74498b808327b174bcbc/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6165373131333862616138312e706e67" alt="Image" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/ae71138baa81.png" style="max-width: 100%;"></a></p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/79828cbfff6f9244cb362a8b6f621e701d1a0e6cb763fdb5a9966177c9b80a0d/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3065356336626239636464622e706e67"><img src="https://camo.githubusercontent.com/79828cbfff6f9244cb362a8b6f621e701d1a0e6cb763fdb5a9966177c9b80a0d/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3065356336626239636464622e706e67" alt="Image" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/0e5c6bb9cddb.png" style="max-width: 100%;"></a></p>
+<p>剩下的全部放包，就能成功登录</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/7818563dd4879c604377c35c1f3f11b937257c37fef718a65121cdba6ca60fb8/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3166326133363363623563342e706e67"><img src="https://camo.githubusercontent.com/7818563dd4879c604377c35c1f3f11b937257c37fef718a65121cdba6ca60fb8/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3166326133363363623563342e706e67" alt="Image" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/1f2a363cb5c4.png" style="max-width: 100%;"></a></p>
+<p>下面是一个修改手机号返回包的案例</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/865e6138f4ef3a84bea3f354ffc89776a3f6cc65c77001590279e632ba32a65a/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3465363438393131393732312e706e67"><img src="https://camo.githubusercontent.com/865e6138f4ef3a84bea3f354ffc89776a3f6cc65c77001590279e632ba32a65a/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3465363438393131393732312e706e67" alt="Image" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/4e6489119721.png" style="max-width: 100%;"></a></p>
+<p>抓包登录</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/a4295bf2e2e686cf75429b97ed51ba8cfa5de50d246fa022c02c08566d9c11e9/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6330373961623633383830632e706e67"><img src="https://camo.githubusercontent.com/a4295bf2e2e686cf75429b97ed51ba8cfa5de50d246fa022c02c08566d9c11e9/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6330373961623633383830632e706e67" alt="Image" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/c079ab63880c.png" style="max-width: 100%;"></a></p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/8f04d4fa1a497f15e7ef67020342769eab29f81c2ed9668b1c0fe822c647a7b4/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6262343633373539333231652e706e67"><img src="https://camo.githubusercontent.com/8f04d4fa1a497f15e7ef67020342769eab29f81c2ed9668b1c0fe822c647a7b4/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6262343633373539333231652e706e67" alt="Image" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/bb463759321e.png" style="max-width: 100%;"></a></p>
+<p>如果找不到“受害者”的手机号，那么就用自己的两个手机号测试</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/421b61b4914a7820506fb8077c9e00446068e4438a127536184532d7488086cd/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3433323632663264363439622e706e67"><img src="https://camo.githubusercontent.com/421b61b4914a7820506fb8077c9e00446068e4438a127536184532d7488086cd/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3433323632663264363439622e706e67" alt="Image" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/43262f2d649b.png" style="max-width: 100%;"></a></p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/f53466bb576365c09acac9ab173e9c39728803c1d46c36aecfb71be46042f0a8/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3835393733363863643263362e706e67"><img src="https://camo.githubusercontent.com/f53466bb576365c09acac9ab173e9c39728803c1d46c36aecfb71be46042f0a8/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3835393733363863643263362e706e67" alt="Image" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/8597368cd2c6.png" style="max-width: 100%;"></a></p>
+<p>登录之后我们得检查一下信息是否变动，有些是就改了前端数据，后端数据没变，这个就不算漏洞</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/188e6445fbe7ef41f94994d880ccf537f3595bff01368e76f6dc6b2dfc7d7af9/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6166376332323862303166302e706e67"><img src="https://camo.githubusercontent.com/188e6445fbe7ef41f94994d880ccf537f3595bff01368e76f6dc6b2dfc7d7af9/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6166376332323862303166302e706e67" alt="Image" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/af7c228b01f0.png" style="max-width: 100%;"></a></p>
+<p>这种情况要写“任意登录”，不要写越权，这样才能拿高危</p>
+<h1>万能密码（SQL注入）</h1>
+<p>在搜索的时候,字段类型是非整形,当参数为0的时候,并且只有一个限定条件,会导</p>
+<p>致爆表。</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/7cd1e5e68a40307e147afa5ecaab95ba2c1284696b2c1f018b348453425b365f/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6466396131616135366263662e706e67"><img src="https://camo.githubusercontent.com/7cd1e5e68a40307e147afa5ecaab95ba2c1284696b2c1f018b348453425b365f/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6466396131616135366263662e706e67" alt="Image" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/df9a1aa56bcf.png" style="max-width: 100%;"></a></p>
+<p>因此可以使用这种形式?name=aaaaa'=0 -- +</p>
+<p>然后进行爆表操作。</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/94c3f78704fc7573679a360181aacf446cfb676dc0f738fee1ef625b53598553/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3536396438653837386661362e706e67"><img src="https://camo.githubusercontent.com/94c3f78704fc7573679a360181aacf446cfb676dc0f738fee1ef625b53598553/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3536396438653837386661362e706e67" alt="Image" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/569d8e878fa6.png" style="max-width: 100%;"></a></p>
+<p>快速判断sql注入的方法</p>
+<p>进行简单的单引号输入，发现一个单引号报错，两个正常，三个报错，四个正常，就可以判断其存在sql注入。考虑是不是存在万能密码</p>
+<p>这种简单快速，而且waf不会拦截</p>
+<h1>sql注入</h1>
+<p>这个懂得都懂就不写了</p>
+<h1>XSS</h1>
+<p>存在两个地方,第一个是在账号密码处的xss,第二个在url上面,直接打入xss。</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/512c335ead9eadbd944af64b5cd2005f53fd26449b9ab9761e79e6bd7e5f86e5/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3062646236303630646164372e77656270"><img src="https://camo.githubusercontent.com/512c335ead9eadbd944af64b5cd2005f53fd26449b9ab9761e79e6bd7e5f86e5/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3062646236303630646164372e77656270" alt="Image" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/0bdb6060dad7.webp" style="max-width: 100%;"></a></p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/9325724a7a51c40692ad878fdfa966967975a614d10c5862f8c1f77fa9b8703d/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3532323938633061626662312e706e67"><img src="https://camo.githubusercontent.com/9325724a7a51c40692ad878fdfa966967975a614d10c5862f8c1f77fa9b8703d/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3532323938633061626662312e706e67" alt="Image" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/52298c0abfb1.png" style="max-width: 100%;"></a></p>
+<h1>SSRF</h1>
+<p>登录口,我首推荐使用F12查看网络,查看远程加载的图片,然后将url替换成dnslog。</p>
+<p>对于这种png或者jpg的图片静态文件,burp很多情况下,他们的数据包都是默认不抓</p>
+<p>取的。</p>
+<p>下面是设置流程</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/5baa3d5b5aa6795f3c52dda850a7d4ef76126046361768aff2518bf4b9305426/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6539393634623362613336622e77656270"><img src="https://camo.githubusercontent.com/5baa3d5b5aa6795f3c52dda850a7d4ef76126046361768aff2518bf4b9305426/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6539393634623362613336622e77656270" alt="Image" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/e9964b3ba36b.webp" style="max-width: 100%;"></a></p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/a3833ea739d34d027f12858e8597407a899b9a881b751e80224db753d767048a/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6562663631323566396664622e77656270"><img src="https://camo.githubusercontent.com/a3833ea739d34d027f12858e8597407a899b9a881b751e80224db753d767048a/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6562663631323566396664622e77656270" alt="Image" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/ebf6125f9fdb.webp" style="max-width: 100%;"></a></p>
+<p>勾选这个后,才显示图片类型数据包。</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/fdd33764100440d4a2e78848c1f39f611c2c3d7ed5d481eee4132d8a2215b577/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6632363730616432653032332e77656270"><img src="https://camo.githubusercontent.com/fdd33764100440d4a2e78848c1f39f611c2c3d7ed5d481eee4132d8a2215b577/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6632363730616432653032332e77656270" alt="Image" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/f2670ad2e023.webp" style="max-width: 100%;"></a></p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/bc39ca11c5f785964643d80cdf718cbedc19d4bc274620fdd385c05a07bac37f/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6261623666316237303136322e77656270"><img src="https://camo.githubusercontent.com/bc39ca11c5f785964643d80cdf718cbedc19d4bc274620fdd385c05a07bac37f/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6261623666316237303136322e77656270" alt="Image" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/bab6f1b70162.webp" style="max-width: 100%;"></a></p>
+<pre lang="Plain" data-meta="Text" class="notranslate"><code class="notranslate">https://web.u51.com/api.u51.com/nodejs-performance-log-server/ng?_u=https%3A%2F%2Fwww.xiaolanben.com%2F&amp;_v=1.0.21&amp;_o=&amp;kmdNetk=&amp;kmdHasBg=false&amp;dns=0&amp;ntw=11206&amp;dlt=38405&amp;dct=40231&amp;tlt=4023
+</code></pre>
+<p>比如像这种，修改后面?_u=的内容，修改成自己的dnslog来测SSRF</p>
+<h1>URL跳转</h1>
+<p>这个和ssrf很像,在测试ssrf的时候,可以顺便测试url跳转,就是在这里输入其他链接后,浏览器直接跳转到这个地址。</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/730b8840e44f969e7c7a82004c68985962df534ac2ba436af10b505549cf67d2/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3239613938343837323230622e77656270"><img src="https://camo.githubusercontent.com/730b8840e44f969e7c7a82004c68985962df534ac2ba436af10b505549cf67d2/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3239613938343837323230622e77656270" alt="Image" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/29a98487220b.webp" style="max-width: 100%;"></a></p>
+<h1>用户名枚举</h1>
+<p>这个算是登录口最常见的漏洞了,有的src收取,有的不收（尽量还是打组合拳）,但是线下项目都是可以正常提交给客户.</p>
+<p>用户名枚举特征:1. 账号不存在 2.密码错误</p>
+<p>不存在漏洞:用户名或密码错误</p>
+<h1>测试账号爆破</h1>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/cbcf6f9b05b3a35ce1e44410c537cffbdeb296a3f3bb244731b9e70611b6d8ed/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3238343064613864316331662e706e67"><img src="https://camo.githubusercontent.com/cbcf6f9b05b3a35ce1e44410c537cffbdeb296a3f3bb244731b9e70611b6d8ed/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3238343064613864316331662e706e67" alt="Image" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/2840da8d1c1f.png" style="max-width: 100%;"></a></p>
+<h1>目录扫描</h1>
+<p>dirsearch，主要看有没有未授权访问，或者有没有文件泄露</p>
+<h1>猜测注册接口</h1>
+<p>有些登录接口可能只在前端删掉了，后端没删</p>
+<p>/register</p>
+<p>/register.php</p>
+<p>/register.jsp</p>
+<p>/register.html</p>
+<p>这样来猜测注册接口,然后就可以注册一个账号然后登录上去。</p>
+<h1>猜测密码修改接口</h1>
+<p>为什么要找密码修改处呢?因为这里也会有很多功能点。</p>
+<p>如果你通过用户名遍历获得账号,可以在这边直接测试任意密码修改漏洞。</p>
+<p>同样的,这里也有很多功能点,比如图片验证码漏洞,手机号验证码漏洞,用户名遍历,逻辑漏洞等等。</p>
+<p>/resetpssword</p>
+<p>/changePassword</p>
+<p>可以使用的方法是</p>
+<p>js 查找,dirsearch 目录扫描</p>
+<h1>JS中提取接口</h1>
+<p>四个方式,</p>
+<p>F12手动分析js</p>
+<p>路径爆破,一定关闭默认的url 编码</p>
+<p>浏览器插件 findsomething  雪瞳</p>
+<p>python 脚本 urlfinder (exe版本)</p>
+<p>python 脚本 jsfinder</p>
+<p>页面是空白的,但是不代表真的什么东西都没有。</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/386af7615118acbf43ed78299f12cc7c27dceea159fe1892285b4e3a6eac5b07/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6439613431326231633132312e706e67"><img src="https://camo.githubusercontent.com/386af7615118acbf43ed78299f12cc7c27dceea159fe1892285b4e3a6eac5b07/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6439613431326231633132312e706e67" alt="Image" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/d9a412b1c121.png" style="max-width: 100%;"></a></p>
+<p>去查看js,或者使用工具去爬取js去分析。</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/11db2a78c81acb20f8a3a18d990b291337fccae9eaf7107890979bb4ff8169b6/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3362323233346263366534622e77656270"><img src="https://camo.githubusercontent.com/11db2a78c81acb20f8a3a18d990b291337fccae9eaf7107890979bb4ff8169b6/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3362323233346263366534622e77656270" alt="Image" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/3b2234bc6e4b.webp" style="max-width: 100%;"></a></p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/5abbdfb7e64b378bf799dbc794ea48d207e8185ab755b3b4f18d1afefd7ffbd2/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3531373065633339323562652e77656270"><img src="https://camo.githubusercontent.com/5abbdfb7e64b378bf799dbc794ea48d207e8185ab755b3b4f18d1afefd7ffbd2/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3531373065633339323562652e77656270" alt="Image" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/5170ec3925be.webp" style="max-width: 100%;"></a></p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/09ce87cdfd0a8c11a1b18b9144f2976c133bbe89b7a8c7f522c71e50873d3f93/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3532343837323963306364392e706e67"><img src="https://camo.githubusercontent.com/09ce87cdfd0a8c11a1b18b9144f2976c133bbe89b7a8c7f522c71e50873d3f93/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3532343837323963306364392e706e67" alt="Image" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/5248729c0cd9.png" style="max-width: 100%;"></a></p>
+<h1>js密码&amp;敏感信息提取</h1>
+<p>js中写着默认账号密码</p>
+<p>使用 urlfinder 去提取js,发现写有默认密码 seata/seata</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/02a16e71fa6c98103c1feb27583ccef42ea8a0eb1a807510b5503c224d76a81f/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3535353066346264393366352e77656270"><img src="https://camo.githubusercontent.com/02a16e71fa6c98103c1feb27583ccef42ea8a0eb1a807510b5503c224d76a81f/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3535353066346264393366352e77656270" alt="Image" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/5550f4bd93f5.webp" style="max-width: 100%;"></a></p>
+<h1>图片验证码漏洞-水洞</h1>
+<h2>图片验证码复用</h2>
+<p>什么叫做图片验证码复用呢?就是第一次登录需要你输入正确的验证码,这时候你抓包,然后你可以不断的多次发包,你发现他只提示密码错误,并没有提示验证码错误,然后你稍微修改一点验证码,他就提示验证码错误,这种说明什么呢?这就说明该验证码只要你输入正确的内容,就可以一直重复使用,也就是失去了验证码的防止爆破功能,这个验证码也就是失效的了!</p>
+<h2>图片验证码置空失效</h2>
+<p>输入错误的验证码会提示验证码错误。</p>
+<p>但是直接将验证码内容删除,写为空,就会绕过对验证码的检测。</p>
+<h2>验证码前端验证</h2>
+<p>如果输入验证码后,发现数据包中不存在验证码参数,比如&amp;code=xxxx这种参数,只有账号密码的参数,那这种就要考虑是不是前端验证码验证,如果是前端,那么这个验证码是没用的,失去了验证码的作用,因为我们可以直接抓包绕过。</p>
+<h2>图片验证码拒绝服务漏洞</h2>
+<p>不要太大,不要给网站搞崩溃 !! 点到为止。</p>
+<p>查看生成验证码的那个url,右键打开新的链接,进行抓包。</p>
+<p><a href="https://xxxx%5C.jsp?m=vfycode%5C&amp;c=VerifyCode%5C&amp;a=CreateCode%5C&amp;width=68%5C&amp;height=27" rel="nofollow">https://xxxx\.jsp?m=vfycode\&amp;c=VerifyCode\&amp;a=CreateCode\&amp;width=68\&amp;height=27</a></p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/72903417eb203b00766bcd23ae0c2575bbae1a71a9ab29ab60187333ee79a3b6/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6462376365383166653937322e706e67"><img src="https://camo.githubusercontent.com/72903417eb203b00766bcd23ae0c2575bbae1a71a9ab29ab60187333ee79a3b6/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6462376365383166653937322e706e67" alt="Image" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/db7ce81fe972.png" style="max-width: 100%;"></a></p>
+<p><a href="https://xxx%5C.com/123%5C.png?width=200%5C&amp;height=100" rel="nofollow">https://xxx\.com/123\.png?width=200\&amp;height=100</a></p>
+<p>然后不断的修改width和height的大小,如果没有限制,可以一直扩大,然后他的返回时间和返回大小一直增加,就证明存在拒绝服务漏洞,如果width或者height没有限制就可以,很多情况下,大小在999999之后,就输入更大的后就没有反应了,这种情况。</p>
+<p>如果返回的还是很快,那就不算漏洞。</p>
+<p><strong>edu不收，公益别打！！！</strong></p>
+<h1>手机号验证码漏洞</h1>
+<h2>短信轰炸漏洞</h2>
+<p>并发是低危,repeter无限发放数据包,这个危害更高!</p>
+<p>这里要注意,如果repeter能成功,就别交并发,交repeter,等他修复了,再次并发一下,如果成功了,可以再交一次。</p>
+<p>不止手机号验证码，所有这种漏洞都可以这样交</p>
+<p>短信轰炸漏洞绕过。</p>
+<ol>
+<li>
+<p>前后添加空格</p>
+</li>
+<li>
+<p>开头添加86或者+86</p>
+</li>
+</ol>
+<h2>手机号验证码返回</h2>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/07f799b0603a4be7a01571d1ee5937da54a43a0ae076b149ec4cd570664c3f75/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6366666166646336343961302e77656270"><img src="https://camo.githubusercontent.com/07f799b0603a4be7a01571d1ee5937da54a43a0ae076b149ec4cd570664c3f75/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6366666166646336343961302e77656270" alt="Image" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/cffafdc649a0.webp" style="max-width: 100%;"></a></p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/463281b23435c8ec380583a5fbdbc2a7df06731cc698d1518295d65a9d8a4887/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6634383030366564646163372e706e67"><img src="https://camo.githubusercontent.com/463281b23435c8ec380583a5fbdbc2a7df06731cc698d1518295d65a9d8a4887/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6634383030366564646163372e706e67" alt="Image" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/f48006eddac7.png" style="max-width: 100%;"></a></p>
+<h2>手机号验证码双发</h2>
+<p><strong>常见高危漏洞</strong></p>
+<p>比如一个登录页面</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/ea0d8c44a7be2e23729f47d23e638f33f0c4225ec3f250f2acca451ad5254728/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3938663063626236373035312e706e67"><img src="https://camo.githubusercontent.com/ea0d8c44a7be2e23729f47d23e638f33f0c4225ec3f250f2acca451ad5254728/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3938663063626236373035312e706e67" alt="Image" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/98f0cbb67051.png" style="max-width: 100%;"></a></p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/3f905ba889cac4e13c85fe766625eb4a1414e3a353a35fb3f1d8f9deccb7bf8d/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6163363264333162386230612e77656270"><img src="https://camo.githubusercontent.com/3f905ba889cac4e13c85fe766625eb4a1414e3a353a35fb3f1d8f9deccb7bf8d/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6163363264333162386230612e77656270" alt="Image" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/ac62d31b8b0a.webp" style="max-width: 100%;"></a></p>
+<p>假设这是原本的请求包</p>
+<p>对phone参数进行修改</p>
+<p>比如把原始的182xxxxxxx手机号后面加上英文逗号加上自己的手机号</p>
+<pre lang="Plain" data-meta="Text" class="notranslate"><code class="notranslate">182xxxxxxxxxx,1888888888888
+</code></pre>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/b10ea3b9b7bfca23f8fe61839466a345fc7b0efcbfa90a059204504de38b9eaa/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6432616336323338636263312e77656270"><img src="https://camo.githubusercontent.com/b10ea3b9b7bfca23f8fe61839466a345fc7b0efcbfa90a059204504de38b9eaa/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6432616336323338636263312e77656270" alt="Image" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/d2ac6238cbc1.webp" style="max-width: 100%;"></a></p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/bd94616b3b5d610d2f39b2eb8f3b0b76d11ab96787ec0a60d64900bb0c7ea9a5/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3738393831643138613163302e77656270"><img src="https://camo.githubusercontent.com/bd94616b3b5d610d2f39b2eb8f3b0b76d11ab96787ec0a60d64900bb0c7ea9a5/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3738393831643138613163302e77656270" alt="Image" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/78981d18a1c0.webp" style="max-width: 100%;"></a></p>
+<p>如果出现两个手机号都接收到验证码的情况，那么就证明其存在<strong>双发漏洞</strong></p>
+<p>邮箱也可以,比如<a href="mailto:123@qq.com">123@qq.com</a>,<a href="mailto:456@qq.com">456@qq.com</a></p>
+<p>一般情况下,一旦出现双发漏洞,一般使用手机号的功能都会存在该漏洞,比如登录口，注册口，修改密码等。</p>
+<p>如果能实现任意登录、注册、修改密码，一定要优先交任意登录或者密码修改，因为这样的评级更高</p>
+<h2>验证码双发变种</h2>
+<p>这里进行一下拓展,无论是验证码还是手机号都可以进行双发,除了上面的phone=手机号A,手机号B的形式,其实还可以进行phone=手机号A&amp;phone=手机号B的形式。</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/c251424b4806532016d6d6d557f0700ef31af012bc1e80e649fb8b9146124d58/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3635643435353861393830622e77656270"><img src="https://camo.githubusercontent.com/c251424b4806532016d6d6d557f0700ef31af012bc1e80e649fb8b9146124d58/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3635643435353861393830622e77656270" alt="Image" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/65d4558a980b.webp" style="max-width: 100%;"></a></p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/682818c5695683f926fc7fc95339089035f56ac34426c5b055c686e79509df8a/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6634663261313431636132652e77656270"><img src="https://camo.githubusercontent.com/682818c5695683f926fc7fc95339089035f56ac34426c5b055c686e79509df8a/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6634663261313431636132652e77656270" alt="Image" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/f4f2a141ca2e.webp" style="max-width: 100%;"></a></p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/35e9d8f8a6ba1f4619728698a592b2096d55ba1fc3d3bf747f36a02290a68ad6/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3231313964356630346231382e706e67"><img src="https://camo.githubusercontent.com/35e9d8f8a6ba1f4619728698a592b2096d55ba1fc3d3bf747f36a02290a68ad6/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3231313964356630346231382e706e67" alt="Image" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/2119d5f04b18.png" style="max-width: 100%;"></a></p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/4ea48f7bac56d2711ba8c5204452784dc78287cfbd236ee0f21217ce3016b949/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3433313033376261346136612e706e67"><img src="https://camo.githubusercontent.com/4ea48f7bac56d2711ba8c5204452784dc78287cfbd236ee0f21217ce3016b949/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3433313033376261346136612e706e67" alt="Image" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/431037ba4a6a.png" style="max-width: 100%;"></a></p>
+<h2>短信内容可修改</h2>
+<p>1、出现在发送短信的时候进行抓包,发现短信验证码存在发送包里,比如code=976865,这时候尝试更改code的值,可能会导致发送任意短信内容。</p>
+<p>2、发送短信的时候,有message的参数值,并且值的内容和短信内容一致,可以尝试修改message的值,从而篡改发送短信的内容。</p>
+<p>可以冒用权威身份，发送钓鱼或者广告等，损害企业政府单位的名誉</p>
+<h2>验证码爆破</h2>
+<p>可以看这个文档</p>
+<p><a href="https://rcn3jqf4xs7x.feishu.cn/wiki/QTGawiRfaiZi1UkUeJacuA8Jnpf" rel="nofollow">逻辑漏洞</a></p>
+<h2>默认验证码漏洞</h2>
+<p>来自学员的一个案例。</p>
+<p>爆破时候两个验证码都成功,经过测试,一个是真正的验证码,另一个是万能验证码,任何手机号输入万能验证码都能成功登录。</p>
+<p>0000</p>
+<p>1111</p>
+<p>9999</p>
+<p>123456</p>
+<p>999999</p>
+<p>000000</p>
+<p>111111</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/95c7e536844cb13aaf492f6fca42d7e2d54f3784da60423575ce314016db0e42/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3965316239333832656639352e706e67"><img src="https://camo.githubusercontent.com/95c7e536844cb13aaf492f6fca42d7e2d54f3784da60423575ce314016db0e42/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3965316239333832656639352e706e67" alt="Image" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/9e1b9382ef95.png" style="max-width: 100%;"></a></p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/35526f9e4cdcddb9d0fbd8b6c7961f9a573e47e0c8354863934bda8624525c18/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6566323031363363373862332e77656270"><img src="https://camo.githubusercontent.com/35526f9e4cdcddb9d0fbd8b6c7961f9a573e47e0c8354863934bda8624525c18/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6566323031363363373862332e77656270" alt="Image" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/ef20163c78b3.webp" style="max-width: 100%;"></a></p>
+<h2>验证码不绑定手机号</h2>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/91a09ec4ba56812f30ce30ef09d07dfa38552fca5783d3fccf139fe45d8d53b3/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3766643764313866616330342e706e67"><img src="https://camo.githubusercontent.com/91a09ec4ba56812f30ce30ef09d07dfa38552fca5783d3fccf139fe45d8d53b3/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3766643764313866616330342e706e67" alt="Image" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/7fd7d18fac04.png" style="max-width: 100%;"></a></p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/e01c4c6352b92e91e8272ebc903de0d2f0ff789f3beadce246845addce5792b8/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6432393266306664393832362e77656270"><img src="https://camo.githubusercontent.com/e01c4c6352b92e91e8272ebc903de0d2f0ff789f3beadce246845addce5792b8/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6432393266306664393832362e77656270" alt="Image" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/d292f0fd9826.webp" style="max-width: 100%;"></a></p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/2333873abcb8f363b849589aaf6add4b0aedc534bcbdbe2f3f48dfe5a1a13d5d/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3236353064656665303561342e77656270"><img src="https://camo.githubusercontent.com/2333873abcb8f363b849589aaf6add4b0aedc534bcbdbe2f3f48dfe5a1a13d5d/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3236353064656665303561342e77656270" alt="Image" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/2650defe05a4.webp" style="max-width: 100%;"></a></p>
+<p>然后发现登录成功</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/7eba397b0fbbdc6a0780c3a7884625354bfbecb7527e31cbb1afa4f1daafc8cc/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3532393064393736333163362e706e67"><img src="https://camo.githubusercontent.com/7eba397b0fbbdc6a0780c3a7884625354bfbecb7527e31cbb1afa4f1daafc8cc/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3532393064393736333163362e706e67" alt="Image" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/5290d97631c6.png" style="max-width: 100%;"></a></p>
+<p>这种属于任意登录，高危</p>
+<h1>端口旁站</h1>
+<p>使用NMAP 端口扫描或者 tscanplus 端口扫描。</p>
+<p>比如我这个端口扫描,同一个网站,使用的协议不同,无法访问请多次切换 !!!</p>
+<pre lang="Plain" data-meta="Text" class="notranslate"><code class="notranslate">nmap -sS -Pn -n -- open -- min-hostgroup 4 -- min-parallelism 1024 -- host-timeout 30 -T4 -v -p 1-65535 -iL ip.txt -oX output.xml
+</code></pre>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/af11768565512098b5a0a483c21eff12bae035adf9f939326979876d44314868/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6538383031623864363534332e77656270"><img src="https://camo.githubusercontent.com/af11768565512098b5a0a483c21eff12bae035adf9f939326979876d44314868/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6538383031623864363534332e77656270" alt="Image" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/e8801b8d6543.webp" style="max-width: 100%;"></a></p>
+<h1>指纹识别打框架漏洞</h1>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/46e7bcf478ee4034812fc91892c0b04dd9e3cbe2662ad45007f6d6eca5b7face/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6165303937353535303061352e706e67"><img src="https://camo.githubusercontent.com/46e7bcf478ee4034812fc91892c0b04dd9e3cbe2662ad45007f6d6eca5b7face/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6165303937353535303061352e706e67" alt="Image" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/ae09755500a5.png" style="max-width: 100%;"></a></p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/1659aad53bf29d19d9b14a6848142d8745b421da3dca454de83bb5372e552950/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6561633335303761646164642e77656270"><img src="https://camo.githubusercontent.com/1659aad53bf29d19d9b14a6848142d8745b421da3dca454de83bb5372e552950/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6561633335303761646164642e77656270" alt="Image" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/eac3507adadd.webp" style="max-width: 100%;"></a></p>
+<h1>任意用户注册漏洞</h1>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/2e70f79b9d7026d83e63d9394d109f21eedc84a68dd5366b3565aae520d2d590/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3965326664393737356234352e706e67"><img src="https://camo.githubusercontent.com/2e70f79b9d7026d83e63d9394d109f21eedc84a68dd5366b3565aae520d2d590/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3965326664393737356234352e706e67" alt="Image" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/9e2fd9775b45.png" style="max-width: 100%;"></a></p>
+<h1>任意注册覆盖漏洞</h1>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/d41ed4d394ce3c8b2c245b762934275070830fd0be0f16860ed29c7bd48adbbe/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3662306262383633393163362e706e67"><img src="https://camo.githubusercontent.com/d41ed4d394ce3c8b2c245b762934275070830fd0be0f16860ed29c7bd48adbbe/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3662306262383633393163362e706e67" alt="Image" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/6b0bb86391c6.png" style="max-width: 100%;"></a></p>
+<h1>小程序登录转换到网页端渗透</h1>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/0e6abcff6e2cfbf12eb782c3098a968a0a0f3e7d13a1f168c256759bf51003ff/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3531376534383266653338632e77656270"><img src="https://camo.githubusercontent.com/0e6abcff6e2cfbf12eb782c3098a968a0a0f3e7d13a1f168c256759bf51003ff/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3531376534383266653338632e77656270" alt="Image" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/517e482fe38c.webp" style="max-width: 100%;"></a></p>
+<p>就比如小程序界面登录的网站，你把域名放到电脑上，如果有电脑端就可以便于渗透</p>
+<p>而且有些小程序的管理后台一般都是web网站</p>
+<p>之后还可以进行目录扫描</p>
+<p>有些时候可以把小程序的cookie放到电脑的web网站里，因为他们是同一个系统，可能cookie可以复用</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/22e67a2a5ee9d276bd84e05d3d4eea92abb292a40af14d92677300ced8837900/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3662613961663233393962612e706e67"><img src="https://camo.githubusercontent.com/22e67a2a5ee9d276bd84e05d3d4eea92abb292a40af14d92677300ced8837900/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3662613961663233393962612e706e67" alt="Image" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/6ba9af2399ba.png" style="max-width: 100%;"></a></p>
+<h1>迂回战术WAF和源码</h1>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/d7cf04ea90a2d4f4f73e02ab8394c00a9e77ec9ec0919b77c47889abe466b38a/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3534646235313565643539372e706e67"><img src="https://camo.githubusercontent.com/d7cf04ea90a2d4f4f73e02ab8394c00a9e77ec9ec0919b77c47889abe466b38a/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3534646235313565643539372e706e67" alt="Image" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/54db515ed597.png" style="max-width: 100%;"></a></p>
+<h1>前后端分离扫三大组件未授权漏洞</h1>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/7ddca4f73eb6b806a038acd1a36ced8236069429ace3884f3a2350e7f837cd40/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6466633235633065373834642e706e67"><img src="https://camo.githubusercontent.com/7ddca4f73eb6b806a038acd1a36ced8236069429ace3884f3a2350e7f837cd40/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6466633235633065373834642e706e67" alt="Image" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/dfc25c0e784d.png" style="max-width: 100%;"></a></p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/0ea6e87ce4eae7fa8bf5f7b82af5e880b5ab562cd69eb17c275999fd8e72bc76/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6161323764396263376466332e77656270"><img src="https://camo.githubusercontent.com/0ea6e87ce4eae7fa8bf5f7b82af5e880b5ab562cd69eb17c275999fd8e72bc76/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6161323764396263376466332e77656270" alt="Image" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/aa27d9bc7df3.webp" style="max-width: 100%;"></a></p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/da9a9b47c955192304d90fc1e49b6411ff13bc7234307de2fffd7887f3ee3373/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3461353863346261353731302e706e67"><img src="https://camo.githubusercontent.com/da9a9b47c955192304d90fc1e49b6411ff13bc7234307de2fffd7887f3ee3373/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3461353863346261353731302e706e67" alt="Image" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/4a58c4ba5710.png" style="max-width: 100%;"></a></p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/8602b1c24b6bfeb2efbaadf643609ae8d5cb8d60bea77e02983cd75e135cfd89/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3762333030326561326635662e77656270"><img src="https://camo.githubusercontent.com/8602b1c24b6bfeb2efbaadf643609ae8d5cb8d60bea77e02983cd75e135cfd89/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3762333030326561326635662e77656270" alt="Image" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/7b3002ea2f5f.webp" style="max-width: 100%;"></a></p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/9e37b74b0218a015f601177b7e193f61eef6ab8fa8a3b396ac05d31c47d66b03/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3532383731316436393333332e706e67"><img src="https://camo.githubusercontent.com/9e37b74b0218a015f601177b7e193f61eef6ab8fa8a3b396ac05d31c47d66b03/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3532383731316436393333332e706e67" alt="Image" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/528711d69333.png" style="max-width: 100%;"></a></p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/a3441d33e0e207e3fbf44e031126d64bd7aa38c913f649daf4e96f21324cbb8e/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6535643636613436656238372e706e67"><img src="https://camo.githubusercontent.com/a3441d33e0e207e3fbf44e031126d64bd7aa38c913f649daf4e96f21324cbb8e/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6535643636613436656238372e706e67" alt="Image" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/e5d66a46eb87.png" style="max-width: 100%;"></a></p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/48929b605a78bd4aebf16b4c983f079d3cb3acafc65a6b562f9c4594bcf48329/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3237303437316666363062632e77656270"><img src="https://camo.githubusercontent.com/48929b605a78bd4aebf16b4c983f079d3cb3acafc65a6b562f9c4594bcf48329/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3237303437316666363062632e77656270" alt="Image" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/270471ff60bc.webp" style="max-width: 100%;"></a></p>
+<p>actuator要看有没有env，headdump</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/6ef9660847d7ab96a2c7dc25f1ec1bfa690e1667196032b398c0b0eeb0fb03d5/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6535393934653035343962332e706e67"><img src="https://camo.githubusercontent.com/6ef9660847d7ab96a2c7dc25f1ec1bfa690e1667196032b398c0b0eeb0fb03d5/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6535393934653035343962332e706e67" alt="Image" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/e5994e0549b3.png" style="max-width: 100%;"></a></p>
+<p>比如之前去北仑区人民医院，通过headdump的未授权访问，下载后进行分析，发现了数据库sa账户的账号和密码，直接连上数据库</p>
+<p><a href="https://rcn3jqf4xs7x.feishu.cn/wiki/Fy4hwJoReiPdnZk6HgtchucVnwb" rel="nofollow">北仑人民医院渗透测试报告_20260723.docx</a></p>
+<h1>后台凭证通用漏洞-CNVD案通杀例</h1>
+<p><a href="https://mp%5C.weixin%5C.qq%5C.com/s/7MFZ4FL2e%5C-8LZZyc7sVD8A" rel="nofollow">https://mp\.weixin\.qq\.com/s/7MFZ4FL2e\-8LZZyc7sVD8A</a></p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/1ef5a902419ab2e4af24feab43ff3cabc1fb5ab072861f33d102141801a6b442/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6464643730306462363138362e77656270"><img src="https://camo.githubusercontent.com/1ef5a902419ab2e4af24feab43ff3cabc1fb5ab072861f33d102141801a6b442/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6464643730306462363138362e77656270" alt="Image" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/ddd700db6186.webp" style="max-width: 100%;"></a></p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/2a14ab6ec1582523e779809b4cfd949dd8d333ae301e1bc9027f8405151cbaf9/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6162336161393138623734322e706e67"><img src="https://camo.githubusercontent.com/2a14ab6ec1582523e779809b4cfd949dd8d333ae301e1bc9027f8405151cbaf9/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6162336161393138623734322e706e67" alt="Image" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/ab3aa918b742.png" style="max-width: 100%;"></a></p></div>
+<div style="font-size:small;margin-top:8px;float:right;"></div>
+
+<button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>
+<div class="comments" id="comments"></div>
+
+</div>
+    <div id="footer"><div id="footer1">Copyright © <span id="copyrightYear"></span> <a href="https://P7IVESC.github.io">P7IVESC's blog</a></div>
+<div id="footer2">
+    <span id="runday"></span><span>Powered by <a href="https://meekdai.com/Gmeek.html" target="_blank">Gmeek</a></span>
+</div>
+
+<script>
+var now=new Date();
+document.getElementById("copyrightYear").innerHTML=now.getFullYear();
+
+if(""!=""){
+    var startSite=new Date("");
+    var diff=now.getTime()-startSite.getTime();
+    var diffDay=Math.floor(diff/(1000*60*60*24));
+    document.getElementById("runday").innerHTML="网站运行 "+diffDay+" 天"+" • ";
+}
+</script></div>
+</body>
+<script>
+var IconList={'sun': 'M8 10.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM8 12a4 4 0 100-8 4 4 0 000 8zM8 0a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0V.75A.75.75 0 018 0zm0 13a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5A.75.75 0 018 13zM2.343 2.343a.75.75 0 011.061 0l1.06 1.061a.75.75 0 01-1.06 1.06l-1.06-1.06a.75.75 0 010-1.06zm9.193 9.193a.75.75 0 011.06 0l1.061 1.06a.75.75 0 01-1.06 1.061l-1.061-1.06a.75.75 0 010-1.061zM16 8a.75.75 0 01-.75.75h-1.5a.75.75 0 010-1.5h1.5A.75.75 0 0116 8zM3 8a.75.75 0 01-.75.75H.75a.75.75 0 010-1.5h1.5A.75.75 0 013 8zm10.657-5.657a.75.75 0 010 1.061l-1.061 1.06a.75.75 0 11-1.06-1.06l1.06-1.06a.75.75 0 011.06 0zm-9.193 9.193a.75.75 0 010 1.06l-1.06 1.061a.75.75 0 11-1.061-1.06l1.06-1.061a.75.75 0 011.061 0z', 'moon': 'M9.598 1.591a.75.75 0 01.785-.175 7 7 0 11-8.967 8.967.75.75 0 01.961-.96 5.5 5.5 0 007.046-7.046.75.75 0 01.175-.786zm1.616 1.945a7 7 0 01-7.678 7.678 5.5 5.5 0 107.678-7.678z', 'sync': 'M1.705 8.005a.75.75 0 0 1 .834.656 5.5 5.5 0 0 0 9.592 2.97l-1.204-1.204a.25.25 0 0 1 .177-.427h3.646a.25.25 0 0 1 .25.25v3.646a.25.25 0 0 1-.427.177l-1.38-1.38A7.002 7.002 0 0 1 1.05 8.84a.75.75 0 0 1 .656-.834ZM8 2.5a5.487 5.487 0 0 0-4.131 1.869l1.204 1.204A.25.25 0 0 1 4.896 6H1.25A.25.25 0 0 1 1 5.75V2.104a.25.25 0 0 1 .427-.177l1.38 1.38A7.002 7.002 0 0 1 14.95 7.16a.75.75 0 0 1-1.49.178A5.5 5.5 0 0 0 8 2.5Z', 'home': 'M6.906.664a1.749 1.749 0 0 1 2.187 0l5.25 4.2c.415.332.657.835.657 1.367v7.019A1.75 1.75 0 0 1 13.25 15h-3.5a.75.75 0 0 1-.75-.75V9H7v5.25a.75.75 0 0 1-.75.75h-3.5A1.75 1.75 0 0 1 1 13.25V6.23c0-.531.242-1.034.657-1.366l5.25-4.2Zm1.25 1.171a.25.25 0 0 0-.312 0l-5.25 4.2a.25.25 0 0 0-.094.196v7.019c0 .138.112.25.25.25H5.5V8.25a.75.75 0 0 1 .75-.75h3.5a.75.75 0 0 1 .75.75v5.25h2.75a.25.25 0 0 0 .25-.25V6.23a.25.25 0 0 0-.094-.195Z', 'github': 'M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z'};
+var utterancesLoad=0;
+
+let themeSettings={
+    "dark": ["dark","moon","#00f0ff","dark-blue"],
+    "light": ["light","sun","#ff5000","github-light"],
+    "auto": ["auto","sync","","preferred-color-scheme"]
+};
+function changeTheme(mode, icon, color, utheme){
+    document.documentElement.setAttribute("data-color-mode",mode);
+    document.getElementById("themeSwitch").setAttribute("d",value=IconList[icon]);
+    document.getElementById("themeSwitch").parentNode.style.color=color;
+    if(utterancesLoad==1){utterancesTheme(utheme);}
+}
+function modeSwitch(){
+    let currentMode=document.documentElement.getAttribute('data-color-mode');
+    let newMode = currentMode === "light" ? "dark" : currentMode === "dark" ? "auto" : "light";
+    localStorage.setItem("meek_theme", newMode);
+    if(themeSettings[newMode]){
+        changeTheme(...themeSettings[newMode]);
+    }
+}
+function utterancesTheme(theme){
+    const message={type:'set-theme',theme: theme};
+    const iframe=document.getElementsByClassName('utterances-frame')[0];
+    iframe.contentWindow.postMessage(message,'https://utteranc.es');
+}
+if(themeSettings[theme]){changeTheme(...themeSettings[theme]);}
+console.log("\n %c Gmeek v2.25 https://github.com/Meekdai/Gmeek \n","padding:5px 0;background:#02d81d;color:#fff");
+</script>
+
+<script>
+document.getElementById("pathHome").setAttribute("d",IconList["home"]);
+document.getElementById("pathIssue").setAttribute("d",IconList["github"]);
+
+
+
+function openComments(){
+    cm=document.getElementById("comments");
+    cmButton=document.getElementById("cmButton");
+    cmButton.disabled=true;
+    cmButton.innerHTML="loading";
+    span=document.createElement("span");
+    span.setAttribute("class","AnimatedEllipsis");
+    cmButton.appendChild(span);
+
+    script=document.createElement("script");
+    script.setAttribute("src","https://utteranc.es/client.js");
+    script.setAttribute("repo","P7IVESC/P7IVESC.github.io");
+    script.setAttribute("issue-term","title");
+    
+    if(localStorage.getItem("meek_theme")=="dark"){script.setAttribute("theme","dark-blue");}
+    else if(localStorage.getItem("meek_theme")=="light") {script.setAttribute("theme","github-light");}
+    else{script.setAttribute("theme","preferred-color-scheme");}
+    
+    script.setAttribute("crossorigin","anonymous");
+    script.setAttribute("async","");
+    cm.appendChild(script);
+
+    int=self.setInterval("iFrameLoading()",200);
+}
+
+function iFrameLoading(){
+    var utterances=document.getElementsByClassName('utterances');
+    if(utterances.length==1){
+        if(utterances[0].style.height!=""){
+            utterancesLoad=1;
+            int=window.clearInterval(int);
+            document.getElementById("cmButton").style.display="none";
+            console.log("utterances Load OK");
+        }
+    }
+}
+
+
+
+</script>
+
+
+</html>

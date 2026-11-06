@@ -1,5 +1,43 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>P7IVESC's blog</title><link>https://P7IVESC.github.io</link><description>知其黑，守其白。一个网安小白的红队实战、靶场复盘与学习笔记。技术交流请备注来源：emhlcGluZzA1MDc=</description><copyright>P7IVESC's blog</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://avatars.githubusercontent.com/u/237383456?v=4&amp;size=200</url><title>avatar</title><link>https://P7IVESC.github.io</link></image><lastBuildDate>Fri, 06 Nov 2026 06:28:13 +0000</lastBuildDate><managingEditor>P7IVESC's blog</managingEditor><ttl>60</ttl><webMaster>P7IVESC's blog</webMaster><item><title>信息收集</title><link>https://P7IVESC.github.io/post/xin-xi-shou-ji.html</link><description># edu信息收集
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>P7IVESC's blog</title><link>https://P7IVESC.github.io</link><description>知其黑，守其白。一个网安小白的红队实战、靶场复盘与学习笔记。技术交流请备注来源：emhlcGluZzA1MDc=</description><copyright>P7IVESC's blog</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://avatars.githubusercontent.com/u/237383456?v=4&amp;size=200</url><title>avatar</title><link>https://P7IVESC.github.io</link></image><lastBuildDate>Fri, 06 Nov 2026 06:30:59 +0000</lastBuildDate><managingEditor>P7IVESC's blog</managingEditor><ttl>60</ttl><webMaster>P7IVESC's blog</webMaster><item><title>开局一个登录口如何进行渗透测试</title><link>https://P7IVESC.github.io/post/kai-ju-yi-ge-deng-lu-kou-ru-he-jin-xing-shen-tou-ce-shi.html</link><description># 弱口令
+
+常见用户名：
+
+```Plain Text
+admin
+root
+admin123
+test
+test01
+```
+
+常见密码：
+
+```Plain Text
+admin
+admin123
+123456
+1
+123123
+```
+
+# 返回包篡改
+
+## 第一种\-无密码情况下
+
+第一种是只改一个简单的状态码,比如400改成200,fail改成true,或者改成success
+
+不知道咋改可以f12看源码里面有没有
+
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/9f0ecf5769fd.png)
+
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/442acf792913.png)
+
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/7e7f13bc4539.png)
+
+## 第二种\-有密码情况下
+
+该系统有俩洞一个是弱口令,一个是绕过登录验证,直接进后台。</description><guid isPermaLink="true">https://P7IVESC.github.io/post/kai-ju-yi-ge-deng-lu-kou-ru-he-jin-xing-shen-tou-ce-shi.html</guid><pubDate>Fri, 06 Nov 2026 06:30:34 +0000</pubDate></item><item><title>信息收集</title><link>https://P7IVESC.github.io/post/xin-xi-shou-ji.html</link><description># edu信息收集
 
 http://www\.moe\.gov\.cn/srcsite/A05/s7505/202401/t20240117\_1100766\.html
 
