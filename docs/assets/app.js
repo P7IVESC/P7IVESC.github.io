@@ -17,6 +17,13 @@
     }
   ];
 
+  /* ---- 首页分类：key 必须与 GitHub Issue 标签名完全一致 ---- */
+  var CATS = [
+    { key: "渗透实战", en: "PENTEST" },
+    { key: "靶场复盘", en: "LABS" },
+    { key: "知识沉淀", en: "NOTES" }
+  ];
+
   var ICON_SHIELD =
     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" ' +
     'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
@@ -111,58 +118,78 @@
       (subtitle ? '<p class="hero-desc">' + esc(subtitle) + "</p>" : "") +
       '<div class="hero-stats">' +
       "<span><b>" + items.length + "</b> 篇文章</span>" +
-      "<span><b>" + countLabels(items) + "</b> 个标签</span>" +
+      '<span><b class="stat-words">—</b> 字</span>' +
       '<span><b class="stat-imgs">—</b> 图片</span>' +
       '<a class="stat-rss" href="/rss.xml" target="_blank" rel="noopener noreferrer"' +
       ' title="用阅读器订阅，新文章自动送达"><b>RSS</b> 订阅</a>' +
+      "</div>" +
       "</div>";
 
-    var head = document.createElement("div");
-    head.className = "section-head";
-    head.innerHTML = "<h2>最新文章</h2><em>LATEST POSTS</em>";
-
-    var grid = document.createElement("div");
-    grid.className = "card-grid";
-
+    /* ---- 按分类分组渲染（顺序见 CATS，未知标签与未分类排最后） ---- */
+    var groups = [];
+    var gidx = {};
     items.forEach(function (it) {
-      var a = document.createElement("a");
-      a.className = "card";
-      a.href = it.href;
-      a.innerHTML =
-        '<div class="card-cover loading"></div>' +
-        '<div class="card-body">' +
-        '<h3 class="card-title">' + esc(it.title) + "</h3>" +
-        '<p class="card-excerpt"></p>' +
-        '<div class="card-meta">' +
-        (it.date ? "<span>" + esc(it.date) + "</span>" : "") +
-        (it.labels.length
-          ? '<span class="dot"></span><span class="pill">' + esc(it.labels[0]) + "</span>"
-          : "") +
-        "</div></div>";
-      grid.appendChild(a);
-      it.node = a;
+      var k = it.labels[0] || "未分类";
+      if (!(k in gidx)) {
+        gidx[k] = groups.length;
+        groups.push({ key: k, items: [] });
+      }
+      groups[gidx[k]].items.push(it);
+    });
+    groups.sort(function (a, b) {
+      function order(k) {
+        for (var i = 0; i < CATS.length; i++) if (CATS[i].key === k) return i;
+        return CATS.length;
+      }
+      return order(a.key) - order(b.key);
     });
 
     nav.parentNode.insertBefore(hero, nav);
-    nav.parentNode.insertBefore(head, nav);
-    nav.parentNode.insertBefore(grid, nav);
+
+    groups.forEach(function (g) {
+      var meta = null;
+      for (var i = 0; i < CATS.length; i++) if (CATS[i].key === g.key) meta = CATS[i];
+
+      var head = document.createElement("div");
+      head.className = "section-head";
+      head.innerHTML =
+        "<h2>" + esc(g.key) + "</h2><em>" + esc(meta ? meta.en : "POSTS") + "</em>";
+
+      var grid = document.createElement("div");
+      grid.className = "card-grid";
+      g.items.forEach(function (it) {
+        grid.appendChild(cardOf(it));
+      });
+
+      nav.parentNode.insertBefore(head, nav);
+      nav.parentNode.insertBefore(grid, nav);
+    });
     nav.style.display = "none";
 
     hydrate(items, hero);
   }
 
-  function countLabels(items) {
-    var set = {};
-    items.forEach(function (i) {
-      i.labels.forEach(function (l) {
-        set[l] = 1;
-      });
-    });
-    return Object.keys(set).length;
+  function cardOf(it) {
+    var a = document.createElement("a");
+    a.className = "card";
+    a.href = it.href;
+    a.innerHTML =
+      '<div class="card-cover loading"></div>' +
+      '<div class="card-body">' +
+      '<h3 class="card-title">' + esc(it.title) + "</h3>" +
+      '<p class="card-excerpt"></p>' +
+      '<div class="card-meta">' +
+      (it.date ? "<span>" + esc(it.date) + "</span>" : "") +
+      (it.labels.length
+        ? '<span class="dot"></span><span class="pill">' + esc(it.labels[0]) + "</span>"
+        : "") +
+      "</div></div>";
+    it.node = a;
+    return a;
   }
 
-  /* ---- 逐篇补封面与摘要（带本地缓存） ---- */
-  var CACHE_KEY = "gmeek_cards_v1";
+  /* ---- 逐篇补封面与摘要（带本地缓存；v2 增加字数字段） ---- */
+  var CACHE_KEY = "gmeek_cards_v2";
   var CACHE_TTL = 30 * 24 * 3600 * 1000;
   var cache = (function () {
     try {
@@ -180,6 +207,7 @@
 
   function hydrate(items, hero) {
     var totalImgs = 0;
+    var totalWords = 0;
     var pending = items.length;
     var touched = false;
 
@@ -189,6 +217,8 @@
       if (touched) saveCache();
       var el = hero.querySelector(".stat-imgs");
       if (el && totalImgs) el.textContent = totalImgs;
+      var w = hero.querySelector(".stat-words");
+      if (w && totalWords) w.textContent = fmtWords(totalWords);
     }
 
     items.forEach(function (it) {
@@ -196,6 +226,7 @@
       if (hit && Date.now() - (hit.t || 0) < CACHE_TTL) {
         apply(it, hit);
         totalImgs += hit.imgs || 0;
+        totalWords += hit.words || 0;
         return done();
       }
       fetch(it.href)
@@ -209,11 +240,13 @@
               cover: info.cover,
               excerpt: info.excerpt,
               imgs: info.imgs,
+              words: info.words,
               t: Date.now(),
             };
             touched = true;
             apply(it, info);
             totalImgs += info.imgs || 0;
+            totalWords += info.words || 0;
           }
           done();
         })
@@ -235,7 +268,14 @@
         break;
       }
     }
-    return { cover: cover, excerpt: excerptOf(b), imgs: imgs.length };
+    var words = (b.textContent || "").replace(/\s/g, "").length;
+    return { cover: cover, excerpt: excerptOf(b), imgs: imgs.length, words: words };
+  }
+
+  /* 总字数显示：过万折算成「x.x万」 */
+  function fmtWords(n) {
+    if (n >= 10000) return (Math.round(n / 1000) / 10) + "万";
+    return String(n);
   }
 
   /* 摘要：取前几段像正文的文字拼起来（命令行、payload 这类跳过） */
