@@ -818,7 +818,13 @@ body:has(.tagTitle) .listLabels .Label {
 }
 body:has(.tagTitle) .listLabels .Label object { display: inline; height: auto; }
 body:has(.tagTitle) .listLabels .Label object a { color: #fff !important; text-decoration: none; }
-body:has(.tagTitle) .listTitle { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* 标题必须是块级元素，overflow/text-overflow 才生效（inline 上不生效，长标题会压到标签上） */
+body:has(.tagTitle) .listTitle {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 /* 窄屏时标题要能被压缩省略，否则会压到右侧标签上（原来的重叠） */
 body:has(.tagTitle) .SideNav-item > .d-flex { min-width: 0; flex: 1 1 auto; }
 body:has(.tagTitle) .SideNav-item .listTitle { min-width: 0; max-width: 100%; }
