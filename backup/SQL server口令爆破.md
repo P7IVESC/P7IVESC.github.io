@@ -47,6 +47,6 @@ hydra支持的服务有：POP3，SMTP、SMB，RDP，SSH，FTP，POP3，Telnet，
 hydra -l sa -P dic_password_sqlserver.txt mssql://10.3.4.118 -V
 ```
 
-进一步的命令执行可参考SQL server命令执行
+进一步的命令执行可参考 [SQL server命令执行](https://p7ivesc.github.io/post/SQL%20server-ming-ling-zhi-xing.html)
 
-<!-- build: 2026-11-06 11:43:53 -->
+<!-- build: 2026-11-06 12:02:46 -->
