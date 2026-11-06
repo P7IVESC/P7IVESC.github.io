@@ -730,6 +730,7 @@ body:has(.tagTitle) .tagTitle::before {
 body:has(.tagTitle) .subnav-search {
   display: flex;
   align-items: stretch;
+  position: relative !important;   /* 放大镜的定位基准，不依赖 Primer */
   width: auto !important;
   margin: 0 6px 0 0 !important;
 }
@@ -745,14 +746,17 @@ body:has(.tagTitle) .subnav-search-input {
 }
 /* 放大镜：Primer 是 absolute/top:9px/left:8px，这里对齐到 32px 内边距 */
 body:has(.tagTitle) .subnav-search-icon {
+  position: absolute !important;
   top: 50% !important;
   left: 11px !important;
   transform: translateY(-50%);
   width: 14px !important;
   height: 14px !important;
+  margin: 0 !important;
   color: var(--fg-soft);
   opacity: 0.7;
   pointer-events: none;
+  z-index: 2;
 }
 body:has(.tagTitle) .subnav-search button {
   white-space: nowrap;
