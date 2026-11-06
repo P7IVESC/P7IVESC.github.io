@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html data-color-mode="light" data-dark-theme="dark" data-light-theme="light" lang="zh-CN">
+<head>
+    <meta content="text/html; charset=utf-8" http-equiv="content-type" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link href='https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/Primer/21.0.7/primer.css' rel='stylesheet' />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/noto-serif-sc@5.0.0/700.css"><link rel="stylesheet" href="/assets/theme.css?v=7e48d4fc"><script defer src="/assets/app.js?v=7e48d4fc"></script>
+    <link rel="icon" href="https://avatars.githubusercontent.com/u/237383456?v=4&size=200"><script>
+        let theme = localStorage.getItem("meek_theme") || "light";
+        document.documentElement.setAttribute("data-color-mode", theme);
+    </script>
+<meta name="description" content="![](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/f3fd637de9ff.webp)
+
+本次实验我们以dvwa的文件包含漏洞low等级作为对象，目标是读取D:\phpstudy_pro\WWW\DVWA\vulnerabilities\fi下的flag.txt文件内容。">
+<meta property="og:title" content="PHP文件包含漏洞">
+<meta property="og:description" content="![](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/f3fd637de9ff.webp)
+
+本次实验我们以dvwa的文件包含漏洞low等级作为对象，目标是读取D:\phpstudy_pro\WWW\DVWA\vulnerabilities\fi下的flag.txt文件内容。">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://P7IVESC.github.io/post/PHP-wen-jian-bao-han-lou-dong.html">
+<meta property="og:image" content="https://avatars.githubusercontent.com/u/237383456?v=4&size=200">
+<title>PHP文件包含漏洞</title>
+
+
+
+</head>
+<style>
+body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;padding: 45px;font-size: 16px;font-family: sans-serif;line-height: 1.25;}
+#header{display:flex;padding-bottom:8px;border-bottom: 1px solid var(--borderColor-muted, var(--color-border-muted));margin-bottom: 16px;}
+#footer {margin-top:64px; text-align: center;font-size: small;}
+
+</style>
+
+<style>
+.postTitle{margin: auto 0;font-size:40px;font-weight:bold;}
+.title-right{display:flex;margin:auto 0 0 auto;}
+.title-right .circle{padding: 14px 16px;margin-right:8px;}
+#postBody{border-bottom: 1px solid var(--color-border-default);padding-bottom:36px;}
+#postBody hr{height:2px;}
+#cmButton{height:48px;margin-top:48px;}
+#comments{margin-top:64px;}
+.g-emoji{font-size:24px;}
+@media (max-width: 600px) {
+    body {padding: 8px;}
+    .postTitle{font-size:24px;}
+}
+
+</style>
+
+
+
+
+<body>
+    <div id="header">
+<h1 class="postTitle">PHP文件包含漏洞</h1>
+<div class="title-right">
+    <a href="https://P7IVESC.github.io" id="buttonHome" class="btn btn-invisible circle" title="首页">
+        <svg class="octicon" width="16" height="16">
+            <path id="pathHome" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+    
+    <a href="https://github.com/P7IVESC/P7IVESC.github.io/issues/7" target="_blank" class="btn btn-invisible circle" title="Issue">
+        <svg class="octicon" width="16" height="16">
+            <path id="pathIssue" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+    
+
+    <a class="btn btn-invisible circle" onclick="modeSwitch();" title="切换主题">
+        <svg class="octicon" width="16" height="16" >
+            <path id="themeSwitch" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+
+</div>
+</div>
+    <div id="content">
+<div class="markdown-body" id="postBody"><p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/5c48814064f650d5172600eb95906e6cce1181cce77fa84a4876b6f0a008245f/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6633666436333764653966662e77656270"><img src="https://camo.githubusercontent.com/5c48814064f650d5172600eb95906e6cce1181cce77fa84a4876b6f0a008245f/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6633666436333764653966662e77656270" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/f3fd637de9ff.webp" style="max-width: 100%;"></a></p>
+<p>本次实验我们以dvwa的文件包含漏洞low等级作为对象，目标是读取D:\phpstudy_pro\WWW\DVWA\vulnerabilities\fi下的flag.txt文件内容。</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/1c10754413b0bcbc67ccae726e5b7e1fa9fddabde6d34f6f30f39bec0f62c632/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3233373566636135653438612e706e67"><img src="https://camo.githubusercontent.com/1c10754413b0bcbc67ccae726e5b7e1fa9fddabde6d34f6f30f39bec0f62c632/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3233373566636135653438612e706e67" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/2375fca5e48a.png" style="max-width: 100%;"></a></p>
+<p>查看源码可以看到，服务器端对page参数没有做任何的过滤跟检查。</p>
+<p>通过将page参数设置为php://input，并在 POST 数据中传入 PHP 代码实现任意代码执行。</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/c4b3d49bea82e1dc8dfbee9ff556f17937d12292e8a8e5648ace4dbce5541c18/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6364373439383163373232302e77656270"><img src="https://camo.githubusercontent.com/c4b3d49bea82e1dc8dfbee9ff556f17937d12292e8a8e5648ace4dbce5541c18/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6364373439383163373232302e77656270" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/cd74981c7220.webp" style="max-width: 100%;"></a></p>
+<p>如下图我们将post数据改为查看php相关信息。</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/1fc1a143004a0f7a7e1c28ff97e65f6e74379922409393ec37fb319d6ab4a537/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6530333464646530353465362e77656270"><img src="https://camo.githubusercontent.com/1fc1a143004a0f7a7e1c28ff97e65f6e74379922409393ec37fb319d6ab4a537/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6530333464646530353465362e77656270" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/e034dde054e6.webp" style="max-width: 100%;"></a></p>
+<p>Post数据改为，即可获得当前目录路径</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/908d92975d58ad3f6685a1b8ca94a06df3755870d0ce6655f00c1cc57c4b03f2/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3638346531653732343831352e77656270"><img src="https://camo.githubusercontent.com/908d92975d58ad3f6685a1b8ca94a06df3755870d0ce6655f00c1cc57c4b03f2/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3638346531653732343831352e77656270" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/684e1e724815.webp" style="max-width: 100%;"></a></p>
+<p>我们可以看到目录中存在一个flag.txt。</p>
+<p>当想查看敏感文件（如flag.txt，本次实验为自建）内容时，就可以利用php://filter 。</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/596542eba959c53496c9f3e1f140df822b28bf054060d0b95287537b39ec7bfe/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3465353961316361346435312e77656270"><img src="https://camo.githubusercontent.com/596542eba959c53496c9f3e1f140df822b28bf054060d0b95287537b39ec7bfe/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3465353961316361346435312e77656270" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/4e59a1ca4d51.webp" style="max-width: 100%;"></a></p>
+<p>我们使用php://filter/read=convert.base64-encode/resource=flag.txt来读取flag.txt文件内容并进行 Base64 编码显示。</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/5e43e67a8c528c9f630b04e4d138359db05e7158054a6bc77303a5c67350c1d0/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3238316238653834373831642e77656270"><img src="https://camo.githubusercontent.com/5e43e67a8c528c9f630b04e4d138359db05e7158054a6bc77303a5c67350c1d0/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3238316238653834373831642e77656270" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/281b8e84781d.webp" style="max-width: 100%;"></a></p>
+<p>然后将得到的编码进行解码，得到文件内容。</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/05bf9bc21400acfc9cb94570157b8c475f3e044fac60bd0eac2efd773fd918c0/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6238643033356664663761332e77656270"><img src="https://camo.githubusercontent.com/05bf9bc21400acfc9cb94570157b8c475f3e044fac60bd0eac2efd773fd918c0/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6238643033356664663761332e77656270" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/b8d035fdf7a3.webp" style="max-width: 100%;"></a></p>
+<p>例题：[ACTF2020 新生赛]Include</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/8e1a764a0f0f0390804725d17b5befe2b2b4f454828b1e9a6a31bb4dacb75e0b/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3662643234633034313939352e706e67"><img src="https://camo.githubusercontent.com/8e1a764a0f0f0390804725d17b5befe2b2b4f454828b1e9a6a31bb4dacb75e0b/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3662643234633034313939352e706e67" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/6bd24c041995.png" style="max-width: 100%;"></a></p>
+<p>这题题目就是flag.php，猜测flag就藏在这个文件里，只不过不在页面显示。</p>
+<p>使用其他方法都会显示hacker</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/6d6144b1b2dfab33f5c93a58b0e8f3560a2114d578e86922255e5b203634babc/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6237646364616139353831362e706e67"><img src="https://camo.githubusercontent.com/6d6144b1b2dfab33f5c93a58b0e8f3560a2114d578e86922255e5b203634babc/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6237646364616139353831362e706e67" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/b7dcdaa95816.png" style="max-width: 100%;"></a></p>
+<p>所以想到使用编码的形式读取文件</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/6e69f3c49b6a1f07650f4f350cebf881ac19ae62fe7c7e484e25edd3aa3d3187/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6337396265633563323663342e706e67"><img src="https://camo.githubusercontent.com/6e69f3c49b6a1f07650f4f350cebf881ac19ae62fe7c7e484e25edd3aa3d3187/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6337396265633563323663342e706e67" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/c79bec5c26c4.png" style="max-width: 100%;"></a></p>
+<p>利用base64解码，得到flag</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/19ba18a19aea76721542d42dca614067eb8f1f2094aca238f847dee8be936bb0/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6561303831363232366236322e77656270"><img src="https://camo.githubusercontent.com/19ba18a19aea76721542d42dca614067eb8f1f2094aca238f847dee8be936bb0/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6561303831363232366236322e77656270" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/ea0816226b62.webp" style="max-width: 100%;"></a></p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/b83a44461d14878bcc4707fa67af2b912f83d6ea847ea83d29b5856351d4f985/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3262613838373366656562352e77656270"><img src="https://camo.githubusercontent.com/b83a44461d14878bcc4707fa67af2b912f83d6ea847ea83d29b5856351d4f985/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3262613838373366656562352e77656270" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/2ba8873feeb5.webp" style="max-width: 100%;"></a></p>
+<p>zip:// 可以访问压缩包里面的文件。当它与包含函数结合时，zip://流会被当作php文件 执行。从而实现任意代码执行。</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/fc209e201c3dddc178a7a265117f1b06f9d6686e016373586cab2e3c82f7fae8/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6362323134643738663532362e77656270"><img src="https://camo.githubusercontent.com/fc209e201c3dddc178a7a265117f1b06f9d6686e016373586cab2e3c82f7fae8/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6362323134643738663532362e77656270" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/cb214d78f526.webp" style="max-width: 100%;"></a></p>
+<p>于是我们创建一个文件放入我们的恶意代码（以 为例演示过程），然后压缩成压缩包。</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/1cf25f4ac935d648841d5c4f40f68301d37a4ced8e21d4a96f80cad2a791d409/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3965633535353838336333322e706e67"><img src="https://camo.githubusercontent.com/1cf25f4ac935d648841d5c4f40f68301d37a4ced8e21d4a96f80cad2a791d409/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3965633535353838336333322e706e67" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/9ec555883c32.png" style="max-width: 100%;"></a></p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/26299463592dcfbf332aaf477aeb4dc5aedfe2ace561e5855c56f86a0c71493b/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3265353339313934656233362e706e67"><img src="https://camo.githubusercontent.com/26299463592dcfbf332aaf477aeb4dc5aedfe2ace561e5855c56f86a0c71493b/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3265353339313934656233362e706e67" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/2e539194eb36.png" style="max-width: 100%;"></a></p>
+<p>之后我们在page后面使用zip直接访问这个压缩包，并且执行里面的代码</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/4f11c80a1bd5e404a709a13e7240b21e3f39e00b508275635e6e71cc0ee76bdc/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3332393638336634613365332e77656270"><img src="https://camo.githubusercontent.com/4f11c80a1bd5e404a709a13e7240b21e3f39e00b508275635e6e71cc0ee76bdc/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3332393638336634613365332e77656270" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/329683f4a3e3.webp" style="max-width: 100%;"></a></p>
+<p>利用这个原理，结合上我们刚才获得的flag.txt的路径，我们就可以通过 访问flag.txt里的信息。</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/af0c8edde03f70430b27ad60dce05b581a5d5e733e253d2e6cb32723d3e1ae67/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3865366333396235353664332e706e67"><img src="https://camo.githubusercontent.com/af0c8edde03f70430b27ad60dce05b581a5d5e733e253d2e6cb32723d3e1ae67/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3865366333396235353664332e706e67" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/8e6c39b556d3.png" style="max-width: 100%;"></a></p>
+<p>data:// 同样类似与php://input，可以让用户来控制输入流，当它与包含函数结合时，用户输入的data://流会被当作php文件执行。从而导致任意代码执行。</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/c0383b70f4fa44340a548ace09ee6f9140476b9dac0612d405bb76d5af2159e0/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6335353135393037303566632e77656270"><img src="https://camo.githubusercontent.com/c0383b70f4fa44340a548ace09ee6f9140476b9dac0612d405bb76d5af2159e0/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6335353135393037303566632e77656270" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/c551590705fc.webp" style="max-width: 100%;"></a></p>
+<p>我们利用如下代码也能获得flag.txt的信息。</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/106c08f8e666ee911facab329cfc2b58212b511ac59819b65ad40b699cda4722/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3938366165663636323539312e706e67"><img src="https://camo.githubusercontent.com/106c08f8e666ee911facab329cfc2b58212b511ac59819b65ad40b699cda4722/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3938366165663636323539312e706e67" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/986aef662591.png" style="max-width: 100%;"></a></p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/aa66d73a4d2431ed139f888d0040b9b9c9b3b82dccc61582c00323a88978dbc3/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6633616639663730366436392e706e67"><img src="https://camo.githubusercontent.com/aa66d73a4d2431ed139f888d0040b9b9c9b3b82dccc61582c00323a88978dbc3/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6633616639663730366436392e706e67" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/f3af9f706d69.png" style="max-width: 100%;"></a></p>
+<p>phar:// 有点类似zip://同样可以导致任意代码执行。</p>
+<p>使用phar://D:\Desktop\phpinfo.zip/phpinfo.txt，得到信息</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/98ef688b59a3f86c0fb405cb6ae56d1b03526832c6703f7e2a0d1822233b2bfb/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6262623766396638313664642e706e67"><img src="https://camo.githubusercontent.com/98ef688b59a3f86c0fb405cb6ae56d1b03526832c6703f7e2a0d1822233b2bfb/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6262623766396638313664642e706e67" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/bbb7f9f816dd.png" style="max-width: 100%;"></a></p>
+<p>日志包含</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/e9ebe8bc92f9c46c94f7a8aff6c680166d526b8cc5f09954f7e2fa072853e4c6/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3766313536373537633566382e77656270"><img src="https://camo.githubusercontent.com/e9ebe8bc92f9c46c94f7a8aff6c680166d526b8cc5f09954f7e2fa072853e4c6/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3766313536373537633566382e77656270" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/7f156757c5f8.webp" style="max-width: 100%;"></a></p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/f513e869cf684199ca3a2f4de2df02103fc3e39c1821c2d457e6c8a0e2e1bbc2/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6634356538363464613139332e77656270"><img src="https://camo.githubusercontent.com/f513e869cf684199ca3a2f4de2df02103fc3e39c1821c2d457e6c8a0e2e1bbc2/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6634356538363464613139332e77656270" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/f45e864da193.webp" style="max-width: 100%;"></a></p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/acf5566d857a68809282659d8263c1eaa74d9e508895460128c90b99f77876dd/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3330663034636132666535332e77656270"><img src="https://camo.githubusercontent.com/acf5566d857a68809282659d8263c1eaa74d9e508895460128c90b99f77876dd/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3330663034636132666535332e77656270" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/30f04ca2fe53.webp" style="max-width: 100%;"></a></p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/f9e4fd3b6f2cfe1edfc38cf41288486c9c2c8eee2ca40af43ab859199f9cb8be/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6566336431396135393861332e77656270"><img src="https://camo.githubusercontent.com/f9e4fd3b6f2cfe1edfc38cf41288486c9c2c8eee2ca40af43ab859199f9cb8be/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6566336431396135393861332e77656270" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/ef3d19a598a3.webp" style="max-width: 100%;"></a></p>
+<p>session包含</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/af0e5555c1d1448af316eeaf91dc7c05563c132da8a03b8a15a10e1cdd9414b4/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3530393235363930343234342e77656270"><img src="https://camo.githubusercontent.com/af0e5555c1d1448af316eeaf91dc7c05563c132da8a03b8a15a10e1cdd9414b4/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3530393235363930343234342e77656270" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/509256904244.webp" style="max-width: 100%;"></a></p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/37169fd0efa200ae07f2e21aae009df720e6e235729bdf63cf09d82a023933ec/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3739653464653233656466622e77656270"><img src="https://camo.githubusercontent.com/37169fd0efa200ae07f2e21aae009df720e6e235729bdf63cf09d82a023933ec/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3739653464653233656466622e77656270" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/79e4de23edfb.webp" style="max-width: 100%;"></a></p>
+<p>上面是通过phpinfo界面查看的，如果看不到phpinfo</p>
+<p>那么可以尝试下面的常见地址</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/8822837f4daf2899ea4da1af59148e69eef9043252535a3e1898384fc8629584/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3637393661616565643433612e706e67"><img src="https://camo.githubusercontent.com/8822837f4daf2899ea4da1af59148e69eef9043252535a3e1898384fc8629584/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3637393661616565643433612e706e67" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/6796aaeed43a.png" style="max-width: 100%;"></a></p>
+<p>下面的示例代码是模拟靶场环境</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/ad06c14d98dcf4cc1c3da61fc4650f9623ccda97a7a91c30f17f5c041707d07f/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3361353439393031356365322e706e67"><img src="https://camo.githubusercontent.com/ad06c14d98dcf4cc1c3da61fc4650f9623ccda97a7a91c30f17f5c041707d07f/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3361353439393031356365322e706e67" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/3a5499015ce2.png" style="max-width: 100%;"></a></p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/3de193e36fac9b730c34db5b097d2b0a0489b1748b66b76b24c82fcc1400a84e/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6139343738303133626434312e77656270"><img src="https://camo.githubusercontent.com/3de193e36fac9b730c34db5b097d2b0a0489b1748b66b76b24c82fcc1400a84e/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6139343738303133626434312e77656270" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/a9478013bd41.webp" style="max-width: 100%;"></a></p>
+<p>复现：</p>
+<p>第一步写入payload</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/aa251fef4cd0c3f94f5fef6c86ffc63fbe7161763fb2c63669285220b783a83b/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3138663364663861663831622e706e67"><img src="https://camo.githubusercontent.com/aa251fef4cd0c3f94f5fef6c86ffc63fbe7161763fb2c63669285220b783a83b/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3138663364663861663831622e706e67" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/18f3df8af81b.png" style="max-width: 100%;"></a></p>
+<p>第二步查看session</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/9951142fc2f638893ace0d5fa03d2971324e5e7983af1a1dbd7f22a5103fe2db/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3232663466643730613232352e706e67"><img src="https://camo.githubusercontent.com/9951142fc2f638893ace0d5fa03d2971324e5e7983af1a1dbd7f22a5103fe2db/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3232663466643730613232352e706e67" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/22f4fd70a225.png" style="max-width: 100%;"></a></p>
+<p>第三步包含session文件</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/660f30847e929c6cbe110b0f9d473d7090e88c72ff77409bc216cd520ce68a9e/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6535386165663763636631642e77656270"><img src="https://camo.githubusercontent.com/660f30847e929c6cbe110b0f9d473d7090e88c72ff77409bc216cd520ce68a9e/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6535386165663763636631642e77656270" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/e58aef7ccf1d.webp" style="max-width: 100%;"></a></p></div>
+<div style="font-size:small;margin-top:8px;float:right;"></div>
+
+<button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>
+<div class="comments" id="comments"></div>
+
+</div>
+    <div id="footer"><div id="footer1">Copyright © <span id="copyrightYear"></span> <a href="https://P7IVESC.github.io">P7IVESC's blog</a></div>
+<div id="footer2">
+    <span id="runday"></span><span>Powered by <a href="https://meekdai.com/Gmeek.html" target="_blank">Gmeek</a></span>
+</div>
+
+<script>
+var now=new Date();
+document.getElementById("copyrightYear").innerHTML=now.getFullYear();
+
+if(""!=""){
+    var startSite=new Date("");
+    var diff=now.getTime()-startSite.getTime();
+    var diffDay=Math.floor(diff/(1000*60*60*24));
+    document.getElementById("runday").innerHTML="网站运行 "+diffDay+" 天"+" • ";
+}
+</script></div>
+</body>
+<script>
+var IconList={'sun': 'M8 10.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM8 12a4 4 0 100-8 4 4 0 000 8zM8 0a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0V.75A.75.75 0 018 0zm0 13a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5A.75.75 0 018 13zM2.343 2.343a.75.75 0 011.061 0l1.06 1.061a.75.75 0 01-1.06 1.06l-1.06-1.06a.75.75 0 010-1.06zm9.193 9.193a.75.75 0 011.06 0l1.061 1.06a.75.75 0 01-1.06 1.061l-1.061-1.06a.75.75 0 010-1.061zM16 8a.75.75 0 01-.75.75h-1.5a.75.75 0 010-1.5h1.5A.75.75 0 0116 8zM3 8a.75.75 0 01-.75.75H.75a.75.75 0 010-1.5h1.5A.75.75 0 013 8zm10.657-5.657a.75.75 0 010 1.061l-1.061 1.06a.75.75 0 11-1.06-1.06l1.06-1.06a.75.75 0 011.06 0zm-9.193 9.193a.75.75 0 010 1.06l-1.06 1.061a.75.75 0 11-1.061-1.06l1.06-1.061a.75.75 0 011.061 0z', 'moon': 'M9.598 1.591a.75.75 0 01.785-.175 7 7 0 11-8.967 8.967.75.75 0 01.961-.96 5.5 5.5 0 007.046-7.046.75.75 0 01.175-.786zm1.616 1.945a7 7 0 01-7.678 7.678 5.5 5.5 0 107.678-7.678z', 'sync': 'M1.705 8.005a.75.75 0 0 1 .834.656 5.5 5.5 0 0 0 9.592 2.97l-1.204-1.204a.25.25 0 0 1 .177-.427h3.646a.25.25 0 0 1 .25.25v3.646a.25.25 0 0 1-.427.177l-1.38-1.38A7.002 7.002 0 0 1 1.05 8.84a.75.75 0 0 1 .656-.834ZM8 2.5a5.487 5.487 0 0 0-4.131 1.869l1.204 1.204A.25.25 0 0 1 4.896 6H1.25A.25.25 0 0 1 1 5.75V2.104a.25.25 0 0 1 .427-.177l1.38 1.38A7.002 7.002 0 0 1 14.95 7.16a.75.75 0 0 1-1.49.178A5.5 5.5 0 0 0 8 2.5Z', 'home': 'M6.906.664a1.749 1.749 0 0 1 2.187 0l5.25 4.2c.415.332.657.835.657 1.367v7.019A1.75 1.75 0 0 1 13.25 15h-3.5a.75.75 0 0 1-.75-.75V9H7v5.25a.75.75 0 0 1-.75.75h-3.5A1.75 1.75 0 0 1 1 13.25V6.23c0-.531.242-1.034.657-1.366l5.25-4.2Zm1.25 1.171a.25.25 0 0 0-.312 0l-5.25 4.2a.25.25 0 0 0-.094.196v7.019c0 .138.112.25.25.25H5.5V8.25a.75.75 0 0 1 .75-.75h3.5a.75.75 0 0 1 .75.75v5.25h2.75a.25.25 0 0 0 .25-.25V6.23a.25.25 0 0 0-.094-.195Z', 'github': 'M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z'};
+var utterancesLoad=0;
+
+let themeSettings={
+    "dark": ["dark","moon","#00f0ff","dark-blue"],
+    "light": ["light","sun","#ff5000","github-light"],
+    "auto": ["auto","sync","","preferred-color-scheme"]
+};
+function changeTheme(mode, icon, color, utheme){
+    document.documentElement.setAttribute("data-color-mode",mode);
+    document.getElementById("themeSwitch").setAttribute("d",value=IconList[icon]);
+    document.getElementById("themeSwitch").parentNode.style.color=color;
+    if(utterancesLoad==1){utterancesTheme(utheme);}
+}
+function modeSwitch(){
+    let currentMode=document.documentElement.getAttribute('data-color-mode');
+    let newMode = currentMode === "light" ? "dark" : currentMode === "dark" ? "auto" : "light";
+    localStorage.setItem("meek_theme", newMode);
+    if(themeSettings[newMode]){
+        changeTheme(...themeSettings[newMode]);
+    }
+}
+function utterancesTheme(theme){
+    const message={type:'set-theme',theme: theme};
+    const iframe=document.getElementsByClassName('utterances-frame')[0];
+    iframe.contentWindow.postMessage(message,'https://utteranc.es');
+}
+if(themeSettings[theme]){changeTheme(...themeSettings[theme]);}
+console.log("\n %c Gmeek v2.25 https://github.com/Meekdai/Gmeek \n","padding:5px 0;background:#02d81d;color:#fff");
+</script>
+
+<script>
+document.getElementById("pathHome").setAttribute("d",IconList["home"]);
+document.getElementById("pathIssue").setAttribute("d",IconList["github"]);
+
+
+
+function openComments(){
+    cm=document.getElementById("comments");
+    cmButton=document.getElementById("cmButton");
+    cmButton.disabled=true;
+    cmButton.innerHTML="loading";
+    span=document.createElement("span");
+    span.setAttribute("class","AnimatedEllipsis");
+    cmButton.appendChild(span);
+
+    script=document.createElement("script");
+    script.setAttribute("src","https://utteranc.es/client.js");
+    script.setAttribute("repo","P7IVESC/P7IVESC.github.io");
+    script.setAttribute("issue-term","title");
+    
+    if(localStorage.getItem("meek_theme")=="dark"){script.setAttribute("theme","dark-blue");}
+    else if(localStorage.getItem("meek_theme")=="light") {script.setAttribute("theme","github-light");}
+    else{script.setAttribute("theme","preferred-color-scheme");}
+    
+    script.setAttribute("crossorigin","anonymous");
+    script.setAttribute("async","");
+    cm.appendChild(script);
+
+    int=self.setInterval("iFrameLoading()",200);
+}
+
+function iFrameLoading(){
+    var utterances=document.getElementsByClassName('utterances');
+    if(utterances.length==1){
+        if(utterances[0].style.height!=""){
+            utterancesLoad=1;
+            int=window.clearInterval(int);
+            document.getElementById("cmButton").style.display="none";
+            console.log("utterances Load OK");
+        }
+    }
+}
+
+
+
+</script>
+
+
+</html>
