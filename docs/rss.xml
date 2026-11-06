@@ -1,5 +1,11 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>P7IVESC's blog</title><link>https://P7IVESC.github.io</link><description>知其黑，守其白。一个网安小白的红队实战、靶场复盘与学习笔记。技术交流请备注来源：emhlcGluZzA1MDc=</description><copyright>P7IVESC's blog</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://avatars.githubusercontent.com/u/237383456?v=4&amp;size=200</url><title>avatar</title><link>https://P7IVESC.github.io</link></image><lastBuildDate>Fri, 06 Nov 2026 02:51:26 +0000</lastBuildDate><managingEditor>P7IVESC's blog</managingEditor><ttl>60</ttl><webMaster>P7IVESC's blog</webMaster><item><title>solr 代码执行 (CVE-2019-12409)</title><link>https://P7IVESC.github.io/post/solr%20-dai-ma-zhi-xing-%20%28CVE-2019-12409%29.html</link><description>![](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/4775531358a7.webp)
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>P7IVESC's blog</title><link>https://P7IVESC.github.io</link><description>知其黑，守其白。一个网安小白的红队实战、靶场复盘与学习笔记。技术交流请备注来源：emhlcGluZzA1MDc=</description><copyright>P7IVESC's blog</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://avatars.githubusercontent.com/u/237383456?v=4&amp;size=200</url><title>avatar</title><link>https://P7IVESC.github.io</link></image><lastBuildDate>Fri, 06 Nov 2026 03:01:06 +0000</lastBuildDate><managingEditor>P7IVESC's blog</managingEditor><ttl>60</ttl><webMaster>P7IVESC's blog</webMaster><item><title>CVE-2012-2122(mysql渗透)</title><link>https://P7IVESC.github.io/post/CVE-2012-2122%28mysql-shen-tou-%29.html</link><description>```bash
+.\fscan.exe -h 10.3.4.95 -p 3306 -np
+```
+
+![](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/0d01037d441a.png)
+
+漏洞原理：当连接MariaDB/MySQL时，输入的密码会与期望的正确密码比较，由于不正确的处理，会导致即便是memcmp()返回一个非零值，也会使MySQL认为两个密码是相同的。</description><guid isPermaLink="true">https://P7IVESC.github.io/post/CVE-2012-2122%28mysql-shen-tou-%29.html</guid><pubDate>Fri, 06 Nov 2026 03:00:38 +0000</pubDate></item><item><title>solr 代码执行 (CVE-2019-12409)</title><link>https://P7IVESC.github.io/post/solr%20-dai-ma-zhi-xing-%20%28CVE-2019-12409%29.html</link><description>![](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/4775531358a7.webp)
 
 ## 背景介绍
 
