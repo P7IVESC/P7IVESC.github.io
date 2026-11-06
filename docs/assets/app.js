@@ -394,8 +394,43 @@
   /* ============================================================
      文章页
      ============================================================ */
+
+  /* Gmeek 用 GitHub 的 Markdown API 渲染正文，GitHub 会给每张外链图片套一层 Camo 代理：
+       <a href="https://camo.githubusercontent.com/<sha>/<原地址的十六进制>"><img src="原地址"></a>
+     <img> 的 src 被 Gmeek 换回原图了，外层 <a> 却还留着这串十六进制。
+     结果：点开图片 / 右键复制图片链接，拿到的都是 camo 的乱码地址。
+     这里统一还原成真实图片地址。 */
+  function fixImageLinks(root) {
+    var as = [].slice.call(root.querySelectorAll('a[href*="camo.githubusercontent.com"]'));
+    as.forEach(function (a) {
+      var img = a.querySelector("img");
+      var real = img ? img.getAttribute("data-canonical-src") || img.getAttribute("src") || "" : "";
+      if (!real || real.indexOf("camo.githubusercontent.com") !== -1) {
+        /* img 自己也是 camo：路径最后一段是原地址的 hex，解出来 */
+        var m = (a.getAttribute("href") || "").match(/\/([0-9a-fA-F]{20,})\/?$/);
+        if (m) {
+          try {
+            var pairs = m[1].match(/../g) || [];
+            var bytes = new Uint8Array(pairs.map(function (h) { return parseInt(h, 16); }));
+            var dec = new TextDecoder("utf-8").decode(bytes);
+            if (/^https?:\/\//.test(dec)) real = dec;
+          } catch (e) {}
+        }
+      }
+      if (real) {
+        a.setAttribute("href", real);
+        a.setAttribute("target", "_blank");
+        a.setAttribute("rel", "noopener noreferrer");
+      } else {
+        a.removeAttribute("href");   /* 解不出来就别让它跳到乱码地址 */
+      }
+    });
+  }
+
   function initPost() {
     var body = hasPost;
+
+    fixImageLinks(body);
 
     /* ---- 阅读进度 ---- */
     var bar = document.createElement("div");

