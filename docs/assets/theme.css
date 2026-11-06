@@ -452,6 +452,19 @@ body:has(.hero) .hero { padding-top: 10px; }
 /* --- 正文排版 --- */
 #postBody p { margin: 0 0 1.05em; }
 
+/* 长 URL、长路径、长英文串也要在框内断开；否则窄屏会撑出整页横向滚动 */
+#postBody p,
+#postBody li,
+#postBody td,
+#postBody blockquote,
+#postBody h1,
+#postBody h2,
+#postBody h3,
+#postBody h4 {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
 #postBody h1, #postBody h2, #postBody h3, #postBody h4 {
   font-family: var(--font-serif);
   font-weight: 700;
@@ -534,20 +547,30 @@ body:has(.hero) .hero { padding-top: 10px; }
 #side {
   grid-column: 2;
   grid-row: 1;
+  box-sizing: border-box;
   position: sticky;
-  top: 28px;
+  top: 24px;
   font-size: 12.8px;
   color: var(--fg-soft);
   align-self: start;
+  /* 侧栏最高不超过一屏；装不下的部分交给目录自己滚，而不是被视口裁掉 */
+  max-height: calc(100vh - 48px);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-height: 0;
 }
 
 .side-card {
+  box-sizing: border-box;
   border: 1px solid var(--line);
   border-radius: 12px;
   background: var(--bg-elev);
   padding: 16px 16px 14px;
-  margin-bottom: 14px;
+  flex: 0 0 auto;          /* 默认不压缩，只有目录卡会让步 */
+  min-width: 0;
 }
+.side-card * { box-sizing: border-box; }
 .side-card h4 {
   font-family: var(--font-sans);
   font-size: 11px;
@@ -558,21 +581,156 @@ body:has(.hero) .hero { padding-top: 10px; }
   margin: 0 0 12px;
 }
 .side-row { display: flex; justify-content: space-between; gap: 10px; padding: 5px 0; }
+/* .side-row 是作者样式，会盖掉浏览器默认的 [hidden]，这里显式还原 */
+.side-row[hidden] { display: none !important; }
 .side-row span:first-child { color: var(--fg-mute); }
 .side-row span:last-child { color: var(--fg); font-variant-numeric: tabular-nums; }
 
-#toc { list-style: none; margin: 0; padding: 0; }#toc li { margin: 0; }
+/* --- 目录卡：卡片本身固定，列表内部独立滚动 --- */
+.side-card.toc {
+  display: flex;
+  flex-direction: column;
+  flex: 0 1 auto;          /* 允许被压缩，但不主动撑高 */
+  min-height: 0;
+  overflow: hidden;
+  padding-bottom: 10px;
+}
+.side-card.toc h4 {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  flex: 0 0 auto;
+}
+.toc-count {
+  letter-spacing: 0;
+  text-transform: none;
+  font-weight: 500;
+  font-size: 10.5px;
+  color: var(--fg-mute);
+  opacity: 0.75;
+}
+#toc {
+  list-style: none;
+  margin: 0;
+  padding: 0 2px 0 0;
+  min-height: 0;
+  flex: 1 1 auto;
+  overflow-y: auto;
+  overscroll-behavior: contain;   /* 滚到头别把整页带走 */
+  scrollbar-width: thin;
+  scrollbar-color: var(--line-strong) transparent;
+}
+/* 还能往下滚时，上下边缘淡出一点，给个"还有内容"的暗示 */
+#toc.can-scroll {
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 10px, #000 calc(100% - 12px), transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0, #000 10px, #000 calc(100% - 12px), transparent 100%);
+}
+#toc.can-scroll.at-top {
+  -webkit-mask-image: linear-gradient(to bottom, #000 0, #000 calc(100% - 12px), transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 0, #000 calc(100% - 12px), transparent 100%);
+}
+#toc.can-scroll.at-bottom {
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 10px, #000 100%);
+  mask-image: linear-gradient(to bottom, transparent 0, #000 10px, #000 100%);
+}
+#toc.can-scroll.at-top.at-bottom {
+  -webkit-mask-image: none;
+  mask-image: none;
+}
+#toc::-webkit-scrollbar { width: 4px; }
+#toc::-webkit-scrollbar-track { background: transparent; }
+#toc::-webkit-scrollbar-thumb {
+  background: var(--line-strong);
+  border-radius: 4px;
+}
+#toc::-webkit-scrollbar-thumb:hover { background: var(--fg-mute); }
+
+#toc li { margin: 0; }
 #toc a {
   display: block;
-  padding: 4px 0 4px 10px;
+  padding: 5px 6px 5px 10px;
   border-left: 2px solid var(--line);
+  border-radius: 0 5px 5px 0;
   color: var(--fg-soft) !important;
   text-decoration: none;
   font-size: 12.5px;
-  line-height: 1.55;
-  transition: color 0.2s, border-color 0.2s;
+  line-height: 1.5;
+  /* 长标题、连字符 URL、长英文串一律在框内折行，不许戳出边框 */
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  hyphens: auto;
+  transition: color 0.2s, border-color 0.2s, background-color 0.2s;
 }
-#toc a:hover, #toc a.active { color: var(--accent) !important; border-left-color: var(--accent); }
+#toc a:hover { color: var(--accent) !important; border-left-color: var(--line-strong); }
+#toc a.active {
+  color: var(--accent) !important;
+  border-left-color: var(--accent);
+  background: var(--accent-soft);
+}
+/* 二级标题（h3）：缩进同时把左侧竖线一起带进去，形成层级 */
+#toc a.lv3 {
+  margin-left: 11px;
+  padding-left: 9px;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+/* --- 手机端的目录抽屉 --- */
+#tocFab {
+  display: none;                 /* 只在窄屏出现 */
+  position: fixed;
+  right: 16px;
+  bottom: 20px;
+  z-index: 130;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 15px 10px 13px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--bg-elev);
+  color: var(--fg-soft);
+  font-family: var(--font-sans);
+  font-size: 12.5px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  box-shadow: var(--shadow-hover);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+#tocFab:active { transform: scale(0.96); }
+#tocFab svg { width: 14px; height: 14px; }
+body.toc-open #tocFab { opacity: 0; pointer-events: none; }
+
+#tocClose {
+  display: none;
+  align-self: flex-end;
+  width: 28px;
+  height: 28px;
+  margin: -4px -2px 6px 0;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--bg-elev);
+  color: var(--fg-mute);
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+}
+#tocClose:hover { color: var(--fg); border-color: var(--line-strong); }
+
+#tocMask {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 119;
+  background: rgba(12, 12, 14, 0.42);
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.28s ease;
+}
 
 /* --- 评论按钮 --- */
 #cmButton {
@@ -668,12 +826,51 @@ body:has(.hero) .hero { padding-top: 10px; }
 
 @media (max-width: 900px) {
   #content:has(#postBody) { grid-template-columns: minmax(0, 1fr); }
-  #side { display: none; }
   body { padding: 0 20px 72px !important; }
   .postTitle { font-size: 30px !important; }
   .hero { gap: 20px; padding-bottom: 28px; }
   .hero-avatar { width: 68px; height: 68px; }
   .hero-name { font-size: 26px; }
+
+  /* 侧栏改成右侧抽屉：手机上也能有目录，不再直接藏掉 */
+  #side {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: min(86vw, 340px);
+    max-height: none;
+    height: 100%;
+    padding: 16px 16px 28px;
+    background: var(--bg);
+    border-left: 1px solid var(--line);
+    box-shadow: -18px 0 48px -26px rgba(0, 0, 0, 0.5);
+    transform: translateX(102%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 120;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+  body.toc-open #side { transform: none; }
+  body.toc-open { overflow: hidden; }
+
+  /* 抽屉里让整块侧栏一起滚，目录不再单独滚（避免两层滚动打架） */
+  .side-card.toc { flex: 0 0 auto; overflow: visible; }
+  #toc {
+    overflow: visible;
+    max-height: none;
+    scroll-behavior: auto;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+  #toc a { font-size: 13.5px; padding-top: 7px; padding-bottom: 7px; }
+  #toc a.lv3 { font-size: 13px; }
+
+  #tocFab { display: flex; }
+  #tocClose { display: block; }
+  #tocMask { display: block; }
+  body.toc-open #tocMask { opacity: 1; pointer-events: auto; }
 }
 
 @media (max-width: 600px) {

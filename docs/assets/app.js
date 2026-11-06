@@ -34,6 +34,12 @@
     'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" class="ext">' +
     '<path d="M7 17 17 7M9 7h8v8"/></svg>';
 
+  /* 窄屏「目录」悬浮按钮的图标 */
+  var ICON_TOC =
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" ' +
+    'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+    '<path d="M4 6h16M4 12h11M4 18h13"/></svg>';
+
   /* 顶栏圆钮：把 Gmeek 自带的 RSS 图标换成 PROFILES[0] 的外部主页入口 */
   function initHeaderEntry() {
     if (!PROFILES.length) return;
@@ -400,37 +406,132 @@
     content.appendChild(side);
 
     var heads = [].slice.call(body.querySelectorAll("h2, h3"));
+    var tocList = null;
+
+    /* 让高亮项留在目录自己的可视区里：只动目录的 scrollTop，页面不跟着跑 */
+    function keepVisible(a) {
+      if (!tocList || !tocList.clientHeight) return;
+      var r = a.getBoundingClientRect();
+      var b = tocList.getBoundingClientRect();
+      var pad = 10;
+      if (r.top < b.top + pad) tocList.scrollTop -= b.top + pad - r.top;
+      else if (r.bottom > b.bottom - pad) tocList.scrollTop += r.bottom - b.bottom + pad;
+    }
+
+    /* 目录内容超过卡片高度时，加个渐隐提示"还能往下滚" */
+    function syncTocHint() {
+      if (!tocList) return;
+      var max = tocList.scrollHeight - tocList.clientHeight;
+      var can = max > 4;
+      tocList.classList.toggle("can-scroll", can);
+      tocList.classList.toggle("at-top", tocList.scrollTop < 4);
+      tocList.classList.toggle("at-bottom", can && tocList.scrollTop > max - 4);
+    }
+
     if (heads.length) {
       var tocCard = document.createElement("div");
-      tocCard.className = "side-card";
-      tocCard.innerHTML = '<h4>目录</h4><ul id="toc"></ul>';
+      tocCard.className = "side-card toc";
+      tocCard.innerHTML =
+        '<h4><span>目录</span><span class="toc-count">' + heads.length + " 节</span></h4>" +
+        '<ul id="toc"></ul>';
       side.appendChild(tocCard);
-      var list = tocCard.querySelector("#toc");
+
+      tocList = tocCard.querySelector("#toc");
       heads.forEach(function (h, i) {
         if (!h.id) h.id = "h-" + i;
         var li = document.createElement("li");
-        li.innerHTML =
-          '<a href="#' + h.id + '"' +
-          (h.tagName === "H3" ? ' style="padding-left:22px;font-size:12px"' : "") +
-          ">" + esc(h.textContent.trim()) + "</a>";
-        list.appendChild(li);
+        var a = document.createElement("a");
+        a.href = "#" + h.id;
+        if (h.tagName === "H3") a.className = "lv3";
+        a.textContent = h.textContent.trim();
+        a.title = a.textContent;
+        li.appendChild(a);
+        tocList.appendChild(li);
       });
-      var links = [].slice.call(list.querySelectorAll("a"));
+
+      var links = [].slice.call(tocList.querySelectorAll("a"));
       var spy = new IntersectionObserver(
         function (entries) {
           entries.forEach(function (en) {
             if (!en.isIntersecting) return;
+            var act = null;
             links.forEach(function (a) {
-              a.classList.remove("active");
+              var on = a.getAttribute("href") === "#" + en.target.id;
+              a.classList.toggle("active", on);
+              if (on) act = a;
             });
-            var a = list.querySelector('a[href="#' + en.target.id + '"]');
-            if (a) a.classList.add("active");
+            if (act) keepVisible(act);
           });
         },
         { rootMargin: "-72px 0px -70% 0px" }
       );
       heads.forEach(function (h) {
         spy.observe(h);
+      });
+
+      syncTocHint();
+      tocList.addEventListener("scroll", syncTocHint, { passive: true });
+      window.addEventListener("resize", syncTocHint);
+      window.addEventListener("load", syncTocHint);
+      if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(syncTocHint).catch(function () {});
+      }
+    }
+
+    /* ---- 窄屏：目录收进右侧抽屉，用悬浮按钮呼出 ---- */
+    if (tocList) {
+      var fab = document.createElement("button");
+      fab.id = "tocFab";
+      fab.type = "button";
+      fab.setAttribute("aria-label", "打开目录");
+      fab.setAttribute("aria-expanded", "false");
+      fab.innerHTML = ICON_TOC + "<span>目录</span>";
+      document.body.appendChild(fab);
+
+      var mask = document.createElement("div");
+      mask.id = "tocMask";
+      document.body.appendChild(mask);
+
+      var closeBtn = document.createElement("button");
+      closeBtn.id = "tocClose";
+      closeBtn.type = "button";
+      closeBtn.setAttribute("aria-label", "关闭目录");
+      closeBtn.innerHTML = "&times;";
+      side.insertBefore(closeBtn, side.firstChild);
+
+      function narrow() {
+        return window.matchMedia("(max-width: 900px)").matches;
+      }
+      function setDrawer(on) {
+        var open = !!on && narrow();
+        document.body.classList.toggle("toc-open", open);
+        fab.setAttribute("aria-expanded", open ? "true" : "false");
+        if (open) {
+          var act = tocList.querySelector("a.active");
+          /* 等抽屉滑出来再定位，否则量到的是位移中的位置 */
+          setTimeout(function () {
+            if (act) keepVisible(act);
+          }, 320);
+        }
+      }
+      fab.addEventListener("click", function () {
+        setDrawer(!document.body.classList.contains("toc-open"));
+      });
+      mask.addEventListener("click", function () {
+        setDrawer(false);
+      });
+      closeBtn.addEventListener("click", function () {
+        setDrawer(false);
+      });
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape" && document.body.classList.contains("toc-open")) setDrawer(false);
+      });
+      tocList.addEventListener("click", function (e) {
+        var a = e.target && e.target.closest ? e.target.closest("a") : null;
+        if (a && narrow()) setDrawer(false);
+      });
+      window.addEventListener("resize", function () {
+        if (!narrow()) setDrawer(false);
       });
     }
 
