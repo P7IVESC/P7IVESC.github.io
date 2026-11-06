@@ -105,7 +105,11 @@
 
   /* ============================================================
      首页：把 Gmeek 的条目列表改造成卡片墙
+     分页规则：每个分类每页最多 6 篇，按时间倒序，多的顺延到下一页
+     （Gmeek 的 onePageListNum 已调大，DOM 里有全部文章，分页在前端做）
      ============================================================ */
+  var PER_PAGE = 6;
+
   function initList() {
     var nav = document.querySelector("nav.SideNav");
     if (!nav) return;
@@ -155,7 +159,8 @@
       "</div>" +
       "</div>";
 
-    /* ---- 按分类分组渲染（顺序见 CATS，未知标签与未分类排最后） ---- */
+    /* ---- 按分类分组（顺序见 CATS，未知标签与未分类排最后） ----
+       组内保持 DOM 顺序 = Gmeek 的时间倒序 */
     var groups = [];
     var gidx = {};
     items.forEach(function (it) {
@@ -174,57 +179,210 @@
       return order(a.key) - order(b.key);
     });
 
-    nav.parentNode.insertBefore(hero, nav);
-
+    /* 每类 6 篇一页：总页数取各分类的最大值 */
+    var pageCount = 1;
     groups.forEach(function (g) {
-      var meta = null;
-      for (var i = 0; i < CATS.length; i++) if (CATS[i].key === g.key) meta = CATS[i];
-
-      var head = document.createElement("div");
-      head.className = "section-head";
-      head.innerHTML =
-        "<h2>" + esc(g.key) + "</h2><em>" + esc(meta ? meta.en : "POSTS") + "</em>" +
-        '<a class="sec-more" data-cat="' + esc(g.key) + '" href="/categories.html' +
-        (meta && meta.anchor ? "#" + meta.anchor : "") + '"' +
-        ' title="在分类索引里查看这一类的全部文章">全部 →</a>';
-
-      var grid = document.createElement("div");
-      grid.className = "card-grid";
-      g.items.forEach(function (it) {
-        grid.appendChild(cardOf(it));
-      });
-
-      nav.parentNode.insertBefore(head, nav);
-      nav.parentNode.insertBefore(grid, nav);
+      pageCount = Math.max(pageCount, Math.ceil(g.items.length / PER_PAGE));
     });
+
+    var wrap = document.createElement("div");
+    wrap.className = "home-list";
+    var pager = document.createElement("nav");
+    pager.className = "pager";
+    pager.setAttribute("aria-label", "分页导航");
+
+    nav.parentNode.insertBefore(hero, nav);
+    nav.parentNode.insertBefore(wrap, nav);
+    nav.parentNode.insertBefore(pager, nav);
     nav.style.display = "none";
 
-    hydrate(items, hero);
+    function metaOf(key) {
+      for (var i = 0; i < CATS.length; i++) if (CATS[i].key === key) return CATS[i];
+      return null;
+    }
 
-    /* 全站篇数 / 每类总数：数据来自 make_archive.py 生成的 archive.json */
-    var postsEl = hero.querySelector(".stat-posts");
-    loadArchive(function (d) {
-      if (!d) {
-        if (postsEl) postsEl.textContent = items.length;
-        return;
+    function pageFromUrl() {
+      var m = /[?&]page=(\d+)/.exec(location.search);
+      var p = m ? parseInt(m[1], 10) : 1;
+      if (!(p >= 1)) p = 1;
+      return Math.min(p, pageCount);
+    }
+
+    function hrefOf(p) {
+      return p === 1 ? location.pathname : location.pathname + "?page=" + p;
+    }
+
+    /* 页码序列：页数多时中间用省略号 */
+    function pageNums(p, n) {
+      if (n <= 7) {
+        var all = [];
+        for (var i = 1; i <= n; i++) all.push(i);
+        return all;
       }
-      if (postsEl) {
-        postsEl.textContent = d.total;
-        postsEl.parentNode.title = "全站共 " + d.total + " 篇，本页显示 " + items.length + " 篇";
+      var out = [1];
+      var from = Math.max(2, p - 1);
+      var to = Math.min(n - 1, p + 1);
+      if (from > 2) out.push("...");
+      for (var j = from; j <= to; j++) out.push(j);
+      if (to < n - 1) out.push("...");
+      out.push(n);
+      return out;
+    }
+
+    function pagerBtn(label, target, cls, aria) {
+      var a = document.createElement("a");
+      a.href = hrefOf(target);
+      a.textContent = label;
+      if (cls) a.className = cls;
+      if (aria) a.setAttribute("aria-label", aria);
+      a.addEventListener("click", function (e) {
+        if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button === 1) return;
+        e.preventDefault();
+        go(target);
+      });
+      return a;
+    }
+
+    function buildPager(p) {
+      var frag = document.createDocumentFragment();
+      if (p > 1) {
+        frag.appendChild(pagerBtn("← 上一页", p - 1, "pg-step", "上一页"));
+      } else {
+        var prev = document.createElement("span");
+        prev.className = "pg-step off";
+        prev.textContent = "← 上一页";
+        frag.appendChild(prev);
       }
-      var wEl = hero.querySelector(".stat-words");
-      if (wEl && d.words) wEl.textContent = fmtWords(d.words);
-      var iEl = hero.querySelector(".stat-imgs");
-      if (iEl && d.imgs) iEl.textContent = d.imgs;
-      [].forEach.call(document.querySelectorAll(".sec-more"), function (a) {
+
+      pageNums(p, pageCount).forEach(function (n) {
+        if (n === "...") {
+          var gap = document.createElement("span");
+          gap.className = "pg-gap";
+          gap.textContent = "…";
+          frag.appendChild(gap);
+        } else if (n === p) {
+          var now = document.createElement("span");
+          now.className = "pg-num on";
+          now.setAttribute("aria-current", "page");
+          now.textContent = n;
+          frag.appendChild(now);
+        } else {
+          frag.appendChild(pagerBtn(String(n), n, "pg-num", "第 " + n + " 页"));
+        }
+      });
+
+      if (p < pageCount) {
+        frag.appendChild(pagerBtn("下一页 →", p + 1, "pg-step", "下一页"));
+      } else {
+        var next = document.createElement("span");
+        next.className = "pg-step off";
+        next.textContent = "下一页 →";
+        frag.appendChild(next);
+      }
+
+      var info = document.createElement("span");
+      info.className = "pg-info";
+      info.textContent = "第 " + p + " / " + pageCount + " 页 · 每类最多 " + PER_PAGE + " 篇";
+      frag.appendChild(info);
+      return frag;
+    }
+
+    var shownCount = 0;
+    var cur = 0;
+
+    /* 分区标题右侧「全部 N 篇 →」与全站统计，数据来自 archive.json */
+    function paintCounts() {
+      if (!ARCHIVE) return;
+      [].forEach.call(wrap.querySelectorAll(".sec-more"), function (a) {
         var k = a.getAttribute("data-cat");
         var hit = null;
-        (d.cats || []).forEach(function (c) {
+        (ARCHIVE.cats || []).forEach(function (c) {
           if (c.key === k) hit = c;
         });
         if (hit) a.textContent = "全部 " + hit.count + " 篇 →";
       });
+      var el = hero.querySelector(".stat-posts");
+      if (el) {
+        el.textContent = ARCHIVE.total;
+        el.parentNode.title =
+          "全站共 " + ARCHIVE.total + " 篇" +
+          (pageCount > 1 ? "，这一页显示 " + shownCount + " 篇" : "");
+      }
+    }
+
+    function render(p) {
+      p = Math.min(Math.max(1, p), pageCount);
+      cur = p;
+      wrap.innerHTML = "";
+      pager.innerHTML = "";
+      shownCount = 0;
+      var visible = [];
+
+      groups.forEach(function (g) {
+        var slice = g.items.slice((p - 1) * PER_PAGE, p * PER_PAGE);
+        if (!slice.length) return;
+        shownCount += slice.length;
+        visible = visible.concat(slice);
+
+        var meta = metaOf(g.key);
+        var head = document.createElement("div");
+        head.className = "section-head";
+        head.innerHTML =
+          "<h2>" + esc(g.key) + "</h2><em>" + esc(meta ? meta.en : "POSTS") + "</em>" +
+          '<a class="sec-more" data-cat="' + esc(g.key) + '" href="/categories.html' +
+          (meta && meta.anchor ? "#" + meta.anchor : "") + '"' +
+          ' title="在分类索引里查看这一类的全部文章">全部 →</a>';
+
+        var grid = document.createElement("div");
+        grid.className = "card-grid";
+        slice.forEach(function (it) {
+          grid.appendChild(cardOf(it));
+        });
+
+        wrap.appendChild(head);
+        wrap.appendChild(grid);
+      });
+
+      if (pageCount > 1) pager.appendChild(buildPager(p));
+      paintCounts();
+      hydrate(visible, hero);
+    }
+
+    function go(p) {
+      p = Math.min(Math.max(1, p), pageCount);
+      if (p === cur) return;
+      try {
+        history.pushState(
+          { page: p }, "",
+          p === 1 ? location.pathname : location.pathname + "?page=" + p
+        );
+      } catch (e) {}
+      render(p);
+      /* 翻页后回到列表顶部（不是页面顶部），省去重看一遍头像区 */
+      var top =
+        wrap.getBoundingClientRect().top +
+        (document.documentElement.scrollTop || document.body.scrollTop || 0);
+      try {
+        window.scrollTo({ top: Math.max(0, top - 12), behavior: "smooth" });
+      } catch (e) {
+        window.scrollTo(0, Math.max(0, top - 12));
+      }
+    }
+
+    window.addEventListener("popstate", function () {
+      render(pageFromUrl());
     });
+
+    loadArchive(function (d) {
+      if (!d) return;
+      var wEl = hero.querySelector(".stat-words");
+      if (wEl && d.words) wEl.textContent = fmtWords(d.words);
+      var iEl = hero.querySelector(".stat-imgs");
+      if (iEl && d.imgs) iEl.textContent = d.imgs;
+      paintCounts();
+    });
+
+    render(pageFromUrl());
   }
 
   function cardOf(it) {

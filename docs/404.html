@@ -95,7 +95,17 @@
     var dec = raw;
     try { dec = decodeURI(raw); } catch (e) {}
     var target = REDIRECT_MAP[raw] || REDIRECT_MAP[dec];
-    if (target) location.replace(target + location.search + location.hash);
+    if (target) {
+      location.replace(target + location.search + location.hash);
+      return;
+    }
+    /* 首页改成前端分页后不再生成 /page2.html /page3.html，
+       老链接落到这里就送回首页对应的那一页 */
+    var mp = /^\/page(\d+)(?:\.html)?$/.exec(dec);
+    if (mp) {
+      var n = parseInt(mp[1], 10);
+      location.replace(n > 1 ? "/?page=" + n : "/");
+    }
   })();
 </script>
 </head>
