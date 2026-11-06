@@ -1,5 +1,11 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>P7IVESC's blog</title><link>https://P7IVESC.github.io</link><description>知其黑，守其白。一个网安小白的红队实战、靶场复盘与学习笔记。技术交流请备注来源：emhlcGluZzA1MDc=</description><copyright>P7IVESC's blog</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://avatars.githubusercontent.com/u/237383456?v=4&amp;size=200</url><title>avatar</title><link>https://P7IVESC.github.io</link></image><lastBuildDate>Fri, 06 Nov 2026 07:15:52 +0000</lastBuildDate><managingEditor>P7IVESC's blog</managingEditor><ttl>60</ttl><webMaster>P7IVESC's blog</webMaster><item><title>开局一个登录口如何进行渗透测试</title><link>https://P7IVESC.github.io/post/kai-ju-yi-ge-deng-lu-kou-ru-he-jin-xing-shen-tou-ce-shi.html</link><description># 弱口令
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>P7IVESC's blog</title><link>https://P7IVESC.github.io</link><description>知其黑，守其白。一个网安小白的红队实战、靶场复盘与学习笔记。技术交流请备注来源：emhlcGluZzA1MDc=</description><copyright>P7IVESC's blog</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://avatars.githubusercontent.com/u/237383456?v=4&amp;size=200</url><title>avatar</title><link>https://P7IVESC.github.io</link></image><lastBuildDate>Fri, 06 Nov 2026 07:24:11 +0000</lastBuildDate><managingEditor>P7IVESC's blog</managingEditor><ttl>60</ttl><webMaster>P7IVESC's blog</webMaster><item><title>微信小程序抓包和并发漏洞</title><link>https://P7IVESC.github.io/post/wei-xin-xiao-cheng-xu-zhua-bao-he-bing-fa-lou-dong.html</link><description>![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/cce03a62bf16.png)
+
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/3337ab167a04.png)
+
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/043d3fec684a.png)
+
+有些服务器无法并发多次，可以稍微降低速率，降低发包的数量。</description><guid isPermaLink="true">https://P7IVESC.github.io/post/wei-xin-xiao-cheng-xu-zhua-bao-he-bing-fa-lou-dong.html</guid><pubDate>Fri, 06 Nov 2026 07:23:45 +0000</pubDate></item><item><title>开局一个登录口如何进行渗透测试</title><link>https://P7IVESC.github.io/post/kai-ju-yi-ge-deng-lu-kou-ru-he-jin-xing-shen-tou-ce-shi.html</link><description># 弱口令
 
 常见用户名：
 
