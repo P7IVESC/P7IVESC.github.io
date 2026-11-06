@@ -212,6 +212,10 @@
         postsEl.textContent = d.total;
         postsEl.parentNode.title = "全站共 " + d.total + " 篇，本页显示 " + items.length + " 篇";
       }
+      var wEl = hero.querySelector(".stat-words");
+      if (wEl && d.words) wEl.textContent = fmtWords(d.words);
+      var iEl = hero.querySelector(".stat-imgs");
+      if (iEl && d.imgs) iEl.textContent = d.imgs;
       [].forEach.call(document.querySelectorAll(".sec-more"), function (a) {
         var k = a.getAttribute("data-cat");
         var hit = null;
@@ -269,10 +273,12 @@
       pending--;
       if (pending > 0) return;
       if (touched) saveCache();
+      /* 有全站统计就用全站，没有才退回「本页」 */
+      var all = ARCHIVE || {};
       var el = hero.querySelector(".stat-imgs");
-      if (el && totalImgs) el.textContent = totalImgs;
+      if (el && (all.imgs || totalImgs)) el.textContent = all.imgs || totalImgs;
       var w = hero.querySelector(".stat-words");
-      if (w && totalWords) w.textContent = fmtWords(totalWords);
+      if (w && (all.words || totalWords)) w.textContent = fmtWords(all.words || totalWords);
     }
 
     items.forEach(function (it) {
