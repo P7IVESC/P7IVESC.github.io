@@ -21,7 +21,7 @@
   var CATS = [
     { key: "渗透实战", en: "PENTEST" },
     { key: "靶场复盘", en: "LABS" },
-    { key: "知识沉淀", en: "NOTES" }
+    { key: "学习笔记", en: "NOTES" }
   ];
 
   var ICON_SHIELD =
