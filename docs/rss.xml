@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>P7IVESC's blog</title><link>https://P7IVESC.github.io</link><description>知其黑，守其白。一个网安小白的红队实战、靶场复盘与学习笔记。技术交流请备注来源：emhlcGluZzA1MDc=</description><copyright>P7IVESC's blog</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://avatars.githubusercontent.com/u/237383456?v=4&amp;size=200</url><title>avatar</title><link>https://P7IVESC.github.io</link></image><lastBuildDate>Fri, 06 Nov 2026 06:05:12 +0000</lastBuildDate><managingEditor>P7IVESC's blog</managingEditor><ttl>60</ttl><webMaster>P7IVESC's blog</webMaster><item><title>burp靶场</title><link>https://P7IVESC.github.io/post/burp-ba-chang.html</link><description># SQLI
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>P7IVESC's blog</title><link>https://P7IVESC.github.io</link><description>知其黑，守其白。一个网安小白的红队实战、靶场复盘与学习笔记。技术交流请备注来源：emhlcGluZzA1MDc=</description><copyright>P7IVESC's blog</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://avatars.githubusercontent.com/u/237383456?v=4&amp;size=200</url><title>avatar</title><link>https://P7IVESC.github.io</link></image><lastBuildDate>Fri, 06 Nov 2026 06:07:21 +0000</lastBuildDate><managingEditor>P7IVESC's blog</managingEditor><ttl>60</ttl><webMaster>P7IVESC's blog</webMaster><item><title>burp靶场</title><link>https://P7IVESC.github.io/post/burp-ba-chang.html</link><description># SQLI
 
 ## https://portswigger\.net/web\-security/sql\-injection/lab\-retrieve\-hidden\-data
 
@@ -127,9 +127,9 @@ select GROUP_CONCAT(table_name) from information_schema.TABLES where table_schem
 
 成功登陆后发现给与我们的提示信息，简单的告诉了我们什么是参数污染，但是在这几个界面中未发现参数的传递。</description><guid isPermaLink="true">https://P7IVESC.github.io/post/IA-Keyring.html</guid><pubDate>Fri, 06 Nov 2026 05:40:28 +0000</pubDate></item><item><title>权限提升</title><link>https://P7IVESC.github.io/post/quan-xian-ti-sheng.html</link><description>## 权限提升基础
 
-在Windows和Linux中，不同的进程和服务由不同用户权限或服务权限运行。</description><guid isPermaLink="true">https://P7IVESC.github.io/post/quan-xian-ti-sheng.html</guid><pubDate>Fri, 06 Nov 2026 03:34:47 +0000</pubDate></item><item><title>SQL server命令执行</title><link>https://P7IVESC.github.io/post/SQL%20server-ming-ling-zhi-xing.html</link><description>前期渗透可以参考 [SQL server口令爆破](https://p7ivesc.github.io/post/SQL%20server-kou-ling-bao-po.html)
+在Windows和Linux中，不同的进程和服务由不同用户权限或服务权限运行。</description><guid isPermaLink="true">https://P7IVESC.github.io/post/quan-xian-ti-sheng.html</guid><pubDate>Fri, 06 Nov 2026 03:34:47 +0000</pubDate></item><item><title>SQL-Server命令执行</title><link>https://P7IVESC.github.io/post/SQL-Server-ming-ling-zhi-xing.html</link><description>前期渗透可以参考 [SQL server口令爆破](https://p7ivesc.github.io/post/SQL-Server-kou-ling-bao-po.html)
 
-“存储过程”：其实质就是一个“集合”，那么是什么样的集合呢，就是存储在SQL server中预先定义好的“SQL语句集合”，说的更直白一些就是使用T-SQL语言编写好的各种小脚本共同组成的集合体，我们称之为“存储过程”。</description><guid isPermaLink="true">https://P7IVESC.github.io/post/SQL%20server-ming-ling-zhi-xing.html</guid><pubDate>Fri, 06 Nov 2026 03:33:31 +0000</pubDate></item><item><title>SQL server口令爆破</title><link>https://P7IVESC.github.io/post/SQL%20server-kou-ling-bao-po.html</link><description>```
+“存储过程”：其实质就是一个“集合”，那么是什么样的集合呢，就是存储在SQL server中预先定义好的“SQL语句集合”，说的更直白一些就是使用T-SQL语言编写好的各种小脚本共同组成的集合体，我们称之为“存储过程”。</description><guid isPermaLink="true">https://P7IVESC.github.io/post/SQL-Server-ming-ling-zhi-xing.html</guid><pubDate>Fri, 06 Nov 2026 03:33:31 +0000</pubDate></item><item><title>SQL-Server口令爆破</title><link>https://P7IVESC.github.io/post/SQL-Server-kou-ling-bao-po.html</link><description>```
 工具：hydra、超级弱口令爆破工具、metasploit
 ```
 
@@ -156,7 +156,7 @@ msf auxiliary(mssql_login) &gt; exploit（开始）
 
 sa是SuperAdministrator的简称，
 
-Sqlserver的默认管理员帐户。</description><guid isPermaLink="true">https://P7IVESC.github.io/post/SQL%20server-kou-ling-bao-po.html</guid><pubDate>Fri, 06 Nov 2026 03:32:55 +0000</pubDate></item><item><title>Redis渗透</title><link>https://P7IVESC.github.io/post/Redis-shen-tou.html</link><description>## Redis未授权访问漏洞
+Sqlserver的默认管理员帐户。</description><guid isPermaLink="true">https://P7IVESC.github.io/post/SQL-Server-kou-ling-bao-po.html</guid><pubDate>Fri, 06 Nov 2026 03:32:55 +0000</pubDate></item><item><title>Redis渗透</title><link>https://P7IVESC.github.io/post/Redis-shen-tou.html</link><description>## Redis未授权访问漏洞
 
 ## Redis本地检查
 
@@ -456,25 +456,25 @@ select/**/PG_READ_FILE($$/etc/passwd$$);
 
 ## copy_from
 
-copy有两个命令：COPY FROM和COPY TO。</description><guid isPermaLink="true">https://P7IVESC.github.io/post/PostgreSQL-shu-ju-ku-shen-tou.html</guid><pubDate>Fri, 06 Nov 2026 03:31:13 +0000</pubDate></item><item><title>MySQL渗透 (CVE-2012-2122)</title><link>https://P7IVESC.github.io/post/MySQL-shen-tou-%20%28CVE-2012-2122%29.html</link><description>```bash
+copy有两个命令：COPY FROM和COPY TO。</description><guid isPermaLink="true">https://P7IVESC.github.io/post/PostgreSQL-shu-ju-ku-shen-tou.html</guid><pubDate>Fri, 06 Nov 2026 03:31:13 +0000</pubDate></item><item><title>MySQL渗透CVE-2012-2122</title><link>https://P7IVESC.github.io/post/MySQL-shen-tou-CVE-2012-2122.html</link><description>```bash
 .\fscan.exe -h 10.3.4.95 -p 3306 -np
 ```
 
 ![](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/0d01037d441a.png)
 
-漏洞原理：当连接MariaDB/MySQL时，输入的密码会与期望的正确密码比较，由于不正确的处理，会导致即便是memcmp()返回一个非零值，也会使MySQL认为两个密码是相同的。</description><guid isPermaLink="true">https://P7IVESC.github.io/post/MySQL-shen-tou-%20%28CVE-2012-2122%29.html</guid><pubDate>Fri, 06 Nov 2026 03:00:38 +0000</pubDate></item><item><title>solr 代码执行 (CVE-2019-12409)</title><link>https://P7IVESC.github.io/post/solr%20-dai-ma-zhi-xing-%20%28CVE-2019-12409%29.html</link><description>![](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/4775531358a7.webp)
+漏洞原理：当连接MariaDB/MySQL时，输入的密码会与期望的正确密码比较，由于不正确的处理，会导致即便是memcmp()返回一个非零值，也会使MySQL认为两个密码是相同的。</description><guid isPermaLink="true">https://P7IVESC.github.io/post/MySQL-shen-tou-CVE-2012-2122.html</guid><pubDate>Fri, 06 Nov 2026 03:00:38 +0000</pubDate></item><item><title>solr代码执行CVE-2019-12409</title><link>https://P7IVESC.github.io/post/solr-dai-ma-zhi-xing-CVE-2019-12409.html</link><description>![](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/4775531358a7.webp)
 
 ## 背景介绍
 
-Apache Solr 是一个开源的搜索服务器，使用 Java 语言开发，主要基于 HTTP 和 Apache Lucene 实现。</description><guid isPermaLink="true">https://P7IVESC.github.io/post/solr%20-dai-ma-zhi-xing-%20%28CVE-2019-12409%29.html</guid><pubDate>Fri, 06 Nov 2026 02:50:55 +0000</pubDate></item><item><title>MySQL UDF提权</title><link>https://P7IVESC.github.io/post/MySQL%20UDF-ti-quan.html</link><description># 参考[MySQL渗透 (CVE-2012-2122)](https://p7ivesc.github.io/post/MySQL-shen-tou-%20%28CVE-2012-2122%29.html)文档，进行mysql渗透
+Apache Solr 是一个开源的搜索服务器，使用 Java 语言开发，主要基于 HTTP 和 Apache Lucene 实现。</description><guid isPermaLink="true">https://P7IVESC.github.io/post/solr-dai-ma-zhi-xing-CVE-2019-12409.html</guid><pubDate>Fri, 06 Nov 2026 02:50:55 +0000</pubDate></item><item><title>MySQL-UDF提权</title><link>https://P7IVESC.github.io/post/MySQL-UDF-ti-quan.html</link><description># 参考[MySQL渗透 (CVE-2012-2122)](https://p7ivesc.github.io/post/MySQL-shen-tou-CVE-2012-2122.html)文档，进行mysql渗透
 
 UDF：User Defined Function，用户自定义函数 
 
 UDF的设计初衷是为了实现功能的多样化和方便用户自定义一些操作函数，但在提升便捷 
 
-性的同时，也带来了命令执行利用的可能。</description><guid isPermaLink="true">https://P7IVESC.github.io/post/MySQL%20UDF-ti-quan.html</guid><pubDate>Fri, 06 Nov 2026 02:48:45 +0000</pubDate></item><item><title>PHP文件包含漏洞</title><link>https://P7IVESC.github.io/post/PHP-wen-jian-bao-han-lou-dong.html</link><description>![](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/f3fd637de9ff.webp)
+性的同时，也带来了命令执行利用的可能。</description><guid isPermaLink="true">https://P7IVESC.github.io/post/MySQL-UDF-ti-quan.html</guid><pubDate>Fri, 06 Nov 2026 02:48:45 +0000</pubDate></item><item><title>PHP文件包含漏洞</title><link>https://P7IVESC.github.io/post/PHP-wen-jian-bao-han-lou-dong.html</link><description>![](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/f3fd637de9ff.webp)
 
-本次实验我们以dvwa的文件包含漏洞low等级作为对象，目标是读取D:\phpstudy_pro\WWW\DVWA\vulnerabilities\fi下的flag.txt文件内容。</description><guid isPermaLink="true">https://P7IVESC.github.io/post/PHP-wen-jian-bao-han-lou-dong.html</guid><pubDate>Fri, 06 Nov 2026 02:37:14 +0000</pubDate></item><item><title>upload labs</title><link>https://P7IVESC.github.io/post/upload%20labs.html</link><description>前几关没有难度直接跳过
+本次实验我们以dvwa的文件包含漏洞low等级作为对象，目标是读取D:\phpstudy_pro\WWW\DVWA\vulnerabilities\fi下的flag.txt文件内容。</description><guid isPermaLink="true">https://P7IVESC.github.io/post/PHP-wen-jian-bao-han-lou-dong.html</guid><pubDate>Fri, 06 Nov 2026 02:37:14 +0000</pubDate></item><item><title>upload-labs</title><link>https://P7IVESC.github.io/post/upload-labs.html</link><description>前几关没有难度直接跳过
 
 Pass-04
 
@@ -508,7 +508,7 @@ Pass-04
 
 ![](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/de9c22687d04.webp)
 
-查看过滤条件，我们会发现他并没有过滤掉**Apache 服务器的配置文件——.htaccess**他能够篡改服务器解析规则。</description><guid isPermaLink="true">https://P7IVESC.github.io/post/upload%20labs.html</guid><pubDate>Fri, 06 Nov 2026 01:48:25 +0000</pubDate></item><item><title>海洋CMS渗透测试(利用数据库备份中的远程代码执行漏洞)</title><link>https://P7IVESC.github.io/post/hai-yang-CMS-shen-tou-ce-shi-%28-li-yong-shu-ju-ku-bei-fen-zhong-de-yuan-cheng-dai-ma-zhi-xing-lou-dong-%29.html</link><description>修改存放目录
+查看过滤条件，我们会发现他并没有过滤掉**Apache 服务器的配置文件——.htaccess**他能够篡改服务器解析规则。</description><guid isPermaLink="true">https://P7IVESC.github.io/post/upload-labs.html</guid><pubDate>Fri, 06 Nov 2026 01:48:25 +0000</pubDate></item><item><title>海洋CMS渗透测试利用数据库备份中的远程代码执行漏洞</title><link>https://P7IVESC.github.io/post/hai-yang-CMS-shen-tou-ce-shi-li-yong-shu-ju-ku-bei-fen-zhong-de-yuan-cheng-dai-ma-zhi-xing-lou-dong.html</link><description>修改存放目录
 
 ![](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/3e46f062ca9b.webp)
 
@@ -580,7 +580,7 @@ php路径
 
 连接 .antproxy.php 脚本
 
-直接修改shell链接，密码不变。</description><guid isPermaLink="true">https://P7IVESC.github.io/post/hai-yang-CMS-shen-tou-ce-shi-%28-li-yong-shu-ju-ku-bei-fen-zhong-de-yuan-cheng-dai-ma-zhi-xing-lou-dong-%29.html</guid><pubDate>Thu, 05 Nov 2026 07:57:18 +0000</pubDate></item><item><title>CMS_YXC1渗透测试报告</title><link>https://P7IVESC.github.io/post/CMS_YXC1-shen-tou-ce-shi-bao-gao.html</link><description>首先拿到内网ip：10.7.11.83，并没有给端口，于是我们先用fscan扫描端口
+直接修改shell链接，密码不变。</description><guid isPermaLink="true">https://P7IVESC.github.io/post/hai-yang-CMS-shen-tou-ce-shi-li-yong-shu-ju-ku-bei-fen-zhong-de-yuan-cheng-dai-ma-zhi-xing-lou-dong.html</guid><pubDate>Thu, 05 Nov 2026 07:57:18 +0000</pubDate></item><item><title>CMS_YXC1渗透测试报告</title><link>https://P7IVESC.github.io/post/CMS_YXC1-shen-tou-ce-shi-bao-gao.html</link><description>首先拿到内网ip：10.7.11.83，并没有给端口，于是我们先用fscan扫描端口
 
 ./fscan -h 10.7.11.83 -p 1-30000
 
@@ -620,7 +620,7 @@ sqlmap -u ' http://10.7.11.83:20048/index.php?r=default%2Findex%2Fsearch&amp;key
 
 ![](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/417b2754ed43.webp)
 
-目标网站的 `keywords` GET 参数存在 **SQL 注入漏洞**，且是 MySQL 数据库下的多种注入类型。</description><guid isPermaLink="true">https://P7IVESC.github.io/post/CMS_YXC1-shen-tou-ce-shi-bao-gao.html</guid><pubDate>Thu, 05 Nov 2026 07:33:34 +0000</pubDate></item><item><title>无镜小迪 VPC 靶场渗透实录</title><link>https://P7IVESC.github.io/post/wu-jing-xiao-di-%20VPC%20-ba-chang-shen-tou-shi-lu.html</link><description>目标地址：192.168.111.79
+目标网站的 `keywords` GET 参数存在 **SQL 注入漏洞**，且是 MySQL 数据库下的多种注入类型。</description><guid isPermaLink="true">https://P7IVESC.github.io/post/CMS_YXC1-shen-tou-ce-shi-bao-gao.html</guid><pubDate>Thu, 05 Nov 2026 07:33:34 +0000</pubDate></item><item><title>无镜小迪VPC靶场渗透实录</title><link>https://P7IVESC.github.io/post/wu-jing-xiao-di-VPC-ba-chang-shen-tou-shi-lu.html</link><description>目标地址：192.168.111.79
 
 本机地址：192.168.111.25
 
@@ -870,7 +870,7 @@ netsh advfirewall set allprofiles state off
 
 ![](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/6ad144a0d25c.png)
 
-secretsdump.py 成功导出了域内所有用户的密码哈希和 Kerberos 密钥。</description><guid isPermaLink="true">https://P7IVESC.github.io/post/wu-jing-xiao-di-%20VPC%20-ba-chang-shen-tou-shi-lu.html</guid><pubDate>Thu, 05 Nov 2026 07:20:37 +0000</pubDate></item><item><title>域控服务器的部署及域渗透</title><link>https://P7IVESC.github.io/post/yu-kong-fu-wu-qi-de-bu-shu-ji-yu-shen-tou.html</link><description>完成域控服务器的部署，并实现添加计算机到当前域
+secretsdump.py 成功导出了域内所有用户的密码哈希和 Kerberos 密钥。</description><guid isPermaLink="true">https://P7IVESC.github.io/post/wu-jing-xiao-di-VPC-ba-chang-shen-tou-shi-lu.html</guid><pubDate>Thu, 05 Nov 2026 07:20:37 +0000</pubDate></item><item><title>域控服务器的部署及域渗透</title><link>https://P7IVESC.github.io/post/yu-kong-fu-wu-qi-de-bu-shu-ji-yu-shen-tou.html</link><description>完成域控服务器的部署，并实现添加计算机到当前域
 1.为 windows server 2008 安装 DNS 及 AD 域控制器
 考虑到后续使用的便利性，现对域控服务器的 IP 地址进行指定，配置如下：
 &lt;img width='200' height='208' alt='Image' src='https://github.com/user-attachments/assets/9e14f85d-e21c-4672-b333-f5d56356ce43' /&gt;

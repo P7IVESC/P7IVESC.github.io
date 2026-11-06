@@ -38,7 +38,7 @@ msf auxiliary(mssql_login) > exploit（开始）
 sa是SuperAdministrator的简称，
 
 Sqlserver的默认管理员帐户。">
-<meta property="og:title" content="SQL server口令爆破">
+<meta property="og:title" content="SQL-Server口令爆破">
 <meta property="og:description" content="```
 工具：hydra、超级弱口令爆破工具、metasploit
 ```
@@ -68,9 +68,9 @@ sa是SuperAdministrator的简称，
 
 Sqlserver的默认管理员帐户。">
 <meta property="og:type" content="article">
-<meta property="og:url" content="https://P7IVESC.github.io/post/SQL%20server-kou-ling-bao-po.html">
+<meta property="og:url" content="https://P7IVESC.github.io/post/SQL-Server-kou-ling-bao-po.html">
 <meta property="og:image" content="https://avatars.githubusercontent.com/u/237383456?v=4&size=200">
-<title>SQL server口令爆破</title>
+<title>SQL-Server口令爆破</title>
 <link href="//unpkg.com/@wooorm/starry-night@2.1.1/style/both.css" rel="stylesheet" />
 
 
@@ -113,7 +113,7 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 
 <body>
     <div id="header">
-<h1 class="postTitle">SQL server口令爆破</h1>
+<h1 class="postTitle">SQL-Server口令爆破</h1>
 <div class="title-right">
     <a href="https://P7IVESC.github.io" id="buttonHome" class="btn btn-invisible circle" title="首页">
         <svg class="octicon" width="16" height="16">
@@ -162,7 +162,7 @@ msf auxiliary(mssql_login) <span class="pl-k">&gt;</span> exploit（开始）</p
 <p>终端输入 <strong>hydra -h</strong>查看使用方法</p>
 <p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/e6efba4fa08318ede44f185ba9b685b53558f8d6ee97970e3941df49f51af14b/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6661353263663438373434392e77656270"><img src="https://camo.githubusercontent.com/e6efba4fa08318ede44f185ba9b685b53558f8d6ee97970e3941df49f51af14b/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6661353263663438373434392e77656270" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/fa52cf487449.webp" style="max-width: 100%;"></a></p>
 <div class="highlight highlight-source-shell"><pre class="notranslate">hydra -l sa -P dic_password_sqlserver.txt mssql://10.3.4.118 -V</pre></div>
-<p>进一步的命令执行可参考 <a href="https://p7ivesc.github.io/post/SQL%20server-ming-ling-zhi-xing.html" rel="nofollow">SQL server命令执行</a></p>
+<p>进一步的命令执行可参考 <a href="https://p7ivesc.github.io/post/SQL-Server-ming-ling-zhi-xing.html" rel="nofollow">SQL server命令执行</a></p>
 </div>
 <div style="font-size:small;margin-top:8px;float:right;"></div>
 

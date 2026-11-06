@@ -1,4 +1,4 @@
-前期渗透可以参考 [SQL server口令爆破](https://p7ivesc.github.io/post/SQL%20server-kou-ling-bao-po.html)
+前期渗透可以参考 [SQL server口令爆破](https://p7ivesc.github.io/post/SQL-Server-kou-ling-bao-po.html)
 
 “存储过程”：其实质就是一个“集合”，那么是什么样的集合呢，就是存储在SQL server中预先定义好的“SQL语句集合”，说的更直白一些就是使用T-SQL语言编写好的各种小脚本共同组成的集合体，我们称之为“存储过程”。而存储过程中的这些小脚本中，其危险性最高的“小脚本”就是扩展存储过程中的 “xp_cmdshell脚本”，它可以执行操作系统的任何指令。
 

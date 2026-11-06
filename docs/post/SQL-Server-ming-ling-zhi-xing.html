@@ -10,17 +10,17 @@
         let theme = localStorage.getItem("meek_theme") || "light";
         document.documentElement.setAttribute("data-color-mode", theme);
     </script>
-<meta name="description" content="前期渗透可以参考 [SQL server口令爆破](https://p7ivesc.github.io/post/SQL%20server-kou-ling-bao-po.html)
+<meta name="description" content="前期渗透可以参考 [SQL server口令爆破](https://p7ivesc.github.io/post/SQL-Server-kou-ling-bao-po.html)
 
 “存储过程”：其实质就是一个“集合”，那么是什么样的集合呢，就是存储在SQL server中预先定义好的“SQL语句集合”，说的更直白一些就是使用T-SQL语言编写好的各种小脚本共同组成的集合体，我们称之为“存储过程”。">
-<meta property="og:title" content="SQL server命令执行">
-<meta property="og:description" content="前期渗透可以参考 [SQL server口令爆破](https://p7ivesc.github.io/post/SQL%20server-kou-ling-bao-po.html)
+<meta property="og:title" content="SQL-Server命令执行">
+<meta property="og:description" content="前期渗透可以参考 [SQL server口令爆破](https://p7ivesc.github.io/post/SQL-Server-kou-ling-bao-po.html)
 
 “存储过程”：其实质就是一个“集合”，那么是什么样的集合呢，就是存储在SQL server中预先定义好的“SQL语句集合”，说的更直白一些就是使用T-SQL语言编写好的各种小脚本共同组成的集合体，我们称之为“存储过程”。">
 <meta property="og:type" content="article">
-<meta property="og:url" content="https://P7IVESC.github.io/post/SQL%20server-ming-ling-zhi-xing.html">
+<meta property="og:url" content="https://P7IVESC.github.io/post/SQL-Server-ming-ling-zhi-xing.html">
 <meta property="og:image" content="https://avatars.githubusercontent.com/u/237383456?v=4&size=200">
-<title>SQL server命令执行</title>
+<title>SQL-Server命令执行</title>
 <link href="//unpkg.com/@wooorm/starry-night@2.1.1/style/both.css" rel="stylesheet" />
 
 
@@ -63,7 +63,7 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 
 <body>
     <div id="header">
-<h1 class="postTitle">SQL server命令执行</h1>
+<h1 class="postTitle">SQL-Server命令执行</h1>
 <div class="title-right">
     <a href="https://P7IVESC.github.io" id="buttonHome" class="btn btn-invisible circle" title="首页">
         <svg class="octicon" width="16" height="16">
@@ -87,7 +87,7 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 </div>
 </div>
     <div id="content">
-<div class="markdown-body" id="postBody"><p>前期渗透可以参考 <a href="https://p7ivesc.github.io/post/SQL%20server-kou-ling-bao-po.html" rel="nofollow">SQL server口令爆破</a></p>
+<div class="markdown-body" id="postBody"><p>前期渗透可以参考 <a href="https://p7ivesc.github.io/post/SQL-Server-kou-ling-bao-po.html" rel="nofollow">SQL server口令爆破</a></p>
 <p>“存储过程”：其实质就是一个“集合”，那么是什么样的集合呢，就是存储在SQL server中预先定义好的“SQL语句集合”，说的更直白一些就是使用T-SQL语言编写好的各种小脚本共同组成的集合体，我们称之为“存储过程”。而存储过程中的这些小脚本中，其危险性最高的“小脚本”就是扩展存储过程中的 “xp_cmdshell脚本”，它可以执行操作系统的任何指令。</p>
 <h2>xp_cmdshell</h2>
 <h2>1.检查xp_cmdshell是否开启</h2>
