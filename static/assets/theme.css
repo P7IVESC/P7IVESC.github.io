@@ -818,9 +818,12 @@ body:has(.tagTitle) .listLabels .Label {
 }
 body:has(.tagTitle) .listLabels .Label object { display: inline; height: auto; }
 body:has(.tagTitle) .listLabels .Label object a { color: #fff !important; text-decoration: none; }
-/* 标题必须是块级元素，overflow/text-overflow 才生效（inline 上不生效，长标题会压到标签上） */
+/* inline 上 overflow 不生效，长标题会压到右侧标签；用 inline-block 才能省略号截断，
+   同时保证图标和标题还在同一行（扣掉图标 16px + 间距 10px） */
 body:has(.tagTitle) .listTitle {
-  display: block;
+  display: inline-block;
+  max-width: calc(100% - 26px);
+  vertical-align: bottom;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
