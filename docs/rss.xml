@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>P7IVESC's blog</title><link>https://P7IVESC.github.io</link><description>知其黑，守其白。一个网安小白的红队实战、靶场复盘与学习笔记。技术交流请备注来源：emhlcGluZzA1MDc=</description><copyright>P7IVESC's blog</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://avatars.githubusercontent.com/u/237383456?v=4&amp;size=200</url><title>avatar</title><link>https://P7IVESC.github.io</link></image><lastBuildDate>Fri, 06 Nov 2026 06:43:19 +0000</lastBuildDate><managingEditor>P7IVESC's blog</managingEditor><ttl>60</ttl><webMaster>P7IVESC's blog</webMaster><item><title>开局一个登录口如何进行渗透测试</title><link>https://P7IVESC.github.io/post/kai-ju-yi-ge-deng-lu-kou-ru-he-jin-xing-shen-tou-ce-shi.html</link><description># 弱口令
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>P7IVESC's blog</title><link>https://P7IVESC.github.io</link><description>知其黑，守其白。一个网安小白的红队实战、靶场复盘与学习笔记。技术交流请备注来源：emhlcGluZzA1MDc=</description><copyright>P7IVESC's blog</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://avatars.githubusercontent.com/u/237383456?v=4&amp;size=200</url><title>avatar</title><link>https://P7IVESC.github.io</link></image><lastBuildDate>Fri, 06 Nov 2026 06:46:50 +0000</lastBuildDate><managingEditor>P7IVESC's blog</managingEditor><ttl>60</ttl><webMaster>P7IVESC's blog</webMaster><item><title>开局一个登录口如何进行渗透测试</title><link>https://P7IVESC.github.io/post/kai-ju-yi-ge-deng-lu-kou-ru-he-jin-xing-shen-tou-ce-shi.html</link><description># 弱口令
 
 常见用户名：
 
@@ -532,11 +532,11 @@ copy有两个命令：COPY FROM和COPY TO。</description><guid isPermaLink="tru
 
 ![](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/0d01037d441a.png)
 
-漏洞原理：当连接MariaDB/MySQL时，输入的密码会与期望的正确密码比较，由于不正确的处理，会导致即便是memcmp()返回一个非零值，也会使MySQL认为两个密码是相同的。</description><guid isPermaLink="true">https://P7IVESC.github.io/post/MySQL-shen-tou-%20%28CVE-2012-2122%29.html</guid><pubDate>Fri, 06 Nov 2026 03:00:38 +0000</pubDate></item><item><title>solr代码执行CVE-2019-12409</title><link>https://P7IVESC.github.io/post/solr-dai-ma-zhi-xing-CVE-2019-12409.html</link><description>![](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/4775531358a7.webp)
+漏洞原理：当连接MariaDB/MySQL时，输入的密码会与期望的正确密码比较，由于不正确的处理，会导致即便是memcmp()返回一个非零值，也会使MySQL认为两个密码是相同的。</description><guid isPermaLink="true">https://P7IVESC.github.io/post/MySQL-shen-tou-%20%28CVE-2012-2122%29.html</guid><pubDate>Fri, 06 Nov 2026 03:00:38 +0000</pubDate></item><item><title>solr 代码执行 (CVE-2019-12409)</title><link>https://P7IVESC.github.io/post/solr%20-dai-ma-zhi-xing-%20%28CVE-2019-12409%29.html</link><description>![](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/4775531358a7.webp)
 
 ## 背景介绍
 
-Apache Solr 是一个开源的搜索服务器，使用 Java 语言开发，主要基于 HTTP 和 Apache Lucene 实现。</description><guid isPermaLink="true">https://P7IVESC.github.io/post/solr-dai-ma-zhi-xing-CVE-2019-12409.html</guid><pubDate>Fri, 06 Nov 2026 02:50:55 +0000</pubDate></item><item><title>MySQL-UDF提权</title><link>https://P7IVESC.github.io/post/MySQL-UDF-ti-quan.html</link><description># 参考[MySQL渗透 (CVE-2012-2122)](https://p7ivesc.github.io/post/MySQL-shen-tou-CVE-2012-2122.html)文档，进行mysql渗透
+Apache Solr 是一个开源的搜索服务器，使用 Java 语言开发，主要基于 HTTP 和 Apache Lucene 实现。</description><guid isPermaLink="true">https://P7IVESC.github.io/post/solr%20-dai-ma-zhi-xing-%20%28CVE-2019-12409%29.html</guid><pubDate>Fri, 06 Nov 2026 02:50:55 +0000</pubDate></item><item><title>MySQL-UDF提权</title><link>https://P7IVESC.github.io/post/MySQL-UDF-ti-quan.html</link><description># 参考[MySQL渗透 (CVE-2012-2122)](https://p7ivesc.github.io/post/MySQL-shen-tou-CVE-2012-2122.html)文档，进行mysql渗透
 
 UDF：User Defined Function，用户自定义函数 
 
@@ -578,7 +578,7 @@ Pass-04
 
 ![](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/de9c22687d04.webp)
 
-查看过滤条件，我们会发现他并没有过滤掉**Apache 服务器的配置文件——.htaccess**他能够篡改服务器解析规则。</description><guid isPermaLink="true">https://P7IVESC.github.io/post/upload-labs.html</guid><pubDate>Fri, 06 Nov 2026 01:48:25 +0000</pubDate></item><item><title>海洋CMS渗透测试利用数据库备份中的远程代码执行漏洞</title><link>https://P7IVESC.github.io/post/hai-yang-CMS-shen-tou-ce-shi-li-yong-shu-ju-ku-bei-fen-zhong-de-yuan-cheng-dai-ma-zhi-xing-lou-dong.html</link><description>修改存放目录
+查看过滤条件，我们会发现他并没有过滤掉**Apache 服务器的配置文件——.htaccess**他能够篡改服务器解析规则。</description><guid isPermaLink="true">https://P7IVESC.github.io/post/upload-labs.html</guid><pubDate>Fri, 06 Nov 2026 01:48:25 +0000</pubDate></item><item><title>海洋CMS渗透测试(利用数据库备份中的远程代码执行漏洞)</title><link>https://P7IVESC.github.io/post/hai-yang-CMS-shen-tou-ce-shi-%28-li-yong-shu-ju-ku-bei-fen-zhong-de-yuan-cheng-dai-ma-zhi-xing-lou-dong-%29.html</link><description>修改存放目录
 
 ![](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/3e46f062ca9b.webp)
 
@@ -650,7 +650,7 @@ php路径
 
 连接 .antproxy.php 脚本
 
-直接修改shell链接，密码不变。</description><guid isPermaLink="true">https://P7IVESC.github.io/post/hai-yang-CMS-shen-tou-ce-shi-li-yong-shu-ju-ku-bei-fen-zhong-de-yuan-cheng-dai-ma-zhi-xing-lou-dong.html</guid><pubDate>Thu, 05 Nov 2026 07:57:18 +0000</pubDate></item><item><title>CMS_YXC1渗透测试报告</title><link>https://P7IVESC.github.io/post/CMS_YXC1-shen-tou-ce-shi-bao-gao.html</link><description>首先拿到内网ip：10.7.11.83，并没有给端口，于是我们先用fscan扫描端口
+直接修改shell链接，密码不变。</description><guid isPermaLink="true">https://P7IVESC.github.io/post/hai-yang-CMS-shen-tou-ce-shi-%28-li-yong-shu-ju-ku-bei-fen-zhong-de-yuan-cheng-dai-ma-zhi-xing-lou-dong-%29.html</guid><pubDate>Thu, 05 Nov 2026 07:57:18 +0000</pubDate></item><item><title>CMS_YXC1渗透测试报告</title><link>https://P7IVESC.github.io/post/CMS_YXC1-shen-tou-ce-shi-bao-gao.html</link><description>首先拿到内网ip：10.7.11.83，并没有给端口，于是我们先用fscan扫描端口
 
 ./fscan -h 10.7.11.83 -p 1-30000
 
