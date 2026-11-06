@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>P7IVESC's blog</title><link>https://P7IVESC.github.io</link><description>知其黑，守其白。一个网安小白的红队实战、靶场复盘与学习笔记。技术交流请备注来源：emhlcGluZzA1MDc=</description><copyright>P7IVESC's blog</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://avatars.githubusercontent.com/u/237383456?v=4&amp;size=200</url><title>avatar</title><link>https://P7IVESC.github.io</link></image><lastBuildDate>Fri, 06 Nov 2026 06:30:59 +0000</lastBuildDate><managingEditor>P7IVESC's blog</managingEditor><ttl>60</ttl><webMaster>P7IVESC's blog</webMaster><item><title>开局一个登录口如何进行渗透测试</title><link>https://P7IVESC.github.io/post/kai-ju-yi-ge-deng-lu-kou-ru-he-jin-xing-shen-tou-ce-shi.html</link><description># 弱口令
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>P7IVESC's blog</title><link>https://P7IVESC.github.io</link><description>知其黑，守其白。一个网安小白的红队实战、靶场复盘与学习笔记。技术交流请备注来源：emhlcGluZzA1MDc=</description><copyright>P7IVESC's blog</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://avatars.githubusercontent.com/u/237383456?v=4&amp;size=200</url><title>avatar</title><link>https://P7IVESC.github.io</link></image><lastBuildDate>Fri, 06 Nov 2026 06:36:37 +0000</lastBuildDate><managingEditor>P7IVESC's blog</managingEditor><ttl>60</ttl><webMaster>P7IVESC's blog</webMaster><item><title>开局一个登录口如何进行渗透测试</title><link>https://P7IVESC.github.io/post/kai-ju-yi-ge-deng-lu-kou-ru-he-jin-xing-shen-tou-ce-shi.html</link><description># 弱口令
 
 常见用户名：
 
@@ -39,7 +39,7 @@ admin123
 
 该系统有俩洞一个是弱口令,一个是绕过登录验证,直接进后台。</description><guid isPermaLink="true">https://P7IVESC.github.io/post/kai-ju-yi-ge-deng-lu-kou-ru-he-jin-xing-shen-tou-ce-shi.html</guid><pubDate>Fri, 06 Nov 2026 06:30:34 +0000</pubDate></item><item><title>信息收集</title><link>https://P7IVESC.github.io/post/xin-xi-shou-ji.html</link><description># edu信息收集
 
-http://www\.moe\.gov\.cn/srcsite/A05/s7505/202401/t20240117\_1100766\.html
+http://www.moe.gov.cn/srcsite/A05/s7505/202401/t20240117_1100766.html
 
 ## 全国大学生国家奖学金获奖名单
 
