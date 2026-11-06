@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>页面走丢了 · P7IVESC</title>
+<style>
+  :root {
+    --bg: #faf9f7; --bg-elev: #ffffff; --fg: #191919; --fg-soft: #565e6a;
+    --fg-mute: #8b939e; --line: #e7e3dc; --accent: #b03a2e;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0e1013; --bg-elev: #16191e; --fg: #e8e6e3; --fg-soft: #a8b0bb;
+      --fg-mute: #6f7885; --line: #262b33; --accent: #ef7a68;
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", "PingFang SC", sans-serif;
+  }
+  .box {
+    max-width: 440px;
+    width: 100%;
+    text-align: center;
+    padding: 40px 32px 34px;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    background: var(--bg-elev);
+  }
+  .code {
+    font-size: 64px;
+    line-height: 1;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: var(--accent);
+    font-variant-numeric: tabular-nums;
+  }
+  h1 { font-size: 17px; margin: 18px 0 10px; font-weight: 600; }
+  p { margin: 0 0 22px; font-size: 13.5px; line-height: 1.8; color: var(--fg-soft); }
+  .path {
+    display: block;
+    margin: 0 0 22px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    font-family: ui-monospace, Consolas, monospace;
+    font-size: 11.5px;
+    color: var(--fg-mute);
+    overflow-wrap: anywhere;
+    text-align: left;
+  }
+  a.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    border-radius: 999px;
+    background: var(--accent);
+    color: #fff;
+    text-decoration: none;
+    font-size: 13.5px;
+    font-weight: 500;
+  }
+  a.btn:hover { opacity: 0.9; }
+</style>
+<script>
+  /* 文章改过标题后，旧地址会 404。这里做一份旧 → 新的映射，命中就自动跳过去。
+     新增映射只要往下面加一行即可（路径用 decodeURI 后的中文/英文原样写）。 */
+  var REDIRECT_MAP = {
+    "/post/CVE-2012-2122(mysql-shen-tou-).html": "/post/MySQL-shen-tou- (CVE-2012-2122).html"
+  };
+  (function () {
+    var raw = location.pathname;
+    var dec = raw;
+    try { dec = decodeURI(raw); } catch (e) {}
+    var target = REDIRECT_MAP[raw] || REDIRECT_MAP[dec];
+    if (target) location.replace(target + location.search + location.hash);
+  })();
+</script>
+</head>
+<body>
+  <div class="box">
+    <div class="code">404</div>
+    <h1>这个地址上没有文章</h1>
+    <p>可能是链接写错了，也可能是文章改名后地址变了。</p>
+    <span class="path" id="oops"></span>
+    <a class="btn" href="/">回到首页</a>
+  </div>
+  <script>
+    document.getElementById("oops").textContent = decodeURI(location.pathname);
+  </script>
+</body>
+</html>
