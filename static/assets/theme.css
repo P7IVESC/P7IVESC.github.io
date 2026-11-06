@@ -713,6 +713,8 @@ body:has(.tagTitle) {
 }
 
 body:has(.tagTitle) #header { align-items: center; gap: 10px; }
+/* 右侧工具组：原来是 margin:auto 0 0 auto，整体贴底，跟居中的标题错开 */
+body:has(.tagTitle) .title-right { align-items: center; margin: auto 0 auto auto !important; }
 body:has(.tagTitle) .tagTitle { font-family: var(--font-serif); font-size: 26px; font-weight: 700; }
 body:has(.tagTitle) .tagTitle::before {
   content: "";
@@ -725,7 +727,12 @@ body:has(.tagTitle) .tagTitle::before {
   vertical-align: -4px;
 }
 
-body:has(.tagTitle) .subnav-search { display: flex; align-items: center; margin-right: 6px; }
+body:has(.tagTitle) .subnav-search {
+  display: flex;
+  align-items: stretch;
+  width: auto !important;
+  margin: 0 6px 0 0 !important;
+}
 body:has(.tagTitle) .subnav-search-input {
   width: 190px !important;
   height: 32px !important;
@@ -733,7 +740,19 @@ body:has(.tagTitle) .subnav-search-input {
   border: 1px solid var(--line) !important;
   background: var(--bg-elev) !important;
   color: var(--fg) !important;
-  padding: 0 10px !important;
+  /* 左边留出放大镜的位置：Primer 默认是 32px，别覆盖成 10px */
+  padding: 0 10px 0 32px !important;
+}
+/* 放大镜：Primer 是 absolute/top:9px/left:8px，这里对齐到 32px 内边距 */
+body:has(.tagTitle) .subnav-search-icon {
+  top: 50% !important;
+  left: 11px !important;
+  transform: translateY(-50%);
+  width: 14px !important;
+  height: 14px !important;
+  color: var(--fg-soft);
+  opacity: 0.7;
+  pointer-events: none;
 }
 body:has(.tagTitle) .subnav-search button {
   white-space: nowrap;
