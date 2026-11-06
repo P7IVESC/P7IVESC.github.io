@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>P7IVESC's blog</title><link>https://P7IVESC.github.io</link><description>知其黑，守其白。一个网安小白的红队实战、靶场复盘与学习笔记。技术交流请备注来源：emhlcGluZzA1MDc=</description><copyright>P7IVESC's blog</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://avatars.githubusercontent.com/u/237383456?v=4&amp;size=200</url><title>avatar</title><link>https://P7IVESC.github.io</link></image><lastBuildDate>Fri, 06 Nov 2026 05:50:34 +0000</lastBuildDate><managingEditor>P7IVESC's blog</managingEditor><ttl>60</ttl><webMaster>P7IVESC's blog</webMaster><item><title>burp靶场</title><link>https://P7IVESC.github.io/post/burp-ba-chang.html</link><description># SQLI
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>P7IVESC's blog</title><link>https://P7IVESC.github.io</link><description>知其黑，守其白。一个网安小白的红队实战、靶场复盘与学习笔记。技术交流请备注来源：emhlcGluZzA1MDc=</description><copyright>P7IVESC's blog</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://avatars.githubusercontent.com/u/237383456?v=4&amp;size=200</url><title>avatar</title><link>https://P7IVESC.github.io</link></image><lastBuildDate>Fri, 06 Nov 2026 06:05:12 +0000</lastBuildDate><managingEditor>P7IVESC's blog</managingEditor><ttl>60</ttl><webMaster>P7IVESC's blog</webMaster><item><title>burp靶场</title><link>https://P7IVESC.github.io/post/burp-ba-chang.html</link><description># SQLI
 
 ## https://portswigger\.net/web\-security/sql\-injection/lab\-retrieve\-hidden\-data
 
@@ -113,7 +113,7 @@ select GROUP_CONCAT(table_name) from information_schema.TABLES where table_schem
 
 ###### 但是，注意这题用的是PostgreSQL，跟mysql完全不一样
 
-在 PostgreSQL 中，每一个数据库（Database）都拥有自己独立的一套 `information_schema` 视图。</description><guid isPermaLink="true">https://P7IVESC.github.io/post/burp-ba-chang.html</guid><pubDate>Fri, 06 Nov 2026 05:49:47 +0000</pubDate></item><item><title>IA: Keyring</title><link>https://P7IVESC.github.io/post/IA-%20Keyring.html</link><description>## 192\.168\.110\.204 拿到ip扫端口
+在 PostgreSQL 中，每一个数据库（Database）都拥有自己独立的一套 `information_schema` 视图。</description><guid isPermaLink="true">https://P7IVESC.github.io/post/burp-ba-chang.html</guid><pubDate>Fri, 06 Nov 2026 05:49:47 +0000</pubDate></item><item><title>IA-Keyring</title><link>https://P7IVESC.github.io/post/IA-Keyring.html</link><description>## 192\.168\.110\.204 拿到ip扫端口
 
 ![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=MWVjNjg1OTQ2OTA0OTRlY2VjZDViNTVhM2Q3YmI3NDNfYzY3ZmI1ZWM1NjNmNTlhMDk3MGI3MmM1NDhkYmYxYzlfSUQ6NzY0OTI2Nzc1NzQzOTQ1NDQxN18xNzkzOTQzNTc0OjE3OTQwMjk5NzRfVjM)
 
@@ -125,7 +125,7 @@ select GROUP_CONCAT(table_name) from information_schema.TABLES where table_schem
 
 先注册一个普通用户
 
-成功登陆后发现给与我们的提示信息，简单的告诉了我们什么是参数污染，但是在这几个界面中未发现参数的传递。</description><guid isPermaLink="true">https://P7IVESC.github.io/post/IA-%20Keyring.html</guid><pubDate>Fri, 06 Nov 2026 05:40:28 +0000</pubDate></item><item><title>权限提升</title><link>https://P7IVESC.github.io/post/quan-xian-ti-sheng.html</link><description>## 权限提升基础
+成功登陆后发现给与我们的提示信息，简单的告诉了我们什么是参数污染，但是在这几个界面中未发现参数的传递。</description><guid isPermaLink="true">https://P7IVESC.github.io/post/IA-Keyring.html</guid><pubDate>Fri, 06 Nov 2026 05:40:28 +0000</pubDate></item><item><title>权限提升</title><link>https://P7IVESC.github.io/post/quan-xian-ti-sheng.html</link><description>## 权限提升基础
 
 在Windows和Linux中，不同的进程和服务由不同用户权限或服务权限运行。</description><guid isPermaLink="true">https://P7IVESC.github.io/post/quan-xian-ti-sheng.html</guid><pubDate>Fri, 06 Nov 2026 03:34:47 +0000</pubDate></item><item><title>SQL server命令执行</title><link>https://P7IVESC.github.io/post/SQL%20server-ming-ling-zhi-xing.html</link><description>前期渗透可以参考 [SQL server口令爆破](https://p7ivesc.github.io/post/SQL%20server-kou-ling-bao-po.html)
 
