@@ -830,6 +830,6 @@ body:has(.tagTitle) .listTitle {
 }
 /* 窄屏时标题要能被压缩省略，否则会压到右侧标签上（原来的重叠） */
 body:has(.tagTitle) .SideNav-item > .d-flex { min-width: 0; flex: 1 1 auto; }
-body:has(.tagTitle) .SideNav-item .listTitle { min-width: 0; max-width: 100%; }
+body:has(.tagTitle) .SideNav-item .listTitle { min-width: 0; max-width: calc(100% - 26px); }
 body:has(.tagTitle) .SideNav-item .SideNav-icon { flex: 0 0 auto; }
 body:has(.tagTitle) .SideNav-icon { margin-right: 10px; color: var(--fg-mute); }
