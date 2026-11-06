@@ -1,4 +1,4 @@
-# 参考[CVE\-2012\-2122\(mysql渗透\)](https://rcn3jqf4xs7x.feishu.cn/wiki/XLDew2jOliBzkGkkjXkc7eS3ngb?from=from_copylink)文档，进行mysql渗透
+# 参考[CVE\-2012\-2122\(mysql渗透\)](https://p7ivesc.github.io/post/CVE-2012-2122%28mysql-shen-tou-%29.html)文档，进行mysql渗透
 
 UDF：User Defined Function，用户自定义函数 
 
