@@ -1,5 +1,119 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>P7IVESC's blog</title><link>https://P7IVESC.github.io</link><description>知其黑，守其白。一个网安小白的红队实战、靶场复盘与学习笔记。技术交流请备注来源：emhlcGluZzA1MDc=</description><copyright>P7IVESC's blog</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://avatars.githubusercontent.com/u/237383456?v=4&amp;size=200</url><title>avatar</title><link>https://P7IVESC.github.io</link></image><lastBuildDate>Fri, 06 Nov 2026 05:40:59 +0000</lastBuildDate><managingEditor>P7IVESC's blog</managingEditor><ttl>60</ttl><webMaster>P7IVESC's blog</webMaster><item><title>IA: Keyring</title><link>https://P7IVESC.github.io/post/IA-%20Keyring.html</link><description>## 192\.168\.110\.204 拿到ip扫端口
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>P7IVESC's blog</title><link>https://P7IVESC.github.io</link><description>知其黑，守其白。一个网安小白的红队实战、靶场复盘与学习笔记。技术交流请备注来源：emhlcGluZzA1MDc=</description><copyright>P7IVESC's blog</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://avatars.githubusercontent.com/u/237383456?v=4&amp;size=200</url><title>avatar</title><link>https://P7IVESC.github.io</link></image><lastBuildDate>Fri, 06 Nov 2026 05:50:34 +0000</lastBuildDate><managingEditor>P7IVESC's blog</managingEditor><ttl>60</ttl><webMaster>P7IVESC's blog</webMaster><item><title>burp靶场</title><link>https://P7IVESC.github.io/post/burp-ba-chang.html</link><description># SQLI
+
+## https://portswigger\.net/web\-security/sql\-injection/lab\-retrieve\-hidden\-data
+
+找到注入点
+
+![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=ZGEyNTMyNGQ5YjhmMzgyMWVkYTkwM2QyMDhjNWE4ZGFfZGQxNzAzZWQ2MzU4YTZkMTQ5NmVmY2Q2YzkxYzBlZTRfSUQ6NzY2ODE0MDQwMTgzNjU3NTcxMl8xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+
+```Plain Text
+https://0ad80089046ed7a28353fd47006600b1.web-security-academy.net/filter?category=
+```
+
+当输入单引号时服务器报错，输入双引号或者数字正常返回
+
+由于union联合查询需要列数匹配，所以我们先用order by判断字段数
+
+![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=MGM3OGRmMjAzYTA2NmIxODFjZWI0MDk4NTdkNWE0M2FfNDFlYjJiYTY4YWIyZTNhMmE5ZWM4M2NhNzcwY2YyZWRfSUQ6NzY2ODE0MDc5MzkwMzUwMDU4NF8xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+
+![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=YmFkMDhjZGFkOTNmMDU4MTlhYmQ1YWNmMDNiZWE4OWNfYTI5ZTY2ODNmODVkYjViMjI4YzA3MzNmNDZmMWVjNjlfSUQ6NzY2ODE0MDg3NDI4Mjg2MzU5OV8xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+
+直到9时服务器报错，证明有八个字段值
+
+用union select判断回显位置
+
+**这边要注意，union的结果类型要相同**
+
+这边以eshop的Category表为例，这边where条件如果是字符类型，后面union如果是数字型，就会报错
+
+![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=MTk4MGExYjkxN2FiMTFhZDI1YzM2NTBmN2M0N2EzMGRfZmU5MDc3MmY3ZTJkYTgyMjJjY2VhZWEzMjk0ODFlYjlfSUQ6NzY2ODE0Mjc0MjUxNzc2MzAzNF8xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+
+所以判断回显位置的payload应该是
+
+```SQL
+https://0ad80089046ed7a28353fd47006600b1.web-security-academy.net/filter?category=' union select '1','2','3','4','5','6','7','8'--+
+```
+
+![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=ZWM5NmRhYTQwMWZiMjY1NmFmZDYwNjNkMDhlNmZiYWVfYzMxYmE5Y2MyZjJmY2Q5YWVhYzgxODUwZGQ3MjVkZTlfSUQ6NzY2ODE0MzA0Njg1MzEzNTMzOV8xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+
+确定3为回显位置，于是开始确定数据库
+
+这边我一般都是直接database\(\)，但是发现执行不了，以为语句有问题，结果一问ai才知道我给每个靶场都默认mysql数据库了
+
+每个类型的数据库查询数据库名的语法不同
+
+###### 如果后端是 Oracle 数据库
+
+```C++
+1' union select '1','2',(SELECT global_name FROM global_name),'4','5','6','7','8' FROM dual--+
+```
+
+###### 如果后端是 MySQL数据库
+
+```C++
+1' union select '1','2',database(),'4','5','6','7','8'--+
+```
+
+###### 如果后端是 Microsoft SQL Server 数据库
+
+```C++
+1' union select '1','2',db_name(),'4','5','6','7','8'*--+*
+```
+
+###### 如果后端是PostgreSQL
+
+```C++
+1' union select '1','2',current_database(),'4','5','6','7','8'--+
+```
+
+![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=YzlhMWI3N2JlYzliY2E4ZGMzN2VjZTQ0YWI3MTBiYzFfNDE3ZjViNGQwNWY4Njk2ODBiZGNhZDUwNzc1NTRmMGVfSUQ6NzY2ODE0NjIyMDI4NDYxMTU1N18xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+
+这边只有current\_database\(\)正常返回，推断靶场使用的是**PostgreSQL数据库，当前数据库名是“academy\_labs”**
+
+用下面这个payload也能证明
+
+```SQL
+https://0a40002704320fb680e50d7300650099.web-security-academy.net/filter?category=1'+union+select+'1','2',version(),'4  ','5','6','7','8'--+
+```
+
+![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=OTllNjE0MWIyNTEzMWJiMDNiODMzMzZlMGQ2OTUzYzdfODU2ODJkMzRhMjhmMGMxZjY5YjlkYjY1ZTkwMGM3YmJfSUQ6NzY2ODIwNDg2ODM4MTQ0NTA2NV8xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+
+
+
+
+
+###### 这边我是想通过看mysql的information\_schema来理解sql注入怎么看一个数据库的所有表名
+
+下一步是看当前数据库中存在什么表，我们就可以借助information\_schema数据库中的tables表来查询
+
+先来看看information\_schema数据库tables表的结构，以查询mysql中的world表名为例
+
+![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=YjAzYjQwNzY5NjdhZDMwY2RkN2E1MDE3NGI2MzhmYjNfYzNjOWViNTc5NDkxNzFjN2ExMDI4NTY2M2EzMDY0ZGJfSUQ6NzY2ODE1MzE0ODAyODczNDY2Nl8xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+
+我们可以看到该表中存在两个字段，一个是TABLE\_SCHEMA存放的所有的数据库名，TABLE\_NAME存放了所有的表名
+
+如果我们要查询world数据库中的所有表名，我们就可以使用下面的语句
+
+```Plain Text
+select table_name from information_schema.TABLES where table_schema='world';
+```
+
+![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=MDBmZmYxMTk3NTExODdjNTg3MDg0OGFmMjY0MmMxY2NfMTRiZWIwNTdhMmU0YzAyMTNmMjBhNGI1ZjM4YjE5NDZfSUQ6NzY2ODE1NTQzMTA5NzA3NzAwMl8xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+
+因为只有一个回显位置，所以我们可以使用group\_concat\(\)将查询结构合并为一个字符串
+
+```Plain Text
+select GROUP_CONCAT(table_name) from information_schema.TABLES where table_schema='world';
+```
+
+![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=Njk2ZjlkMmY0NjA0OGI3YTU5MDcxNjlkYzZmZGY0ZjdfNDU2MmQyN2ViMGQ2ZDMyNGJkZmQ1ZDc2MmZhNGRjOTNfSUQ6NzY2ODE1NTE4MDc4MTQyMzg1Nl8xNzkzOTQzOTE2OjE3OTQwMzAzMTZfVjM)
+
+
+
+###### 但是，注意这题用的是PostgreSQL，跟mysql完全不一样
+
+在 PostgreSQL 中，每一个数据库（Database）都拥有自己独立的一套 `information_schema` 视图。</description><guid isPermaLink="true">https://P7IVESC.github.io/post/burp-ba-chang.html</guid><pubDate>Fri, 06 Nov 2026 05:49:47 +0000</pubDate></item><item><title>IA: Keyring</title><link>https://P7IVESC.github.io/post/IA-%20Keyring.html</link><description>## 192\.168\.110\.204 拿到ip扫端口
 
 ![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=MWVjNjg1OTQ2OTA0OTRlY2VjZDViNTVhM2Q3YmI3NDNfYzY3ZmI1ZWM1NjNmNTlhMDk3MGI3MmM1NDhkYmYxYzlfSUQ6NzY0OTI2Nzc1NzQzOTQ1NDQxN18xNzkzOTQzNTc0OjE3OTQwMjk5NzRfVjM)
 
