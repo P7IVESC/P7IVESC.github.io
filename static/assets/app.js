@@ -282,7 +282,7 @@
 
       var info = document.createElement("span");
       info.className = "pg-info";
-      info.textContent = "第 " + p + " / " + pageCount + " 页 · 每类最多 " + PER_PAGE + " 篇";
+      info.textContent = "第 " + p + " / " + pageCount + " 页";
       frag.appendChild(info);
       return frag;
     }
