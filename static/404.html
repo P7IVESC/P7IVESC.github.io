@@ -76,18 +76,19 @@
   /* 文章改过标题后，旧地址会 404。这里做一份旧 → 新的映射，命中就自动跳过去。
      新增映射只要往下面加一行即可（路径用 decodeURI 后的中文/英文原样写）。 */
   var REDIRECT_MAP = {
-    /* 2026-11-06 统一清理地址：标题里的空格、半角括号去掉，旧地址一律跳到新地址 */
+    /* 2026-11-06 整理地址：标题里的空格、冒号换成连字符 */
     "/post/IA- Keyring.html": "/post/IA-Keyring.html",
     "/post/SQL server-ming-ling-zhi-xing.html": "/post/SQL-Server-ming-ling-zhi-xing.html",
     "/post/SQL server-kou-ling-bao-po.html": "/post/SQL-Server-kou-ling-bao-po.html",
-    "/post/MySQL-shen-tou- (CVE-2012-2122).html": "/post/MySQL-shen-tou-CVE-2012-2122.html",
-    "/post/solr -dai-ma-zhi-xing- (CVE-2019-12409).html": "/post/solr-dai-ma-zhi-xing-CVE-2019-12409.html",
     "/post/MySQL UDF-ti-quan.html": "/post/MySQL-UDF-ti-quan.html",
     "/post/upload labs.html": "/post/upload-labs.html",
-    "/post/hai-yang-CMS-shen-tou-ce-shi-(li-yong-shu-ju-ku-bei-fen-zhong-de-yuan-cheng-dai-ma-zhi-xing-lou-dong-).html": "/post/hai-yang-CMS-shen-tou-ce-shi-li-yong-shu-ju-ku-bei-fen-zhong-de-yuan-cheng-dai-ma-zhi-xing-lou-dong.html",
     "/post/wu-jing-xiao-di- VPC -ba-chang-shen-tou-shi-lu.html": "/post/wu-jing-xiao-di-VPC-ba-chang-shen-tou-shi-lu.html",
+    /* 2026-11-06 恢复标题里的漏洞编号括号：上一版「无括号」地址跳回来 */
+    "/post/MySQL-shen-tou-CVE-2012-2122.html": "/post/MySQL-shen-tou- (CVE-2012-2122).html",
+    "/post/solr-dai-ma-zhi-xing-CVE-2019-12409.html": "/post/solr -dai-ma-zhi-xing- (CVE-2019-12409).html",
+    "/post/hai-yang-CMS-shen-tou-ce-shi-li-yong-shu-ju-ku-bei-fen-zhong-de-yuan-cheng-dai-ma-zhi-xing-lou-dong.html": "/post/hai-yang-CMS-shen-tou-ce-shi-(-li-yong-shu-ju-ku-bei-fen-zhong-de-yuan-cheng-dai-ma-zhi-xing-lou-dong-).html",
     /* 更早的一次改名（标题 CVE-2012-2122(mysql渗透) -> MySQL渗透） */
-    "/post/CVE-2012-2122(mysql-shen-tou-).html": "/post/MySQL-shen-tou-CVE-2012-2122.html"
+    "/post/CVE-2012-2122(mysql-shen-tou-).html": "/post/MySQL-shen-tou- (CVE-2012-2122).html"
   };
   (function () {
     var raw = location.pathname;
