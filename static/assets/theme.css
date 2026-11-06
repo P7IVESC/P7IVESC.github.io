@@ -473,6 +473,7 @@ body:has(.hero) .hero { padding-top: 10px; }
   margin: 2.1em 0 0.7em;
   scroll-margin-top: 30px;
 }
+#postBody h1 { font-size: 27px; }
 #postBody h2 { font-size: 25px; padding-left: 14px; border-left: 4px solid var(--accent); }
 #postBody h3 { font-size: 20px; }
 #postBody h4 { font-size: 17.5px; }
@@ -668,7 +669,17 @@ body:has(.hero) .hero { padding-top: 10px; }
   border-left-color: var(--accent);
   background: var(--accent-soft);
 }
-/* 二级标题（h3）：缩进同时把左侧竖线一起带进去，形成层级 */
+/* 一级标题（h1，文章里用「# 大标题」分篇的）：不缩进、加粗、和下面留一点距离 */
+#toc a.lv1 {
+  font-size: 13px;
+  font-weight: 650;
+  color: var(--fg) !important;
+  padding-top: 8px;
+  border-left-color: var(--line-strong);
+}
+#toc a.lv1:first-child { padding-top: 5px; }
+
+/* 三级标题（h3）：缩进同时把左侧竖线一起带进去，形成层级 */
 #toc a.lv3 {
   margin-left: 11px;
   padding-left: 9px;

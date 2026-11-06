@@ -494,8 +494,22 @@
     side.id = "side";
     content.appendChild(side);
 
-    var heads = [].slice.call(body.querySelectorAll("h2, h3"));
+    /* h1 也算：很多文章用「# 大标题」分篇，漏掉它目录就断成两层 */
+    var heads = [].slice.call(body.querySelectorAll("h1, h2, h3")).filter(function (h) {
+      return !h.classList.contains("postTitle");
+    });
     var tocList = null;
+
+    /* 标题本身就是一条裸链接时，目录里只留「域名/…/末段」，否则整条目都是长 URL */
+    function tocLabel(h) {
+      var t = h.textContent.replace(/\s+/g, " ").trim();
+      var m = /^(https?:\/\/)([^\/\s]+)(\/\S*)?$/i.exec(t);
+      if (m) {
+        var seg = (m[3] || "").replace(/\/+$/, "").split("/").filter(Boolean);
+        t = m[2].replace(/^www\./i, "") + (seg.length ? "/…/" + seg[seg.length - 1] : "");
+      }
+      return t;
+    }
 
     /* 让高亮项留在目录自己的可视区里：只动目录的 scrollTop，页面不跟着跑 */
     function keepVisible(a) {
@@ -531,9 +545,10 @@
         var li = document.createElement("li");
         var a = document.createElement("a");
         a.href = "#" + h.id;
-        if (h.tagName === "H3") a.className = "lv3";
-        a.textContent = h.textContent.trim();
-        a.title = a.textContent;
+        if (h.tagName === "H1") a.className = "lv1";
+        else if (h.tagName === "H3") a.className = "lv3";
+        a.textContent = tocLabel(h);
+        a.title = h.textContent.replace(/\s+/g, " ").trim();
         li.appendChild(a);
         tocList.appendChild(li);
       });
