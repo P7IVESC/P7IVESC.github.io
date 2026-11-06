@@ -819,4 +819,8 @@ body:has(.tagTitle) .listLabels .Label {
 body:has(.tagTitle) .listLabels .Label object { display: inline; height: auto; }
 body:has(.tagTitle) .listLabels .Label object a { color: #fff !important; text-decoration: none; }
 body:has(.tagTitle) .listTitle { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* 窄屏时标题要能被压缩省略，否则会压到右侧标签上（原来的重叠） */
+body:has(.tagTitle) .SideNav-item > .d-flex { min-width: 0; flex: 1 1 auto; }
+body:has(.tagTitle) .SideNav-item .listTitle { min-width: 0; max-width: 100%; }
+body:has(.tagTitle) .SideNav-item .SideNav-icon { flex: 0 0 auto; }
 body:has(.tagTitle) .SideNav-icon { margin-right: 10px; color: var(--fg-mute); }
