@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>分类索引 · P7IVESC</title>
+<meta name="description" content="P7IVESC 博客全部文章的分类索引：渗透实战、靶场复盘、学习笔记。">
+<style>
+  :root {
+    --bg: #faf9f7; --bg-elev: #ffffff; --bg-sunken: #f4f2ee;
+    --fg: #191919; --fg-soft: #565e6a; --fg-mute: #8b939e;
+    --line: #e7e3dc; --line-strong: #d5d0c7; --accent: #b03a2e;
+    --accent-soft: rgba(176,58,46,.09);
+    --serif: "Noto Serif SC", "Source Han Serif SC", "Songti SC", Georgia, serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", "PingFang SC", sans-serif;
+  }
+  html[data-mode="dark"] {
+    --bg: #0e1013; --bg-elev: #16191e; --bg-sunken: #12151a;
+    --fg: #e8e6e3; --fg-soft: #a8b0bb; --fg-mute: #6f7885;
+    --line: #262b33; --line-strong: #363d47; --accent: #ef7a68;
+    --accent-soft: rgba(239,122,104,.12);
+  }
+  @media (prefers-color-scheme: dark) {
+    html[data-mode="auto"] {
+      --bg: #0e1013; --bg-elev: #16191e; --bg-sunken: #12151a;
+      --fg: #e8e6e3; --fg-soft: #a8b0bb; --fg-mute: #6f7885;
+      --line: #262b33; --line-strong: #363d47; --accent: #ef7a68;
+      --accent-soft: rgba(239,122,104,.12);
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 0 24px 96px;
+    background: var(--bg); color: var(--fg);
+    font-family: var(--sans); font-size: 16px; line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 860px; margin: 0 auto; }
+  a { color: inherit; text-decoration: none; }
+
+  /* ---- 头部 ---- */
+  header { padding: 46px 0 8px; border-bottom: 1px solid var(--line); margin-bottom: 30px; }
+  .home { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--fg-mute); margin-bottom: 20px; }
+  .home:hover { color: var(--accent); }
+  h1 { font-family: var(--serif); font-size: 30px; margin: 0 0 10px; letter-spacing: .01em; }
+  .lede { margin: 0 0 18px; color: var(--fg-soft); font-size: 14px; }
+  .lede b { color: var(--fg); font-weight: 600; font-variant-numeric: tabular-nums; }
+  .tools { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; padding-bottom: 20px; }
+  .jump { display: flex; flex-wrap: wrap; gap: 8px; }
+  .jump a {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 6px 13px; border: 1px solid var(--line); border-radius: 999px;
+    font-size: 13px; color: var(--fg-soft); background: var(--bg-elev);
+    transition: all .16s;
+  }
+  .jump a:hover { border-color: var(--accent); color: var(--accent); }
+  .jump a i { font-style: normal; font-size: 11.5px; color: var(--fg-mute); font-variant-numeric: tabular-nums; }
+  .jump a:hover i { color: var(--accent); }
+  .find { margin-left: auto; position: relative; }
+  .find input {
+    width: 190px; padding: 7px 12px 7px 30px; font-size: 13px;
+    color: var(--fg); background: var(--bg-elev);
+    border: 1px solid var(--line); border-radius: 999px; outline: none;
+    transition: border-color .16s, width .16s;
+    font-family: inherit;
+  }
+  .find input:focus { border-color: var(--accent); width: 230px; }
+  .find svg { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); width: 13px; height: 13px; color: var(--fg-mute); }
+
+  /* ---- 分类分区 ---- */
+  section { margin-bottom: 46px; scroll-margin-top: 20px; }
+  .sec-head { display: flex; align-items: baseline; gap: 10px; margin-bottom: 6px; }
+  .sec-head h2 { font-family: var(--serif); font-size: 20px; margin: 0; font-weight: 700; }
+  .sec-head h2::before {
+    content: ""; display: inline-block; width: 4px; height: 15px;
+    background: var(--accent); border-radius: 2px; margin-right: 10px; vertical-align: -1px;
+  }
+  .sec-head em { font-style: normal; font-size: 12px; letter-spacing: .08em; color: var(--fg-mute); }
+  .sec-head span { margin-left: auto; font-size: 12.5px; color: var(--fg-mute); font-variant-numeric: tabular-nums; }
+  .empty { margin: 6px 0 0; font-size: 13.5px; color: var(--fg-mute); }
+
+  ol { list-style: none; margin: 10px 0 0; padding: 0; }
+  li { border-bottom: 1px solid var(--line); }
+  li:last-child { border-bottom: 0; }
+  li a { display: block; padding: 15px 12px 16px; margin: 0 -12px; border-radius: 10px; transition: background .16s; }
+  li a:hover { background: var(--bg-elev); }
+  .row { display: flex; align-items: baseline; gap: 12px; }
+  .t { font-size: 16.5px; font-weight: 600; line-height: 1.55; overflow-wrap: anywhere; }
+  li a:hover .t { color: var(--accent); }
+  .d { margin-left: auto; flex: none; font-size: 12px; color: var(--fg-mute); font-variant-numeric: tabular-nums; }
+  .x { margin: 4px 0 0; font-size: 13.5px; color: var(--fg-soft); line-height: 1.7; overflow-wrap: anywhere; }
+  .pending { font-size: 11.5px; color: var(--accent); border: 1px solid var(--accent); border-radius: 4px; padding: 0 4px; }
+
+  .none { display: none; }
+  .hit { text-align: center; color: var(--fg-mute); font-size: 13.5px; padding: 30px 0; }
+
+  footer { margin-top: 10px; padding-top: 22px; border-top: 1px solid var(--line); font-size: 12.5px; color: var(--fg-mute); display: flex; flex-wrap: wrap; gap: 12px; }
+  footer a { color: var(--fg-soft); border-bottom: 1px dashed var(--line); }
+  footer a:hover { color: var(--accent); border-color: var(--accent); }
+  .theme { margin-left: auto; background: none; border: 1px solid var(--line); color: var(--fg-soft); border-radius: 999px; padding: 4px 12px; font-size: 12px; cursor: pointer; font-family: inherit; }
+  .theme:hover { border-color: var(--accent); color: var(--accent); }
+
+  @media (max-width: 620px) {
+    body { padding: 0 18px 70px; }
+    header { padding-top: 32px; }
+    h1 { font-size: 25px; }
+    .find { margin-left: 0; width: 100%; }
+    .find input, .find input:focus { width: 100%; }
+    .row { flex-wrap: wrap; }
+    .d { margin-left: 0; }
+    li a { padding: 14px 8px 15px; margin: 0 -8px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <a class="home" href="/">&larr; 返回首页</a>
+  <h1>分类索引</h1>
+  <p class="lede">全站 <b>15</b> 篇文章，按分类归档。渗透实战 0 篇、靶场复盘 5 篇、学习笔记 10 篇</p>
+  <div class="tools">
+    <nav class="jump">
+      <a href="#pentest">渗透实战 <i>0</i></a>
+      <a href="#labs">靶场复盘 <i>5</i></a>
+      <a href="#notes">学习笔记 <i>10</i></a>
+    </nav>
+    <div class="find">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input id="q" type="search" placeholder="搜索标题或摘要…" autocomplete="off" aria-label="搜索文章">
+    </div>
+  </div>
+</header>
+<main>
+<section id="pentest">
+  <div class="sec-head"><h2>渗透实战</h2><em>PENTEST</em><span>0 篇</span></div>
+<p class="empty">这一分类还没有文章。</p>
+</section>
+<section id="labs">
+  <div class="sec-head"><h2>靶场复盘</h2><em>LABS</em><span>5 篇</span></div>
+<ol>
+    <li data-s="ia: keyring 注册时发现admin用户已经存在 成功登陆后发现给与我们的提示信息，简单的告诉了我们什么是参数污染，但是在这几个界面中未发现参数的传递。"><a href="/post/IA-%20Keyring.html"><div class="row"><span class="t">IA: Keyring</span><span class="d">2026-11-06</span></div><p class="x">注册时发现admin用户已经存在 成功登陆后发现给与我们的提示信息，简单的告诉了我们什么是参数污染，但是在这几个界面中未发现参数的传递。</p></a></li>
+    <li data-s="upload labs 分析源码发现网站把常见的php，asp等后缀全都过滤了 会将文件名全部转换为小写（也就是大写绕过不行）"><a href="/post/upload%20labs.html"><div class="row"><span class="t">upload labs</span><span class="d">2026-11-06</span></div><p class="x">分析源码发现网站把常见的php，asp等后缀全都过滤了 会将文件名全部转换为小写（也就是大写绕过不行）</p></a></li>
+    <li data-s="海洋cms渗透测试(利用数据库备份中的远程代码执行漏洞) 修改最后的表名为payload 之后一定要先访问config.php，执行代码生成shell.php"><a href="/post/hai-yang-CMS-shen-tou-ce-shi-%28-li-yong-shu-ju-ku-bei-fen-zhong-de-yuan-cheng-dai-ma-zhi-xing-lou-dong-%29.html"><div class="row"><span class="t">海洋CMS渗透测试(利用数据库备份中的远程代码执行漏洞)</span><span class="d">2026-11-05</span></div><p class="x">修改最后的表名为payload 之后一定要先访问config.php，执行代码生成shell.php</p></a></li>
+    <li data-s="cms_yxc1渗透测试报告 首先拿到内网ip：10.7.11.83，并没有给端口，于是我们先用fscan扫描端口 发现目标网站的 keywords get 参数存在 sql 注入漏洞，还可能存在 xss（…"><a href="/post/CMS_YXC1-shen-tou-ce-shi-bao-gao.html"><div class="row"><span class="t">CMS_YXC1渗透测试报告</span><span class="d">2026-11-05</span></div><p class="x">首先拿到内网ip：10.7.11.83，并没有给端口，于是我们先用fscan扫描端口 发现目标网站的 keywords GET 参数存在 SQL 注入漏洞，还可能存在 XSS（…</p></a></li>
+    <li data-s="无镜小迪 vpc 靶场渗透实录 发现一个xampp，百度一下发现是有一个php cgi漏洞的 phpinfo代码确实能够执行"><a href="/post/wu-jing-xiao-di-%20VPC%20-ba-chang-shen-tou-shi-lu.html"><div class="row"><span class="t">无镜小迪 VPC 靶场渗透实录</span><span class="d">2026-11-05</span></div><p class="x">发现一个xampp，百度一下发现是有一个php cgi漏洞的 phpinfo代码确实能够执行</p></a></li>
+</ol>
+</section>
+<section id="notes">
+  <div class="sec-head"><h2>学习笔记</h2><em>NOTES</em><span>10 篇</span></div>
+<ol>
+    <li data-s="权限提升 在windows和linux中，不同的进程和服务由不同用户权限或服务权限运行。linux中：apache2 www-data；systemd root windows中：sql…"><a href="/post/quan-xian-ti-sheng.html"><div class="row"><span class="t">权限提升</span><span class="d">2026-11-06</span></div><p class="x">在Windows和Linux中，不同的进程和服务由不同用户权限或服务权限运行。Linux中：Apache2 www-data；systemd root Windows中：SQL…</p></a></li>
+    <li data-s="sql server命令执行 前期渗透可以参考 sql server口令爆破 “存储过程”：其实质就是一个“集合”，那么是什么样的集合呢，就是存储在sql server中预先定义好的“sql语句集合”，说的…"><a href="/post/SQL%20server-ming-ling-zhi-xing.html"><div class="row"><span class="t">SQL server命令执行</span><span class="d">2026-11-06</span></div><p class="x">前期渗透可以参考 SQL server口令爆破 “存储过程”：其实质就是一个“集合”，那么是什么样的集合呢，就是存储在SQL server中预先定义好的“SQL语句集合”，说的…</p></a></li>
+    <li data-s="sql server口令爆破 sqlserver的默认管理员帐户。hydra是一个自动化的爆破工具，暴力破解弱密码，是一个支持众多协议的爆破工具，已经集成到kalilinux中，"><a href="/post/SQL%20server-kou-ling-bao-po.html"><div class="row"><span class="t">SQL server口令爆破</span><span class="d">2026-11-06</span></div><p class="x">Sqlserver的默认管理员帐户。hydra是一个自动化的爆破工具，暴力破解弱密码，是一个支持众多协议的爆破工具，已经集成到KaliLinux中，</p></a></li>
+    <li data-s="redis渗透 在本地使用redis-cli连接 2.通过redis写入功能将反弹shell写入定时任务中"><a href="/post/Redis-shen-tou.html"><div class="row"><span class="t">Redis渗透</span><span class="d">2026-11-06</span></div><p class="x">在本地使用redis-cli连接 2.通过Redis写入功能将反弹shell写入定时任务中</p></a></li>
+    <li data-s="postgresql数据库渗透 -d 指定连接的数据库，postgresql连接必须指定数据库 -w 指定终端提示符下输入密码"><a href="/post/PostgreSQL-shu-ju-ku-shen-tou.html"><div class="row"><span class="t">PostgreSQL数据库渗透</span><span class="d">2026-11-06</span></div><p class="x">-d 指定连接的数据库，postgresql连接必须指定数据库 -W 指定终端提示符下输入密码</p></a></li>
+    <li data-s="mysql渗透 (cve-2012-2122) 漏洞原理：当连接mariadb/mysql时，输入的密码会与期望的正确密码比较，由于不正确的处理，会导致即便是memcmp()返回一个非零值，也会使mysql认为两个密码是相同…"><a href="/post/MySQL-shen-tou-%20%28CVE-2012-2122%29.html"><div class="row"><span class="t">MySQL渗透 (CVE-2012-2122)</span><span class="d">2026-11-06</span></div><p class="x">漏洞原理：当连接MariaDB/MySQL时，输入的密码会与期望的正确密码比较，由于不正确的处理，会导致即便是memcmp()返回一个非零值，也会使MySQL认为两个密码是相同…</p></a></li>
+    <li data-s="solr 代码执行 (cve-2019-12409) apache solr 是一个开源的搜索服务器，使用 java 语言开发，主要基于 http 和 apache lucene 实现。它对外提供类似于web-service的ap…"><a href="/post/solr%20-dai-ma-zhi-xing-%20%28CVE-2019-12409%29.html"><div class="row"><span class="t">solr 代码执行 (CVE-2019-12409)</span><span class="d">2026-11-06</span></div><p class="x">Apache Solr 是一个开源的搜索服务器，使用 Java 语言开发，主要基于 HTTP 和 Apache Lucene 实现。它对外提供类似于Web-service的AP…</p></a></li>
+    <li data-s="mysql udf提权 udf的设计初衷是为了实现功能的多样化和方便用户自定义一些操作函数，但在提升便捷 性的同时，也带来了命令执行利用的可能。在mysql中，可以通过创建指向特定库文件"><a href="/post/MySQL%20UDF-ti-quan.html"><div class="row"><span class="t">MySQL UDF提权</span><span class="d">2026-11-06</span></div><p class="x">UDF的设计初衷是为了实现功能的多样化和方便用户自定义一些操作函数，但在提升便捷 性的同时，也带来了命令执行利用的可能。在MySQL中，可以通过创建指向特定库文件</p></a></li>
+    <li data-s="php文件包含漏洞 本次实验我们以dvwa的文件包含漏洞low等级作为对象，目标是读取d:\phpstudypro\www\dvwa\vulnerabilities\fi下的flag.txt文件内…"><a href="/post/PHP-wen-jian-bao-han-lou-dong.html"><div class="row"><span class="t">PHP文件包含漏洞</span><span class="d">2026-11-06</span></div><p class="x">本次实验我们以dvwa的文件包含漏洞low等级作为对象，目标是读取D:\phpstudypro\WWW\DVWA\vulnerabilities\fi下的flag.txt文件内…</p></a></li>
+    <li data-s="域控服务器的部署及域渗透 完成域控服务器的部署，并实现添加计算机到当前域 考虑到后续使用的便利性，现对域控服务器的 ip 地址进行指定，配置如下："><a href="/post/yu-kong-fu-wu-qi-de-bu-shu-ji-yu-shen-tou.html"><div class="row"><span class="t">域控服务器的部署及域渗透</span><span class="d">2026-11-05</span></div><p class="x">完成域控服务器的部署，并实现添加计算机到当前域 考虑到后续使用的便利性，现对域控服务器的 IP 地址进行指定，配置如下：</p></a></li>
+</ol>
+</section>
+<p class="hit none" id="hit">没有匹配的文章</p>
+</main>
+<footer>
+  <span>更新于 2026-11-06 13:47</span>
+  <a href="/rss.xml">RSS 订阅</a>
+  <a href="/">首页</a>
+  <button class="theme" id="themeBtn" type="button">切换主题</button>
+</footer>
+</div>
+<script>
+(function () {
+  var root = document.documentElement;
+  var KEY = "p7ivesc-mode";
+  var saved = null;
+  try { saved = localStorage.getItem(KEY); } catch (e) {}
+  root.setAttribute("data-mode", saved || "auto");
+  var btn = document.getElementById("themeBtn");
+  function paint() {
+    var m = root.getAttribute("data-mode");
+    btn.textContent = m === "dark" ? "浅色模式" : m === "light" ? "跟随系统" : "深色模式";
+  }
+  paint();
+  btn.addEventListener("click", function () {
+    var cur = root.getAttribute("data-mode");
+    var next = cur === "dark" ? "light" : cur === "light" ? "auto" : "dark";
+    root.setAttribute("data-mode", next);
+    try { localStorage.setItem(KEY, next); } catch (e) {}
+    paint();
+  });
+
+  var q = document.getElementById("q");
+  var items = [].slice.call(document.querySelectorAll("li[data-s]"));
+  var hit = document.getElementById("hit");
+  function filter() {
+    var kw = (q.value || "").trim().toLowerCase();
+    var shown = 0;
+    items.forEach(function (li) {
+      var ok = !kw || li.getAttribute("data-s").indexOf(kw) >= 0;
+      li.classList.toggle("none", !ok);
+      if (ok) shown++;
+    });
+    // 某分类整组都被过滤掉时，把这一组也隐藏
+    [].forEach.call(document.querySelectorAll("section"), function (sec) {
+      var any = sec.querySelectorAll("li[data-s]:not(.none)").length;
+      sec.classList.toggle("none", kw && !any);
+    });
+    hit.classList.toggle("none", !kw || shown > 0);
+  }
+  if (q) q.addEventListener("input", filter);
+})();
+</script>
+</body>
+</html>

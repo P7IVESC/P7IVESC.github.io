@@ -1030,3 +1030,26 @@ body:has(.tagTitle) .SideNav-item > .d-flex { min-width: 0; flex: 1 1 auto; }
 body:has(.tagTitle) .SideNav-item .listTitle { min-width: 0; max-width: calc(100% - 26px); }
 body:has(.tagTitle) .SideNav-item .SideNav-icon { flex: 0 0 auto; }
 body:has(.tagTitle) .SideNav-icon { margin-right: 10px; color: var(--fg-mute); }
+
+/* ---------- 分类索引入口（首页分区标题右侧 / 文章页分类行） ---------- */
+.section-head em { margin-right: auto; }
+.section-head a.sec-more {
+  flex: 0 0 auto;
+  font-size: 12.5px;
+  color: var(--fg-mute);
+  text-decoration: none;
+  border-bottom: 1px dashed var(--line);
+  padding-bottom: 1px;
+  white-space: nowrap;
+  transition: color 0.16s, border-color 0.16s;
+}
+.section-head a.sec-more:hover { color: var(--accent); border-bottom-color: var(--accent); }
+
+.side-row a.pill { transition: box-shadow 0.16s; }
+.side-row a.pill:hover { box-shadow: inset 0 0 0 1px var(--accent); }
+
+/* 窄屏：分区标题一行放不下时，把「全部 N 篇」换到下一行右侧 */
+@media (max-width: 520px) {
+  .section-head { flex-wrap: wrap; row-gap: 6px; }
+  .section-head a.sec-more { margin-left: auto; }
+}

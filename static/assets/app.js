@@ -17,12 +17,35 @@
     }
   ];
 
-  /* ---- 首页分类：key 必须与 GitHub Issue 标签名完全一致 ---- */
+  /* ---- 首页分类：key 必须与 GitHub Issue 标签名完全一致 ----
+     anchor 对应 /categories.html 里各分区的 id（由 make_archive.py 生成） */
   var CATS = [
-    { key: "渗透实战", en: "PENTEST" },
-    { key: "靶场复盘", en: "LABS" },
-    { key: "学习笔记", en: "NOTES" }
+    { key: "渗透实战", en: "PENTEST", anchor: "pentest" },
+    { key: "靶场复盘", en: "LABS", anchor: "labs" },
+    { key: "学习笔记", en: "NOTES", anchor: "notes" }
   ];
+
+  /* 全站归档数据（篇数、分类计数），由 make_archive.py 生成 */
+  var ARCHIVE = null;
+
+  function loadArchive(cb) {
+    fetch("/assets/archive.json")
+      .then(function (r) {
+        return r.json();
+      })
+      .then(function (d) {
+        ARCHIVE = d;
+        if (cb) cb(d);
+      })
+      .catch(function () {
+        if (cb) cb(null);
+      });
+  }
+
+  function catAnchor(label) {
+    for (var i = 0; i < CATS.length; i++) if (CATS[i].key === label) return CATS[i].anchor;
+    return "";
+  }
 
   var ICON_SHIELD =
     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" ' +
@@ -123,9 +146,10 @@
       '<h1 class="hero-name">' + esc(siteName) + "</h1>" +
       (subtitle ? '<p class="hero-desc">' + esc(subtitle) + "</p>" : "") +
       '<div class="hero-stats">' +
-      "<span><b>" + items.length + "</b> 篇文章</span>" +
+      "<span><b class=\"stat-posts\">—</b> 篇文章</span>" +
       '<span><b class="stat-words">—</b> 字</span>' +
       '<span><b class="stat-imgs">—</b> 图片</span>' +
+      '<a class="stat-rss" href="/categories.html" title="按分类查看全部文章">分类索引</a>' +
       '<a class="stat-rss" href="/rss.xml" target="_blank" rel="noopener noreferrer"' +
       ' title="用阅读器订阅，新文章自动送达"><b>RSS</b> 订阅</a>' +
       "</div>" +
@@ -159,7 +183,10 @@
       var head = document.createElement("div");
       head.className = "section-head";
       head.innerHTML =
-        "<h2>" + esc(g.key) + "</h2><em>" + esc(meta ? meta.en : "POSTS") + "</em>";
+        "<h2>" + esc(g.key) + "</h2><em>" + esc(meta ? meta.en : "POSTS") + "</em>" +
+        '<a class="sec-more" data-cat="' + esc(g.key) + '" href="/categories.html' +
+        (meta && meta.anchor ? "#" + meta.anchor : "") + '"' +
+        ' title="在分类索引里查看这一类的全部文章">全部 →</a>';
 
       var grid = document.createElement("div");
       grid.className = "card-grid";
@@ -173,6 +200,27 @@
     nav.style.display = "none";
 
     hydrate(items, hero);
+
+    /* 全站篇数 / 每类总数：数据来自 make_archive.py 生成的 archive.json */
+    var postsEl = hero.querySelector(".stat-posts");
+    loadArchive(function (d) {
+      if (!d) {
+        if (postsEl) postsEl.textContent = items.length;
+        return;
+      }
+      if (postsEl) {
+        postsEl.textContent = d.total;
+        postsEl.parentNode.title = "全站共 " + d.total + " 篇，本页显示 " + items.length + " 篇";
+      }
+      [].forEach.call(document.querySelectorAll(".sec-more"), function (a) {
+        var k = a.getAttribute("data-cat");
+        var hit = null;
+        (d.cats || []).forEach(function (c) {
+          if (c.key === k) hit = c;
+        });
+        if (hit) a.textContent = "全部 " + hit.count + " 篇 →";
+      });
+    });
   }
 
   function cardOf(it) {
@@ -600,8 +648,12 @@
         }
         var rl = info.querySelector('[data-k="label"]');
         if (rl && (hit.labels || []).length) {
+          var lb = hit.labels[0];
+          var an = catAnchor(lb);
           rl.hidden = false;
-          rl.lastElementChild.innerHTML = '<span class="pill">' + esc(hit.labels[0]) + "</span>";
+          rl.lastElementChild.innerHTML =
+            '<a class="pill" href="/categories.html' + (an ? "#" + an : "") +
+            '" title="在分类索引里查看同类全部文章">' + esc(lb) + " →</a>";
         }
       })
       .catch(function () {});
